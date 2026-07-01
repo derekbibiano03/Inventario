@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inventario.Desktop.Views"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Icon="/Resources/icono.ico"
         Title="Inicio de Sesion" Height="450" Width="800">
     <Grid>
 
-        <StackPanel VerticalAlignment="Center">
+        <StackPanel VerticalAlignment="Center" Width="400">
             <TextBlock Text="Control de Acceso" FontSize="22" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" Foreground="#1A365D"/>
 
             <TextBlock Text="Usuario:" FontWeight="SemiBold" Margin="0,0,5,5" Foreground="#4A5568"/>

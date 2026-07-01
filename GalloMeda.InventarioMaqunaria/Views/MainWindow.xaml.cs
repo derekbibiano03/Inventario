@@ -1,21 +1,43 @@
-﻿using Inventario.Desktop.Views.UserControllers;
+﻿using GalloMeda.InventarioMaqunaria;
+using Inventario.Desktop.Views.UserControllers;
+using Inventario.Desktop.Views.UserControllers.Auth;
+using Inventario.Desktop.Views.UserControllers.Catalogos;
 using Inventario.Desktop.Views.UserControllers.Economicos;
 using Inventario.Desktop.Views.UserControllers.Personal;
-using Inventario.Desktop.Views.UserControllers.Catalogos;
 using Inventario.Desktop.Views.UserControllers.Proveedores;
 using Inventario.Desktop.Views.UserControllers.UbicacionProyectos;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using Inventario.Desktop.Views.UserControllers.Auth;
 
 namespace Inventario.Desktop.Views
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        
-        public MainWindow()
+        private string _usuarioLogueado;
+
+        // CAMBIO: Nombre de propiedad pública cambiado para evitar conflictos con WPF
+        public string UsuarioLogueado
+        {
+            get => _usuarioLogueado;
+            set
+            {
+                _usuarioLogueado = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public MainWindow(string username)
         {
             InitializeComponent();
+
+            // 2. Vincula la ventana con ella misma para habilitar los enlaces (Bindings)
+            this.DataContext = this;
+
+            // 3. Asigna la propiedad dinámica utilizando el parámetro real que viene desde el Login
+            this.UsuarioLogueado = username;
+
             string textoPanel = "Panel de Control de Maquinaria";
             txtPanel.Text = textoPanel;
         }
@@ -150,6 +172,11 @@ namespace Inventario.Desktop.Views
                 txtPanel.Text = textoPanel;
             }
         }
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

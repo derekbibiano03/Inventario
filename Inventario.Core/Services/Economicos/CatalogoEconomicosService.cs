@@ -3,6 +3,7 @@ using Inventario.Data;
 using Inventario.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,6 +16,25 @@ namespace Inventario.Core.Services.Economicos
         public CatalogoEconomicosService(InventarioContext context)
         {
             _context = context;
+        }
+
+        public CatalogoEconomico ObtenerPorIdParaEditar(string idEconomico)
+        {
+            return _context.CatalogoEconomicos.FirstOrDefault(e => e.IdEconomico == idEconomico);
+        }
+
+        public bool ActualizarEconomico(CatalogoEconomico economicoEditado)
+        {
+            if (economicoEditado == null) return false;
+
+            try
+            {
+                return _context.SaveChanges() >= 0;
+            }
+            catch (DbUpdateException)
+            {
+                throw;
+            }
         }
 
         public List<EconomicoMinimoDto> ObtenerEconomicosCortos()

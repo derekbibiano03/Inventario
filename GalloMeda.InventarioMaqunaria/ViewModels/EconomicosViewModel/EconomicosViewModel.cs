@@ -50,6 +50,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         public ICommand ExportarExcelCommand { get; set; }
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
         public ICollectionView VistaEconomicos { get; set; }
+        public ICommand EditarCommand { get; }
         public ObservableCollection<OpcionFiltroCheckbox> FiltroIdOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroDescripcionesOpciones { get; set; }
         public ObservableCollection<OpcionFiltroCheckbox> FiltroMarcasOpciones { get; set; }
@@ -65,7 +66,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         {
             VerDetalleCommand = new RelayCommand<string>(AbrirVentanaDetalle);
             LimpiarFiltrosCommand = new RelayCommand<object>(x => LimpiarFiltros());
-
+            EditarCommand = new RelayCommand<string>(AbrirVentanaEditar);
             var contexto = new InventarioContext();
             _economicosService = new CatalogoEconomicosService(contexto);
 
@@ -81,6 +82,25 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             VistaEconomicos.Filter = FiltroEjecucion;
             ExportarExcelCommand = new RelayCommand(EjecutarExportacion);
             CargarEconomicos();
+        }
+
+        private void AbrirVentanaEditar(string id)
+        {
+            // Evaluamos que el identificador no sea nulo antes de instanciar la ventana
+            if (string.IsNullOrEmpty(id)) return;
+
+            // Creamos la instancia de la ventana pasando el ID del económico por parámetro
+            EditarEconomicoWindow ventanaEditar = new EditarEconomicoWindow(id);
+
+            // Mostramos la ventana de manera modal (.ShowDialog frena el hilo hasta que se cierre)
+            bool? resultado = ventanaEditar.ShowDialog();
+
+            // Si el DialogResult fue 'true', significa que se guardaron cambios en la base de datos
+            if (resultado == true)
+            {
+                // Volvemos a consultar a la base de datos para pintar los nuevos datos editados en la tabla
+                CargarEconomicos();
+            }
         }
 
         private void EjecutarExportacion()

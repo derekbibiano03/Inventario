@@ -9,28 +9,24 @@
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-            <Button Content="Limpiar Filtros" Width="100" Height="28" Margin="0,14,0,0" Background="#E0E0E0" BorderBrush="#CCCCCC"/>
-        </StackPanel>
-
-        <DataGrid Grid.Row="1" 
-          ItemsSource="{Binding Combustibles}" 
-          AutoGenerateColumns="False" 
-          CanUserAddRows="False" 
-          HeadersVisibility="Column"
-          GridLinesVisibility="Horizontal"
-          Background="White"
-          BorderBrush="#CCCCCC"
-          BorderThickness="1"
-          RowHeight="30"
-          AlternatingRowBackground="#F9F9F9">
+        <DataGrid Grid.Row="0" 
+              HorizontalAlignment="Left"
+              ItemsSource="{Binding Combustibles}" 
+              AutoGenerateColumns="False" 
+              CanUserAddRows="False"
+              HeadersVisibility="Column"
+              Background="Gray"
+              BorderBrush="#CCCCCC"
+              BorderThickness="2"
+              RowHeight="30"
+              AlternatingRowBackground="#F9F9F9">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="No.Economico" Width="Auto" Binding="{Binding IdCombustible}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Descripción" Width="*" Binding="{Binding DescripcionCombustible}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="No.Economico" Width="100" Binding="{Binding IdCombustible}" IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Descripción" Width="200" Binding="{Binding DescripcionCombustible}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

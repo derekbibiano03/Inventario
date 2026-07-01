@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inventario.Desktop.Views"
         mc:Ignorable="d"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
         Icon="/Resources/icono.ico"
         Title="Inventario Maquinaria" Height="450" Width="800">
     <Grid>
@@ -34,15 +36,10 @@
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-
                                     <MenuItem Header="Informacion de Economicos" Tag="VerInventario" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Altas Economicos" Tag="AgregarEconomico" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Subir Archivo" Tag="AgregarArchivo" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Servicios Realizados" Tag="VerServicios" Click="MenuItem_Click"/>
-
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -54,13 +51,9 @@
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-
                                     <MenuItem Header="Operadores" Tag="VerOperadores" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Encargados de Maquinaria" Tag="VerEnMaq" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Propietarios y Administradores de Maquinaria" Tag="ProAdmin" Click="MenuItem_Click"/>
-
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -72,9 +65,7 @@
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-
                                     <MenuItem Header="Brokers" Tag="VerBrokers" Click="MenuItem_Click"/>
-
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -85,21 +76,13 @@
                                 <TextBlock Text="Catalogos ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
-
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-
                                     <MenuItem Header="Catalogo de Combustibles" Tag="CatCom" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Catalogo de Tipos de Equipos" Tag="CatTipEq" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Catalogo de Servicios" Tag="CatSer" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Catalogo de Grupos" Tag="CatGrp" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Catalogo de Tipo de Estatus" Tag="CatTiEs" Click="MenuItem_Click"/>
-                                    
                                     <MenuItem Header="Catalogo de Marcas" Tag="CatMarc" Click="MenuItem_Click"/>
-
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -111,13 +94,9 @@
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-
                                     <MenuItem Header="Ubicacion Proyecto" Tag="VerUbicaciones" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Tramos" Tag="VerTramos" Click="MenuItem_Click"/>
-
                                     <MenuItem Header="Frentes" Tag="VerFrentes" Click="MenuItem_Click"/>
-
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -128,15 +107,11 @@
                                 <TextBlock Text="Cuentas ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
-
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-
                                     <MenuItem Header="Agregar Nuevo Usuario" Tag="AddUser" Click="MenuItem_Click"/>
-
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
-
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
@@ -149,11 +124,24 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Background="#F5F6FA" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="15,0">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Name="BtnMostrarMenu" Content="☰ Menú" Width="70" Height="30" Background="#2A2D34" Foreground="White" BorderThickness="0" Visibility="Collapsed" Click="BtnMostrar_Click"/>
-                    <TextBlock x:Name="txtPanel" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#555555" FontSize="14" FontWeight="SemiBold"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <Button Name="BtnMostrarMenu" Content="☰ Menú" Width="70" Height="30" Background="#2A2D34" Foreground="White" BorderThickness="0" Visibility="Collapsed" Click="BtnMostrar_Click"/>
+                        <TextBlock x:Name="txtPanel" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#555555" FontSize="14" FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20,0,10,0">
+                        <TextBlock Text="👤 " Foreground="#2A2D34" FontSize="14" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding UsuarioLogueado}" Foreground="#2A2D34" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
             </Border>
+
             <ContentControl Name="ContenedorPrincipal" Grid.Row="1"/>
         </Grid>
     </Grid>

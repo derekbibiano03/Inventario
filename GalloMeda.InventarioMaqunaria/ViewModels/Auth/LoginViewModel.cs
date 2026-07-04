@@ -4,13 +4,14 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls; // IMPORTANTE: Necesario para usar PasswordBox
 using System.Windows.Input;
 
 namespace Inventario.Desktop.ViewModels.Auth
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -18,19 +19,15 @@ namespace Inventario.Desktop.ViewModels.Auth
 
         private readonly AutenticacionService _autenticacionService;
 
-        private string _usuario;
+        private string _usuario = string.Empty;
         public string Usuario
         {
             get => _usuario;
             set { _usuario = value; OnPropertyChanged(); }
         }
 
-        private string _contrasena;
-        public string Contrasena
-        {
-            get => _contrasena;
-            set { _contrasena = value; OnPropertyChanged(); }
-        }
+        // Dejamos la propiedad interna pero ya no requiere OnPropertyChanged puesto que no se bindea directo al texto
+        public string Contrasena { get; set; }
 
         public ICommand LoginCommand { get; }
 
@@ -39,13 +36,23 @@ namespace Inventario.Desktop.ViewModels.Auth
         public LoginViewModel(AutenticacionService autenticacionService)
         {
             _autenticacionService = autenticacionService;
-            LoginCommand = new RelayCommand(EjecutarLogin);
+            // Modificado para aceptar el parámetro enviado desde la vista
+            LoginCommand = new RelayCommand(EjecutarLogin); // Sin la lambda 'p => ...'
         }
 
         private void EjecutarLogin()
         {
             try
             {
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window.DataContext == this && window is Views.Auth authWindow)
+                    {
+                        // Accedemos directamente al PasswordBox por su x:Name gracias a la instancia de la ventana
+                        this.Contrasena = authWindow.TxtContrasena.Password;
+                        break;
+                    }
+                }
                 if (string.IsNullOrWhiteSpace(this.Usuario))
                 {
                     throw new Exception("El nombre de usuario es obligatorio.");
@@ -60,7 +67,6 @@ namespace Inventario.Desktop.ViewModels.Auth
                 {
                     this.IsAutenticado = true;
 
-                    // CORRECCIÓN DIRECTA: Escribimos directo en la sesión global sin usar métodos estáticos intermedios
                     App.Session.Username = this.Usuario.Trim();
                     App.Session.IdRol = 1;
 

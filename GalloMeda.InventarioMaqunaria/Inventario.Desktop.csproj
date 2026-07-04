@@ -1,53 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<DebugType>embedded</DebugType>
+		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
 
-  <ItemGroup>
-    <None Remove="Resources\AgregarUsuario.png" />
-    <None Remove="Resources\catalogo_icon.png" />
-    <None Remove="Resources\economicos_icon.png" />
-    <None Remove="Resources\empleado_icon.png" />
-    <None Remove="Resources\gallo_meda_icon.png" />
-    <None Remove="Resources\icono.ico" />
-    <None Remove="Resources\socios_icon.png" />
-    <None Remove="Resources\ubicacion_icon.png" />
-  </ItemGroup>
+		<ApplicationIcon>Resources\icono.ico</ApplicationIcon>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.16" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.16" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.16">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Resources\AgregarUsuario.png" />
+		<None Remove="Resources\catalogo_icon.png" />
+		<None Remove="Resources\economicos_icon.png" />
+		<None Remove="Resources\empleado_icon.png" />
+		<None Remove="Resources\gallo_meda_icon.png" />
+		<None Remove="Resources\icono.ico" />
+		<None Remove="Resources\socios_icon.png" />
+		<None Remove="Resources\ubicacion_icon.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
-    <ProjectReference Include="..\Inventario.Data\Inventario.Data.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.16" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.16">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
+		<ProjectReference Include="..\Inventario.Data\Inventario.Data.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Resources\AgregarUsuario.png" />
-    <Resource Include="Resources\catalogo_icon.png" />
-    <Resource Include="Resources\economicos_icon.png" />
-    <Resource Include="Resources\empleado_icon.png" />
-    <Resource Include="Resources\gallo_meda_icon.png" />
-    <Resource Include="Resources\icono.ico" />
-    <Resource Include="Resources\socios_icon.png" />
-    <Resource Include="Resources\ubicacion_icon.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Converters\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\AgregarUsuario.png" />
+		<Resource Include="Resources\catalogo_icon.png" />
+		<Resource Include="Resources\economicos_icon.png" />
+		<Resource Include="Resources\empleado_icon.png" />
+		<Resource Include="Resources\gallo_meda_icon.png" />
+		<Resource Include="Resources\icono.ico" />
+		<Resource Include="Resources\socios_icon.png" />
+		<Resource Include="Resources\ubicacion_icon.png" />
+	</ItemGroup>
 
 </Project>

@@ -23,6 +23,7 @@ namespace Inventario.Desktop.Views
         public Auth()
         {
             InitializeComponent();
+            string passwordIntroducida = TxtContrasena.Password;
         }
     }
 }

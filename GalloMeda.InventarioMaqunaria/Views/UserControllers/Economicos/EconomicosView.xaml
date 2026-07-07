@@ -10,6 +10,16 @@
 
     <UserControl.Resources>
         <helpers:UpperCaseConverter x:Key="MyUpperCaseConverter"/>
+
+        <Style x:Key="EstiloDropdownExcel" TargetType="ComboBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid Margin="20">
@@ -23,12 +33,12 @@
                     Command="{Binding LimpiarFiltrosCommand}" 
                     Width="100" Height="28" Margin="0,14,0,0" Background="#E0E0E0" BorderBrush="#CCCCCC"/>
             <Button Content="Exportar Todo a Excel" 
-                Command="{Binding ExportarExcelCommand}" 
-                Width="150" 
-                Height="35" 
-                HorizontalAlignment="Right" 
-                VerticalAlignment="Top" 
-                Margin="30,10,10,0"/>
+                    Command="{Binding ExportarExcelCommand}" 
+                    Width="150" 
+                    Height="35" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Top" 
+                    Margin="30,10,10,0"/>
         </StackPanel>
 
         <DataGrid Grid.Row="1" 
@@ -40,7 +50,7 @@
                   Background="White"
                   BorderBrush="#CCCCCC"
                   BorderThickness="1"
-                  RowHeight="30"
+                  RowHeight="35"
                   AlternatingRowBackground="#F9F9F9">
 
             <DataGrid.Columns>
@@ -49,14 +59,30 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="ID" HorizontalAlignment="Center" FontWeight="Bold"/>
-
-                                <ComboBox Width="100" Margin="0,2,0,0"
-                          ItemsSource="{Binding DataContext.FiltroIdOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                          SelectedValuePath="Id">
+                                <ComboBox Width="110" Height="25" Margin="0,2,0,0"
+                                          ItemContainerStyle="{StaticResource EstiloDropdownExcel}"
+                                          ItemsSource="{Binding DataContext.FiltroIdOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <ToggleButton x:Name="ToggleButton" BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                                <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" CornerRadius="2" Padding="5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
+                                                            <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaId, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                                <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                                            </ScrollViewer>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding Nombre}" 
-                                      IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -70,13 +96,28 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="Descripción" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                <ComboBox Width="150" 
-                          ItemsSource="{Binding DataContext.FiltroDescripcionesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                          SelectedValuePath="Nombre">
+                                <ComboBox Width="130" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroDescripcionesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
+                                                <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
+                                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="200" Padding="5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
+                                                            <TextBox Width="185" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaDescripcion, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding Nombre}" 
-                                      IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -90,13 +131,28 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="Marca" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                <ComboBox Width="100" 
-                          ItemsSource="{Binding DataContext.FiltroMarcasOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                          SelectedValuePath="Id">
+                                <ComboBox Width="110" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroMarcasOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
+                                                <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
+                                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" Padding="5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
+                                                            <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaMarca, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding Nombre}" 
-                                      IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -105,20 +161,35 @@
                     </DataGridTextColumn.HeaderTemplate>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Modelo"  Width="Auto" Binding="{Binding Modelo}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Modelo" Width="Auto" Binding="{Binding Modelo}" IsReadOnly="True"/>
 
                 <DataGridTextColumn Width="Auto" Binding="{Binding Serie}" IsReadOnly="True">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="No.Serie" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                <ComboBox Width="100" 
-          ItemsSource="{Binding DataContext.FiltroSeriesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
-          SelectedValuePath="Nombre">
+                                <ComboBox Width="110" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroSeriesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
+                                                <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
+                                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" Padding="5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
+                                                            <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaSerie, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding Nombre}" 
-                      IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -129,18 +200,33 @@
 
                 <DataGridTextColumn Header="Año de Fabricación" Width="Auto" Binding="{Binding PeriodoFabricacion}" IsReadOnly="True"/>
 
-                <DataGridTextColumn Width="120" Binding="{Binding IdTipoEquipoNavigation.DescripcionTipoEquipo}" IsReadOnly="True">
+                <DataGridTextColumn Width="130" Binding="{Binding IdTipoEquipoNavigation.DescripcionTipoEquipo}" IsReadOnly="True">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="Tipo de Equipo" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                <ComboBox Width="100" 
-                          ItemsSource="{Binding DataContext.FiltroTipoEquipoOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                          SelectedValuePath="Nombre">
+                                <ComboBox Width="110" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroTipoEquipoOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
+                                                <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
+                                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" Padding="5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
+                                                            <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaTipoEquipo, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding Nombre}" 
-                                      IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -149,18 +235,33 @@
                     </DataGridTextColumn.HeaderTemplate>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Width="150" Binding="{Binding IdUbicacionNavigation.NombreProyecto}" IsReadOnly="True">
+                <DataGridTextColumn Width="160" Binding="{Binding IdUbicacionNavigation.NombreProyecto}" IsReadOnly="True">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="Ubicación" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                <ComboBox Width="130" 
-                          ItemsSource="{Binding DataContext.FiltroUbicacionesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                          SelectedValuePath="Id">
+                                <ComboBox Width="120" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroUbicacionesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
+                                                <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
+                                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="190" Padding="5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
+                                                            <TextBox Width="175" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaUbicacion, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <CheckBox Content="{Binding Nombre}" 
-                                      IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -169,7 +270,7 @@
                     </DataGridTextColumn.HeaderTemplate>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn  Header="Acciones">
+                <DataGridTemplateColumn Header="Acciones">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Ver Detalle" 
@@ -179,7 +280,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn  Header="Acciones">
+
+                <DataGridTemplateColumn Header="Acciones">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Modificar" 
@@ -193,7 +295,6 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-
         </DataGrid>
     </Grid>
 </UserControl>

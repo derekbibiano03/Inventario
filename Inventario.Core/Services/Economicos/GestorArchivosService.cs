@@ -8,15 +8,13 @@ namespace Inventario.Core.Services.Economicos
 {
     public class GestorArchivosService
     {
-        
         private readonly string _directorioAlmacenamiento;
 
         public GestorArchivosService()
         {
-            
-            _directorioAlmacenamiento = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ArchivosSistema");
+            string rutaPersonalizada = @"D:\ArchivosEconomicos";
+            _directorioAlmacenamiento = rutaPersonalizada;
 
-            
             if (!Directory.Exists(_directorioAlmacenamiento))
             {
                 Directory.CreateDirectory(_directorioAlmacenamiento);
@@ -30,23 +28,25 @@ namespace Inventario.Core.Services.Economicos
                 throw new FileNotFoundException("El archivo físico seleccionado no existe en la ruta proporcionada.");
             }
 
-            string nombreOriginal = Path.GetFileName(rutaOriginal);            
+            string nombreOriginal = Path.GetFileName(rutaOriginal);
             string extension = Path.GetExtension(rutaOriginal);
             string nombreFisicoUnico = Guid.NewGuid().ToString() + extension;
             string rutaDestinoCompleta = Path.Combine(_directorioAlmacenamiento, nombreFisicoUnico);
+
             File.Copy(rutaOriginal, rutaDestinoCompleta, true);
+
             CatalogoArchivo nuevoArchivo = new CatalogoArchivo
             {
-                Archivo = nombreFisicoUnico,       
-                NombreArchivo = nombreOriginal,    
-                FechaSubida = DateTime.Now           
+                Archivo = nombreFisicoUnico,
+                NombreArchivo = nombreOriginal,
+                FechaSubida = DateTime.Now
             };
-            nuevoArchivo.IdArchivo = 999;
+
             EconomicosArchivo nuevaRelacion = new EconomicosArchivo
             {
-                IdArchivo = nuevoArchivo.IdArchivo, 
-                IdEconomico = idEconomico           
+                IdEconomico = idEconomico
             };
+
             return (nuevoArchivo, nuevaRelacion);
         }
 

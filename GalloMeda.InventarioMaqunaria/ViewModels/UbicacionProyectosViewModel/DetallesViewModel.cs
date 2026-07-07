@@ -77,7 +77,7 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
         }
 
         // Método ejecutado al dar clic sobre el archivo en la lista
-        private readonly string _directorioBase = @"C:\Users\DEREK\source\repos\GalloMeda.InventarioMaqunaria\GalloMeda.InventarioMaqunaria\bin\Debug\net10.0-windows\ArchivosSistema";
+        private readonly string _directorioBase = @"D:\ArchivosEconomicos";
 
         private void EjecutarAbrirArchivo(CatalogoArchivo archivo)
         {

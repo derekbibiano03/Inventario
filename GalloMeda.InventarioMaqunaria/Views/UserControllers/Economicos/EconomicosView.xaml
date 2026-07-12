@@ -54,7 +54,7 @@
                   AlternatingRowBackground="#F9F9F9">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding IdEconomico}" Width="auto">
+                <DataGridTextColumn Binding="{Binding IdEconomico,Converter={StaticResource MyUpperCaseConverter}}" Width="auto">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">

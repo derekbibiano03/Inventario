@@ -14,5 +14,10 @@ namespace Inventario.Desktop.Views.UserControllers.Catalogos
             InitializeComponent();
             this.DataContext = new GruposViewModel();
         }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

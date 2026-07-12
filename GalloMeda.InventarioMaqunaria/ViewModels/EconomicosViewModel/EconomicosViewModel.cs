@@ -17,19 +17,11 @@ using System.Windows.Input;
 
 namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
 {
-    // Clase que representa un elemento con checkbox dentro del panel desplegable
     public class OpcionFiltroCheckbox : INotifyPropertyChanged
     {
-        // Almacena el estado de selección (marcado o desmarcado) del checkbox
         private bool _isChecked;
-
-        // Texto representativo que se mostrará en la interfaz de usuario
         public string Nombre { get; set; }
-
-        // Identificador numérico único de la entidad de base de datos
         public int Id { get; set; }
-
-        // Propiedad pública que encapsula el estado del checkbox y dispara la actualización del filtro global
         public bool IsChecked
         {
             get => _isChecked;
@@ -37,18 +29,11 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             {
                 _isChecked = value;
                 OnPropertyChanged();
-                // Invoca el delegado asignado para avisarle al sistema que debe re-filtrar el DataGrid
                 AlCambiarSeleccion?.Invoke();
             }
         }
-
-        // Delegado obligatorio que se ejecuta inmediatamente después de mutar el estado de IsChecked
         public required Action AlCambiarSeleccion { get; set; }
-
-        // Evento requerido para implementar el enlace de datos bidireccional reactivo
         public event PropertyChangedEventHandler PropertyChanged;
-
-        // Método de asistencia para notificar de forma segura cambios en las propiedades a la interfaz XAML
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -57,66 +42,35 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
 
     public class EconomicosViewModel : INotifyPropertyChanged
     {
-        // Bandera de control para evitar bucles infinitos de refresco al limpiar o re-poblar colecciones observables
         private bool _isResetting = false;
-
-        // Servicio encargado de gestionar las operaciones del catálogo de equipos económicos en la base de datos
         private readonly CatalogoEconomicosService _economicosService;
-
-        // Servicio especializado en la estructuración de archivos binarios de Excel
         private readonly ExcelExportService _excelService = new ExcelExportService();
-
-        // Contexto de persistencia de datos relacionales a través de Entity Framework Core
         private readonly InventarioContext _contextoCompartido;
-
-        // Variables internas encargadas de almacenar el texto ingresado en los cuadros de búsqueda de cada columna
         private string _busquedaId;
         private string _busquedaDescripcion;
         private string _busquedaMarca;
         private string _busquedaSerie;
         private string _busquedaTipoEquipo;
         private string _busquedaUbicacion;
-
-        // Comando que se enlaza al botón encargado de exportar el estado actual de la tabla a formato de hoja de cálculo
         public ICommand ExportarExcelCommand { get; set; }
-
-        // Colección en memoria de todos los registros en formato DTO corto obtenidos desde la persistencia
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
-
-        // Interfaz de envoltura avanzada encargada de aplicar filtros, agrupaciones u ordenamientos al DataGrid en tiempo real
         public ICollectionView VistaEconomicos { get; set; }
-
-        // Comando enlazado a la acción del botón para modificar las propiedades de un registro seleccionado
         public ICommand EditarCommand { get; }
-
-        // Diccionarios en memoria que mantienen persistido el estado del Checkbox (True/False) de cada categoría
-        // Esto evita que al actualizar las listas del dropdown el usuario pierda lo que ya había seleccionado previamente
         private Dictionary<string, bool> _estadosId = new Dictionary<string, bool>();
         private Dictionary<string, bool> _estadosDescripcion = new Dictionary<string, bool>();
         private Dictionary<int, bool> _estadosMarca = new Dictionary<int, bool>();
         private Dictionary<string, bool> _estadosSerie = new Dictionary<string, bool>();
         private Dictionary<string, bool> _estadosTipoEquipo = new Dictionary<string, bool>();
         private Dictionary<int, bool> _estadosUbicacion = new Dictionary<int, bool>();
-
-        // Colecciones observables dinámicas enlazadas directamente a los ComboBox del encabezado en el archivo XAML
         public ObservableCollection<OpcionFiltroCheckbox> FiltroIdOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroDescripcionesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroMarcasOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroSeriesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroTipoEquipoOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroUbicacionesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
-
-        // Lista auxiliar que retiene los proyectos activos del sistema
         public ObservableCollection<CatalogoUbicacionesProyecto> ListaUbicaciones { get; set; }
-
-        // Comando para abrir la vista modal informativa del activo seleccionado
         public ICommand VerDetalleCommand { get; }
-
-        // Comando asignado para resetear todos los filtros y cadenas de texto al estado inicial de la aplicación
         public ICommand LimpiarFiltrosCommand { get; }
-
-        // PROPIEDADES ENLAZADAS A LAS CAJAS DE TEXTO DE BÚSQUEDA DEL DROPDOWN
-        // Al modificar el texto, limpian y reconstruyen las opciones del dropdown basándose en la coincidencia tipográfica
         public string BusquedaId
         {
             get => _busquedaId;
@@ -147,8 +101,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             get => _busquedaUbicacion;
             set { _busquedaUbicacion = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
         }
-
-        // Constructor base del ViewModel encargado de mapear dependencias e inicializar colecciones de control
         public EconomicosViewModel()
         {
             VerDetalleCommand = new RelayCommand<string>(AbrirVentanaDetalle);
@@ -204,8 +156,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 File.WriteAllBytes(saveFileDialog.FileName, archivoExcelBytes);
             }
         }
-
-        // Predicado lógico de filtrado. Evalúa fila por fila si el registro debe ser mostrado en la tabla visible
         private bool FiltroEjecucion(object item)
         {
             var economico = item as EconomicoMinimoDto;
@@ -213,7 +163,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
 
             bool resultado = true;
 
-            // Filtro ID: Verifica si hay marcas activas en el diccionario de estados guardados
+            // Filtro ID
             var idsSeleccionados = _estadosId.Where(x => x.Value).Select(x => x.Key).ToList();
             if (idsSeleccionados.Any())
             {
@@ -257,18 +207,10 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
 
             return resultado;
         }
-
-        // RECALCULA LAS OPCIONES EN CASCADA EXCLUYENDO LA COLUMNA QUE EL OPERADOR ESTÁ MODIFICANDO ACTUALMENTE
-        // Recibe como parámetro una cadena que identifica cuál columna provocó el evento para no alterar sus propios ítems visuales
         private void RecalcularOpcionesFiltros(string columnaExcluida = null)
         {
-            // Verifica si el sistema se encuentra en medio de un proceso de reseteo masivo para abortar ejecuciones redundantes
             if (_isResetting) return;
-
-            // Eleva la bandera de control para evitar que las mutaciones internas de colecciones disparen ciclos infinitos de refresco
             _isResetting = true;
-
-            // Almacena en memoria una lista de DTOs que únicamente contiene las filas que pasan las reglas vigentes de la tabla
             var itemsVisibles = Economicos.Where(FiltroEjecucion).ToList();
 
             // ==========================================

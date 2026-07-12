@@ -178,25 +178,15 @@ namespace Inventario.Core.Services.Economicos
 
             // Concatena de forma secuencial las cargas de las tablas asociadas necesarias para evitar datos nulos en exportaciones.
             query = query
-                // CORRECCIÓN: Agrega la marca dentro de la construcción dinámica de la consulta para el Excel.
                 .Include(e => e.IdMarcaNavigation)
-                // Agrega de forma explícita la carga del tipo de equipo.
                 .Include(e => e.IdTipoEquipoNavigation)
-                // Agrega de forma explícita la carga del grupo logístico.
                 .Include(e => e.IdGrupoNavigation)
-                // Agrega de forma explícita la carga del proyecto o ubicación.
                 .Include(e => e.IdUbicacionNavigation)
-                // Agrega de forma explícita la carga del tipo de combustible.
                 .Include(e => e.IdCombustibleNavigation)
-                // Agrega de forma explícita la carga de los datos del propietario.
                 .Include(e => e.IdPropietarioNavigation)
-                // Agrega de forma explícita la carga de los datos del administrador.
                 .Include(e => e.IdAdministradorNavigation)
-                // Agrega de forma explícita la carga de la etiqueta del estatus.
                 .Include(e => e.IdEstatusNavigation)
-                // Agrega de forma explícita la carga de la información del operador.
                 .Include(e => e.IdOperadorNavigation)
-                // Agrega de forma explícita la carga de la información del responsable asignado.
                 .Include(e => e.IdResponsableNavigation);
 
             // Verifica si el parámetro del identificador de tipo de equipo contiene un valor válido y no vacío.

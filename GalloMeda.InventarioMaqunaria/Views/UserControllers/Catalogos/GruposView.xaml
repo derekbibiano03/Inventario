@@ -7,31 +7,75 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-            <Button Content="Limpiar Filtros" Width="100" Height="28" Margin="0,14,0,0" Background="#E0E0E0" BorderBrush="#CCCCCC"/>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <DataGrid Grid.Row="1" Grid.Column="0"
+                          Width="400"
+                        ItemsSource="{Binding Grupos}" 
+                        AutoGenerateColumns="False" 
+                        CanUserAddRows="False" 
+                        HeadersVisibility="Column"
+                        GridLinesVisibility="Horizontal"
+                        Background="White"
+                        BorderBrush="#CCCCCC"
+                        BorderThickness="1"
+                        RowHeight="30"
+                        AlternatingRowBackground="#F9F9F9" SelectionChanged="DataGrid_SelectionChanged">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="No.Economico" Width="Auto" Binding="{Binding IdGrupo}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Descripción" Width="*" Binding="{Binding DescripcionGrupo}" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
         </StackPanel>
 
-        <DataGrid Grid.Row="1" 
-ItemsSource="{Binding Grupos}" 
-AutoGenerateColumns="False" 
-CanUserAddRows="False" 
-HeadersVisibility="Column"
-GridLinesVisibility="Horizontal"
-Background="White"
-BorderBrush="#CCCCCC"
-BorderThickness="1"
-RowHeight="30"
-AlternatingRowBackground="#F9F9F9">
+        <StackPanel Grid.Column="1">
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="No.Economico" Width="Auto" Binding="{Binding IdGrupo}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Descripción" Width="*" Binding="{Binding DescripcionGrupo}" IsReadOnly="True"/>
-            </DataGrid.Columns>
-        </DataGrid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="30,30,10,0">
+
+                    <TextBlock Text="Abreviacion de Grupo (ID / No.Economico previo al consecutivo):" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBox Text="{Binding DescripcionCorta, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="250" Height="30" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="Descripcion de Grupo:" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBox Text="{Binding DescripcionCompleta, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="250" Height="30" Margin="0,0,0,10"/>
+
+                    <TextBlock Text="* Campos obligatorios. La contraseña será encriptada automáticamente usando un algoritmo irreversible de Hash (BCrypt) antes de ser guardada en PostgreSQL." FontSize="11" Foreground="#718096" TextWrapping="Wrap"/>
+
+                    <Button 
+                        Content="Registrar Grupo" 
+                        Command="{Binding RegistrarGrupoCommand}" 
+                        Width="150" 
+                        Height="35" 
+                        HorizontalAlignment="Left" 
+                        Background="#2B6CB0" 
+                        Foreground="White" 
+                        FontWeight="Bold" 
+                        Margin="0,15,0,0"/>
+                </StackPanel>
+            </Grid>
+
+        </StackPanel>
     </Grid>
 </UserControl>

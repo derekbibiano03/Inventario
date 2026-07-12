@@ -11,7 +11,7 @@
         Title="Inventario Maquinaria" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="ColumnaMenu" Width="220"/>
+            <ColumnDefinition x:Name="ColumnaMenu" Width="260"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -23,92 +23,92 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Background="#1E2022">
-                    <TextBlock Padding="65,0,0,0"  Text="MÓDULOS" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBlock Style="{StaticResource TextoResaltado}" Padding="65,0,0,0"  Text="MÓDULOS" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <Button Content="☰" Width="30" Height="30" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="16" HorizontalAlignment="Right" Click="BtnColapsar_Click"/>
                 </Grid>
 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <Button Height="40" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/economicos_icon.png" Width="20" Height="20" Margin="0,0,8,0"/>
-                                <TextBlock Text="Economicos ▾" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/economicos_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Economicos ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Header="Informacion de Economicos" Tag="VerInventario" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Altas Economicos" Tag="AgregarEconomico" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Subir Archivo" Tag="AgregarArchivo" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Servicios Realizados" Tag="VerServicios" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Informacion de Economicos" Tag="VerInventario" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Altas Economicos" Tag="AgregarEconomico" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Subir Archivo" Tag="AgregarArchivo" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Servicios Realizados" Tag="VerServicios" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="40" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/empleado_icon.png" Width="20" Height="20" Margin="0,0,8,0"/>
-                                <TextBlock Text="Personal ▾" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/empleado_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Personal ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Header="Operadores" Tag="VerOperadores" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Encargados de Maquinaria" Tag="VerEnMaq" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Propietarios y Administradores de Maquinaria" Tag="ProAdmin" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Operadores" Tag="VerOperadores" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Encargados de Maquinaria" Tag="VerEnMaq" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Propietarios y Administradores de Maquinaria" Tag="ProAdmin" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="40" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/socios_icon.png" Width="20" Height="20" Margin="0,0,8,0"/>
-                                <TextBlock Text="Proveedores ▾" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/socios_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Proveedores ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Header="Brokers" Tag="VerBrokers" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Brokers" Tag="VerBrokers" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="40" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/catalogo_icon.png" Width="20" Height="20" Margin="0,0,8,0"/>
-                                <TextBlock Text="Catalogos ▾" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/catalogo_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Catalogos ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Header="Catalogo de Combustibles" Tag="CatCom" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Catalogo de Tipos de Equipos" Tag="CatTipEq" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Catalogo de Servicios" Tag="CatSer" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Catalogo de Grupos" Tag="CatGrp" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Catalogo de Tipo de Estatus" Tag="CatTiEs" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Catalogo de Marcas" Tag="CatMarc" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Combustibles" Tag="CatCom" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Tipos de Equipos" Tag="CatTipEq" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Servicios" Tag="CatSer" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Grupos" Tag="CatGrp" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Tipo de Estatus" Tag="CatTiEs" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Marcas" Tag="CatMarc" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="40" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/ubicacion_icon.png" Width="20" Height="20" Margin="0,0,8,0"/>
-                                <TextBlock Text="Ubicacion de Proyectos ▾" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/ubicacion_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Ubicacion ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Header="Ubicacion Proyecto" Tag="VerUbicaciones" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Tramos" Tag="VerTramos" Click="MenuItem_Click"/>
-                                    <MenuItem Header="Frentes" Tag="VerFrentes" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Ubicacion Proyecto" Tag="VerUbicaciones" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Tramos" Tag="VerTramos" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Frentes" Tag="VerFrentes" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="40" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/Resources/AgregarUsuario.png" Width="20" Height="20" Margin="0,0,8,0"/>
-                                <TextBlock Text="Cuentas ▾" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/AgregarUsuario.png" Width="30" Height="30" Margin="0,0,8,0"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Cuentas ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Header="Agregar Nuevo Usuario" Tag="AddUser" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Agregar Nuevo Usuario" Tag="AddUser" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -132,12 +132,12 @@
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                         <Button Name="BtnMostrarMenu" Content="☰ Menú" Width="70" Height="30" Background="#2A2D34" Foreground="White" BorderThickness="0" Visibility="Collapsed" Click="BtnMostrar_Click"/>
-                        <TextBlock x:Name="txtPanel" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#555555" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Style="{StaticResource TextoResaltado}" x:Name="txtPanel" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="#555555" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20,0,10,0">
                         <TextBlock Text="👤 " Foreground="#2A2D34" FontSize="14" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding UsuarioLogueado}" Foreground="#2A2D34" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <TextBlock Style="{StaticResource TextoResaltado}" Text="{Binding UsuarioLogueado}" Foreground="#2A2D34" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </Border>

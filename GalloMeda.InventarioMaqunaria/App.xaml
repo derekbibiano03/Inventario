@@ -9,6 +9,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/BotonesStyle.xaml"/>
                 <ResourceDictionary Source="Styles/MenuStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ConfiguracionGeneral.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

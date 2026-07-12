@@ -11,12 +11,12 @@
     <Grid>
 
         <StackPanel VerticalAlignment="Center" Width="400">
-            <TextBlock Text="Control de Acceso" FontSize="22" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" Foreground="#1A365D"/>
+            <TextBlock Style="{StaticResource TextoGeneral}" Text="Control de Acceso" FontSize="22" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center" Foreground="#1A365D"/>
 
-            <TextBlock Text="Usuario:" FontWeight="SemiBold" Margin="0,0,5,5" Foreground="#4A5568"/>
+            <TextBlock Style="{StaticResource TextoGeneral}" Text="Usuario:" FontWeight="SemiBold" Margin="0,0,5,5" Foreground="#4A5568"/>
             <TextBox Text="{Binding Usuario, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,15" Height="30" VerticalContentAlignment="Center" Padding="5,0,0,0"/>
 
-            <TextBlock Text="Contraseña:"  FontWeight="SemiBold" Margin="0,0,5,5" Foreground="#4A5568"/>
+            <TextBlock Style="{StaticResource TextoGeneral}" Text="Contraseña:"  FontWeight="SemiBold" Margin="0,0,5,5" Foreground="#4A5568"/>
             <PasswordBox x:Name="TxtContrasena" Margin="0,0,0,25" Height="30" VerticalContentAlignment="Center" Padding="5,0,0,0"/>
 
             <Button Content="Iniciar Sesión" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=TxtContrasena}" Height="38" Background="#1A365D" Foreground="White" FontWeight="Bold" BorderThickness="0"/>

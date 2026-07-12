@@ -37,9 +37,9 @@ namespace Inventario.Core
                 foreach (var item in listaFiltrada)
                 {
                     // Propiedades directas e indirectas resolviendo las relaciones nulas con el operador '?.'
-                    worksheet.Cells[fila, 1].Value = item.IdEconomico;
+                    worksheet.Cells[fila, 1].Value = item.IdEconomico.ToUpper();
                     worksheet.Cells[fila, 2].Value = item.Descripcion;
-                    worksheet.Cells[fila, 3].Value = item.IdMarca;
+                    worksheet.Cells[fila, 3].Value = item.IdMarcaNavigation?.NombreMarca ?? "SIN INFORMACION";
                     worksheet.Cells[fila, 4].Value = item.Modelo;
                     worksheet.Cells[fila, 5].Value = item.Serie;
                     worksheet.Cells[fila, 6].Value = item.PeriodoFabricacion;

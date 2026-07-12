@@ -25,5 +25,18 @@ namespace Inventario.Core.Services.Catalogos
             return resultado;
 
         }
+
+        public bool NuevoGrupo(string descripcionCorta, string descripcionCompleta) 
+        {
+            var nuevoGrupo = new CatalogoGrupo 
+            { 
+                IdGrupo = descripcionCorta.ToLower(),
+                DescripcionGrupo = descripcionCompleta
+            };
+
+            _context.CatalogoGrupos.Add(nuevoGrupo);
+            _context.SaveChanges();
+            return true;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GalloMeda.InventarioMaqunaria;
 using Inventario.Core.Services.Auth;
+using Inventario.Core.Services.Logs;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -11,6 +12,7 @@ namespace Inventario.Desktop.ViewModels.Auth
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
+        
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -18,7 +20,7 @@ namespace Inventario.Desktop.ViewModels.Auth
         }
 
         private readonly AutenticacionService _autenticacionService;
-
+        private readonly LogsService _logsService;
         private string _usuario = string.Empty;
         public string Usuario
         {
@@ -33,9 +35,10 @@ namespace Inventario.Desktop.ViewModels.Auth
 
         public bool IsAutenticado { get; private set; } = false;
 
-        public LoginViewModel(AutenticacionService autenticacionService)
+        public LoginViewModel(AutenticacionService autenticacionService, LogsService logsService)
         {
             _autenticacionService = autenticacionService;
+            _logsService = logsService;
             // Modificado para aceptar el parámetro enviado desde la vista
             LoginCommand = new RelayCommand(EjecutarLogin); // Sin la lambda 'p => ...'
         }
@@ -62,13 +65,17 @@ namespace Inventario.Desktop.ViewModels.Auth
                 {
                     throw new Exception("La contraseña es obligatoria.");
                 }
-
-                if (_autenticacionService.ValidarCredenciales(this.Usuario.Trim(), this.Contrasena))
+                var usuarioValidado = _autenticacionService.ValidarCredenciales(this.Usuario.Trim(), this.Contrasena);
+                if (usuarioValidado != null)
                 {
                     this.IsAutenticado = true;
 
-                    App.Session.Username = this.Usuario.Trim();
-                    App.Session.IdRol = 1;
+                    App.Session.Username = usuarioValidado.NombreUsuario;
+                    App.Session.IdRol = usuarioValidado.IdRol;
+                    App.Session.IdUsuario = usuarioValidado.IdUsuario;
+
+                    // LLAMADA AL SERVICIO: Registra el log del inicio de sesión exitoso
+                    _logsService.RegistrarLoginExitoso(usuarioValidado.IdUsuario);
 
                     foreach (Window window in Application.Current.Windows)
                     {
@@ -86,7 +93,8 @@ namespace Inventario.Desktop.ViewModels.Auth
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error de Autenticación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                string mensajeError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                MessageBox.Show(mensajeError, "Error de Autenticación", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

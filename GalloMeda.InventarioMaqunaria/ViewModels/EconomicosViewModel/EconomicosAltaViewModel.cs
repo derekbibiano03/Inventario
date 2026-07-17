@@ -1,6 +1,8 @@
-﻿using Inventario.Core.DTOs;
+﻿using GalloMeda.InventarioMaqunaria;
+using Inventario.Core.DTOs;
 using Inventario.Core.Services.Catalogos;
 using Inventario.Core.Services.Economicos;
+using Inventario.Core.Services.Logs;
 using Inventario.Core.Services.Personal;
 using Inventario.Core.Services.UbicacionProyecto;
 using Inventario.Data.Models;
@@ -121,7 +123,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         private bool _estatusSeguro;
         public bool EstatusSeguro { get => _estatusSeguro; set { _estatusSeguro = value; OnPropertyChanged(); } }
 
-        
+
 
         public EconomicosAltaViewModel(CatalogoMarcasService marcasService,
                                        CatalogoTiposEquipoService tipoEquipoService,
@@ -133,37 +135,54 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                                        CatalogoEncargadoMaquinariaService responsableService,
                                        CatalogoEconomicosService economicosService)
         {
+            // Asigna un valor por defecto predeterminado al identificador de la marca del motor
             MarcaMotorSeleccionado = 60;
+
+            // Inicializa el servicio de marcas y prepara su colección enlazada a la UI
             _marcasService = marcasService;
             Marcas = new ObservableCollection<CatalogoMarca>();
 
+            // Inicializa el servicio de categorías de equipo y prepara su colección enlazada a la UI
             _tipoEquipoService = tipoEquipoService;
             TipoEquipo = new ObservableCollection<CatalogoTiposEquipo>();
 
+            // Inicializa el servicio de grupos de activos y prepara su colección enlazada a la UI
             _gruposService = grupoService;
             Grupos = new ObservableCollection<CatalogoGrupo>();
 
+            // Inicializa el servicio de combustibles y prepara su colección enlazada a la UI
             _combustiblesService = combustibleService;
             Combustibles = new ObservableCollection<CatalogoTiposCombustible>();
 
+            // Inicializa el servicio de propietarios y administradores, preparando su colección para la UI
             _pyaService = pyaService;
             PYA = new ObservableCollection<CatalogoPya>();
 
+            // Inicializa el servicio de frentes de obra/proyectos junto a su colección para la UI
             _ubicacionService = ubicacionService;
             Ubicaciones = new ObservableCollection<CatalogoUbicacionesProyecto>();
 
+            // Inicializa el servicio de operadores asignados y prepara su colección para la UI
             _operadorService = operadorService;
             Operadores = new ObservableCollection<CatalogoOperadore>();
 
+            // Inicializa el servicio de encargados de maquinaria junto a su colección para la UI
             _responsableService = responsableService;
             Responsables = new ObservableCollection<CatalogoResponsableMaquinarium>();
 
-            // Inicialización del comando asignado al botón
+            // CORRECCIÓN: Asigna el comando apuntando al método real de tu clase: 'EjecutarAltaEconomico'
             AltaEconomicoCommand = new RelayCommand(EjecutarAltaEconomico);
 
-            _economicosService = economicosService;
+            // Abre una conexión aislada a PostgreSQL exclusivamente para operaciones de auditoría interna
+            var contexto = new InventarioContext();
 
+            // Instancia el gestor de bitácoras asociándole el contexto de datos recién abierto
+            var logsService = new LogsService(contexto);
 
+            // Sobreescribe la variable del servicio asignándole la instancia parametrizada de manera correcta
+            _economicosService = new CatalogoEconomicosService(contexto, logsService);
+
+            // Llama a la función interna encargada de descargar y rellenar todos los listados de los ComboBoxes
             CargarTipos();
         }
 
@@ -235,7 +254,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                 };
 
                 // Llamada directa al método de la clase en el .Core
-                _economicosService.RegistrarEconomico(dto);
+                _economicosService.RegistrarEconomico(App.Session.IdUsuario, dto);
 
                 MessageBox.Show("¡Guardado exitosamente en PostgreSQL!", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                 LimpiarFormulario();

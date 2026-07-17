@@ -1,6 +1,7 @@
 ﻿using Inventario.Core;
 using Inventario.Core.DTOs;
 using Inventario.Core.Services.Economicos;
+using Inventario.Core.Services.Logs;
 using Inventario.Data;
 using Inventario.Data.Models;
 using Inventario.Desktop.Views;
@@ -107,8 +108,14 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             LimpiarFiltrosCommand = new RelayCommand<object>(x => LimpiarFiltros());
             EditarCommand = new RelayCommand<string>(AbrirVentanaEditar);
 
+            // Crea la conexión única con la base de datos PostgreSQL para este módulo
             _contextoCompartido = new InventarioContext();
-            _economicosService = new CatalogoEconomicosService(_contextoCompartido);
+
+            // CORRECCIÓN: Instancia primero el servicio de logs con el contexto compartido
+            var logsService = new LogsService(_contextoCompartido);
+
+            // CORRECCIÓN: Pasa ambos objetos requeridos al constructor del servicio para evitar el NullReferenceException
+            _economicosService = new CatalogoEconomicosService(_contextoCompartido, logsService);
 
             Economicos = new ObservableCollection<EconomicoMinimoDto>();
 

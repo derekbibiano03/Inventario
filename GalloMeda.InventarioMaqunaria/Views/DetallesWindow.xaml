@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inventario.Desktop.Views"
         mc:Ignorable="d"
+
         Icon="/Resources/icono.ico"
-        Title="DetallesView" Height="450" Width="800">
+        WindowStartupLocation="CenterScreen"
+        Title="DetallesView" Height="760" 
+Width="1050">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

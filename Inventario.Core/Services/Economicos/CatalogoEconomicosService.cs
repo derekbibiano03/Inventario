@@ -1,11 +1,12 @@
 ﻿using Inventario.Core.DTOs;
+using Inventario.Core.Services.Logs;
 using Inventario.Data;
 using Inventario.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace Inventario.Core.Services.Economicos
 {
@@ -13,9 +14,12 @@ namespace Inventario.Core.Services.Economicos
     {
         private readonly InventarioContext _context;
 
-        public CatalogoEconomicosService(InventarioContext context)
+        private readonly LogsService _logsService;
+
+        public CatalogoEconomicosService(InventarioContext context, LogsService logsService)
         {
             _context = context;
+            _logsService = logsService;
         }
 
         public CatalogoEconomico ObtenerPorIdParaEditar(string idEconomico)
@@ -82,17 +86,21 @@ namespace Inventario.Core.Services.Economicos
                 .FirstOrDefault(e => e.IdEconomico == idEconomico);
         }
 
-        public bool RegistrarEconomico(EconomicoAltaDto dto)
+        public bool RegistrarEconomico(int idUsuarioOperativo, EconomicoAltaDto dto)
         {
+            // 1. Validaciones preventivas antes de insertar
             if (ValidarSerieDuplicada(dto.Serie))
             {
                 throw new Exception($"El número de serie '{dto.Serie}' ya se encuentra registrado.");
             }
+
             var grupoSeleccionado = _context.CatalogoGrupos.FirstOrDefault(g => g.IdGrupo == dto.IdGrupo);
             if (grupoSeleccionado == null)
             {
                 throw new Exception("El grupo seleccionado no es válido o no existe en la base de datos.");
             }
+
+            // 2. Mapeo de la entidad
             var modeloDb = new CatalogoEconomico
             {
                 IdEconomico = string.Empty,
@@ -124,8 +132,24 @@ namespace Inventario.Core.Services.Economicos
             };
 
             _context.CatalogoEconomicos.Add(modeloDb);
+            _context.SaveChanges(); // Aquí la base de datos genera el ID real
 
-            _context.SaveChanges();
+
+            string idGenerado = _context.CatalogoEconomicos
+                .FromSqlRaw("SELECT * FROM catalogo_economicos WHERE serie = {0}", dto.Serie)
+                .AsNoTracking()
+                .Select(e => e.IdEconomico)
+                .FirstOrDefault();
+
+            // Evalúa si la consulta nativa falló o devolvió un valor nulo para evitar registrar variables vacías en el sistema de auditoría.
+            if (string.IsNullOrEmpty(idGenerado))
+            {
+                // Intenta recuperar el ID directamente desde el objeto local en memoria como último recurso en caso de fallo de red o lectura.
+                idGenerado = modeloDb.IdEconomico;
+            }
+
+            // Invoca al servicio de bitácoras enviando el identificador del usuario activo y el ID real generado por PostgreSQL.
+            _logsService.RegistrarAltaEquipoExitoso(idUsuarioOperativo, idGenerado);
 
             return true;
         }

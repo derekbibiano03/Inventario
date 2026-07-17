@@ -17,12 +17,11 @@ namespace Inventario.Core.Services.Auth
             _context = context;
         }
 
-        public bool ValidarCredenciales(string nombreUsuario, string contrasenaPlana)
+        public Usuario? ValidarCredenciales(string nombreUsuario, string contrasenaPlana)
         {
-            // Validación defensiva básica antes de consultar la base de datos
             if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(contrasenaPlana))
             {
-                return false;
+                return null;
             }
 
             // Busca al usuario en PostgreSQL por su nombre único
@@ -30,18 +29,22 @@ namespace Inventario.Core.Services.Auth
 
             if (usuarioDb == null)
             {
-                return false; // El usuario no existe
+                return null; // El usuario no existe
             }
 
             try
             {
-                // Verifica si la contraseña en texto plano coincide con el hash irreversible guardado (columna Password)
-                return BCryptNet.Verify(contrasenaPlana, usuarioDb.Password);
+                // Verifica si la contraseña en texto plano coincide con el hash guardado
+                if (BCryptNet.Verify(contrasenaPlana, usuarioDb.Password))
+                {
+                    return usuarioDb; // Retorna el objeto completo con su IdUsuario real
+                }
+
+                return null; // Contraseña incorrecta
             }
             catch (Exception)
             {
-                // Si el hash está corrupto o tiene un formato inválido, deniega el acceso
-                return false;
+                return null;
             }
         }
 

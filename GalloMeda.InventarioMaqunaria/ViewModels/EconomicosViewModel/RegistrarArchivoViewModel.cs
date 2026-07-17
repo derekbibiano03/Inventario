@@ -101,7 +101,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Archivos permitidos (*.pdf;*.png;*.jpg)|*.pdf;*.png;*.jpg",
+                Filter = "Archivos permitidos (*.pdf;*.png;*.jpg;*.tif;*.JPEG)|*.pdf;*.png;*.jpg;*.tif;*.JPEG",
                 Title = "Seleccione el documento"
             };
 

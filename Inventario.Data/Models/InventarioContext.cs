@@ -43,6 +43,8 @@ public partial class InventarioContext : DbContext
 
     public virtual DbSet<CatalogoTiposEquipo> CatalogoTiposEquipos { get; set; }
 
+    public virtual DbSet<HistorialLogs> HistoriaLogs { get; set; }
+
     public virtual DbSet<CatalogoTiposServicio> CatalogoTiposServicios { get; set; }
 
     public virtual DbSet<CatalogoTramo> CatalogoTramos { get; set; }
@@ -61,10 +63,54 @@ public partial class InventarioContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=inventario;Username=admin_maestro;Password=7542gTFn45_ADM");
+        => optionsBuilder.UseNpgsql("Host=192.168.0.24;Database=inventario;Username=admin_maestro;Password=7542gTFn45_ADM");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        // Configuración detallada del mapeo de la entidad HistorialLogs con la tabla de auditoría en PostgreSQL
+        modelBuilder.Entity<HistorialLogs>(entity =>
+        {
+            // Vincula el modelo de C# directamente con la tabla física 'historial_logs' en PostgreSQL
+            entity.ToTable("historial_logs");
+
+            // Establece la propiedad IdLog como la llave primaria del modelo de logs
+            entity.HasKey(e => e.IdLog);
+
+            // Mapea la propiedad IdLog con la columna física 'id_log' y la configura como autoincrementable por defecto
+            entity.Property(e => e.IdLog)
+                .HasColumnName("id_log")
+                .UseIdentityByDefaultColumn();
+
+            // Mapea la propiedad DescripcionLog con la columna física 'descripcion_log' que almacena el texto del evento
+            entity.Property(e => e.DescripcionLog)
+                .HasColumnName("descripcion_log");
+
+            // Mapea la propiedad TipoLog con la columna física 'tipo_log' para clasificar la categoría (ej. 'LOGIN')
+            entity.Property(e => e.TipoLog)
+                .HasColumnName("tipo_log");
+
+            // Mapea la propiedad IdUsuario con la columna física 'id_usuario' que relaciona al autor del evento
+            entity.Property(e => e.IdUsuario)
+                .HasColumnName("id_usuario");
+
+            // Mapea la propiedad FechaLog con la columna física 'fecha_log' que registra el momento exacto del suceso
+            entity.Property(e => e.FechaLog)
+                .HasColumnName("fecha_log");
+
+            // Mapea la propiedad IpAddress con la columna física 'ip_address' forzando el tipo de dato de red 'inet' de PostgreSQL
+            entity.Property(e => e.IpAddress)
+                .HasColumnName("ip_address")
+                .HasColumnType("inet");
+
+            // Establece de forma explícita la relación de clave foránea entre HistorialLogs (hijo) y Usuario (padre)
+            // indicando que un objeto Usuario tiene muchos HistorialLogs (colección mapeada en el modelo de Usuario)
+            entity.HasOne(d => d.IdUsuarioNavigation)
+                  .WithMany(p => p.HistorialLogs)
+                  .HasForeignKey(d => d.IdUsuario)
+                  .HasConstraintName("fk_usuario");
+        });
+
         modelBuilder.Entity<CatalogoArchivo>(entity =>
         {
             entity.HasKey(e => e.IdArchivo).HasName("catalogo_archivos_pkey");

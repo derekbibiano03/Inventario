@@ -14,7 +14,7 @@ namespace Inventario.Desktop.ViewModels.Auth
     {
         
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -22,6 +22,7 @@ namespace Inventario.Desktop.ViewModels.Auth
         private readonly AutenticacionService _autenticacionService;
         private readonly LogsService _logsService;
         private string _usuario = string.Empty;
+
         public string Usuario
         {
             get => _usuario;
@@ -29,7 +30,7 @@ namespace Inventario.Desktop.ViewModels.Auth
         }
 
         // Dejamos la propiedad interna pero ya no requiere OnPropertyChanged puesto que no se bindea directo al texto
-        public string Contrasena { get; set; }
+        public string Contrasena { get; set; } = string.Empty;
 
         public ICommand LoginCommand { get; }
 
@@ -70,8 +71,8 @@ namespace Inventario.Desktop.ViewModels.Auth
                 {
                     this.IsAutenticado = true;
 
-                    App.Session.Username = usuarioValidado.NombreUsuario;
-                    App.Session.IdRol = usuarioValidado.IdRol;
+                    App.Session.Username = usuarioValidado.NombreUsuario ?? this.Usuario.Trim();
+                    App.Session.IdRol = usuarioValidado.IdRol ?? 0;
                     App.Session.IdUsuario = usuarioValidado.IdUsuario;
 
                     // LLAMADA AL SERVICIO: Registra el log del inicio de sesión exitoso

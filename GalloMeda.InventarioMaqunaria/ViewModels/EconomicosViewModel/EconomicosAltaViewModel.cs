@@ -17,8 +17,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
 {
     public class EconomicosAltaViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -48,83 +48,83 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         public ObservableCollection<CatalogoResponsableMaquinarium> Responsables { get; set; }
 
         // VARIABLES DE SELECCIÓN DE COMBOBOX
-        private string _idTipoEquipoSeleccionado;
+        private string _idTipoEquipoSeleccionado = "F";
         public string IdTipoEquipoSeleccionado { get => _idTipoEquipoSeleccionado; set { _idTipoEquipoSeleccionado = value; OnPropertyChanged(); } }
 
-        private string _idGrupoSeleccionado;
+        private string _idGrupoSeleccionado = "xxx";
         public string IdGrupoSeleccionado { get => _idGrupoSeleccionado; set { _idGrupoSeleccionado = value; OnPropertyChanged(); } }
 
-        private int? _idCombustibleSeleccionado;
-        public int? IdCombustibleSeleccionado { get => _idCombustibleSeleccionado; set { _idCombustibleSeleccionado = value; OnPropertyChanged(); } }
+        private int _idCombustibleSeleccionado = 7;
+        public int IdCombustibleSeleccionado { get => _idCombustibleSeleccionado; set { _idCombustibleSeleccionado = value; OnPropertyChanged(); } }
         
-        private int? _idMarcaSeleccionado;
-        public int? IdMarcaSeleccionado { get => _idMarcaSeleccionado; set { _idMarcaSeleccionado = value; OnPropertyChanged(); } }
+        private int _idMarcaSeleccionado = 12;
+        public int IdMarcaSeleccionado { get => _idMarcaSeleccionado; set { _idMarcaSeleccionado = value; OnPropertyChanged(); } }
 
-        private int? _marcaMotorSeleccionado;
-        public int? MarcaMotorSeleccionado { get => _marcaMotorSeleccionado; set { _marcaMotorSeleccionado = value; OnPropertyChanged(); } }
+        private int _marcaMotorSeleccionado = 12;
+        public int MarcaMotorSeleccionado { get => _marcaMotorSeleccionado; set { _marcaMotorSeleccionado = value; OnPropertyChanged(); } }
 
-        private int? _idPropietarioSeleccionado;
-        public int? IdPropietarioSeleccionado { get => _idPropietarioSeleccionado; set { _idPropietarioSeleccionado = value; OnPropertyChanged(); } }
+        private int _idPropietarioSeleccionado = 5;
+        public int IdPropietarioSeleccionado { get => _idPropietarioSeleccionado; set { _idPropietarioSeleccionado = value; OnPropertyChanged(); } }
 
-        private int? _idAdministradorSeleccionado;
-        public int? IdAdministradorSeleccionado { get => _idAdministradorSeleccionado; set { _idAdministradorSeleccionado = value; OnPropertyChanged(); } }
+        private int _idAdministradorSeleccionado = 5;
+        public int IdAdministradorSeleccionado { get => _idAdministradorSeleccionado; set { _idAdministradorSeleccionado = value; OnPropertyChanged(); } }
 
-        private int? _idUbicacionSeleccionado;
-        public int? IdUbicacionSeleccionado { get => _idUbicacionSeleccionado; set { _idUbicacionSeleccionado = value; OnPropertyChanged(); } }
+        private int _idUbicacionSeleccionado = 12;
+        public int IdUbicacionSeleccionado { get => _idUbicacionSeleccionado; set { _idUbicacionSeleccionado = value; OnPropertyChanged(); } }
 
-        private int? _idOperadorSeleccionado;
-        public int? IdOperadorSeleccionado { get => _idOperadorSeleccionado; set { _idOperadorSeleccionado = value; OnPropertyChanged(); } }
+        private int _idOperadorSeleccionado = 1;
+        public int IdOperadorSeleccionado { get => _idOperadorSeleccionado; set { _idOperadorSeleccionado = value; OnPropertyChanged(); } }
 
-        private int? _idResponsableSeleccionado;
-        public int? IdResponsableSeleccionado { get => _idResponsableSeleccionado; set { _idResponsableSeleccionado = value; OnPropertyChanged(); } }
+        private int _idResponsableSeleccionado = 12;
+        public int IdResponsableSeleccionado { get => _idResponsableSeleccionado; set { _idResponsableSeleccionado = value; OnPropertyChanged(); } }
 
-        private string _gradoPropiedadSeleccionado;
+        private string _gradoPropiedadSeleccionado = "SIN IDENTIFICAR";
         public string GradoPropiedadSeleccionado { get => _gradoPropiedadSeleccionado; set { _gradoPropiedadSeleccionado = value; OnPropertyChanged(); } }
 
-        private string _observaciones;
+        private string _observaciones = "SIN OBSERVACIONES";
         public string Observaciones { get => _observaciones; set { _observaciones = value; OnPropertyChanged(); } }
 
-        private string _modelo;
+        private string _modelo = "MODELO NO IDENTIFICADO";
         public string Modelo { get => _modelo; set { _modelo = value; OnPropertyChanged(); } }
 
-        private string _serie;
+        private string _serie = "SERIE SIN IDENTIFICAR";
         public string Serie { get => _serie; set { _serie = value; OnPropertyChanged(); } }
 
-        private int? _periodoFab;
-        public int? PeriodoFab { get => _periodoFab; set { _periodoFab = value; OnPropertyChanged(); } }
+        private int _periodoFab = 0;
+        public int PeriodoFab { get => _periodoFab; set { _periodoFab = value; OnPropertyChanged(); } }
 
-        private int _horometro;
+        private int _horometro = 0;
         public int Horometro { get => _horometro; set { _horometro = value; OnPropertyChanged(); } }
 
-        private int _marcaMotor;
+        private int _marcaMotor = 12;
         public int MarcaMotor { get => _marcaMotor; set { _marcaMotor = value; OnPropertyChanged(); } }
 
-        private string _modeloMotor;
+        private string _modeloMotor = "MODELO DE MOTOR SIN IDENTIFICAR O NO TIENE MOTOR";
         public string ModeloMotor { get => _modeloMotor; set { _modeloMotor = value; OnPropertyChanged(); } }
 
-        private string _serieMotor;
+        private string _serieMotor = "SERIE DE MOTOR SIN IDENTIFICAR O NO TIENE MOTOR";
         public string SerieMotor { get => _serieMotor; set { _serieMotor = value; OnPropertyChanged(); } }
 
-        private string _familiaMotor;
+        private string _familiaMotor = "FAMILIA DE MOTOR SIN IDENTIFICAR O NO TIENE MOTOR";
         public string FamiliaMotor { get => _familiaMotor; set { _familiaMotor = value; OnPropertyChanged(); } }
 
-        private string _placas;
+        private string _placas = "PLACAS SIN IDENTIFICAR O NO TIENE PLACAS";
         public string Placas { get => _placas; set { _placas = value; OnPropertyChanged(); } }
 
-        private string _polizaAdj;
+        private string _polizaAdj = "SIN POLIZA VER EN DOCUMENTOS ADJUNTOS";
         public string PolizaAdj { get => _polizaAdj; set { _polizaAdj = value; OnPropertyChanged(); } }
 
-        private string _dimensiones;
+        private string _dimensiones = "DIMENSIONES AUN SIN MEDIR";
         public string Dimensiones { get => _dimensiones; set { _dimensiones = value; OnPropertyChanged(); } }
 
-        private string _thk;
+        private string _thk = "SIN IDENTIFICAR HOROMETRO O KILOMETRAJE";
         public string THK { get => _thk; set { _thk = value; OnPropertyChanged(); } }
 
-        private bool _estatusSeguro;
+        private bool _estatusSeguro = false;
         public bool EstatusSeguro { get => _estatusSeguro; set { _estatusSeguro = value; OnPropertyChanged(); } }
 
 
-
+        
         public EconomicosAltaViewModel(CatalogoMarcasService marcasService,
                                        CatalogoTiposEquipoService tipoEquipoService,
                                        CatalogoGruposService grupoService,
@@ -239,7 +239,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                     Placas = this.Placas,
 
                     // Especificaciones del motor
-                    MarcaMotor = this.MarcaMotorSeleccionado ?? 60,
+                    MarcaMotor = this.MarcaMotorSeleccionado,
                     ModeloMotor = this.ModeloMotor,
                     SerieMotor = this.SerieMotor,
                     FamiliaMotor = this.FamiliaMotor,
@@ -271,7 +271,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             Serie = string.Empty;
             Observaciones = string.Empty;
             Modelo = string.Empty;
-            PeriodoFab = null;
+            PeriodoFab = 0;
             MarcaMotor = 0;
             ModeloMotor = string.Empty;
             SerieMotor = string.Empty;
@@ -283,17 +283,17 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             Dimensiones = string.Empty;
 
             // GENERADO: Limpieza y reinicio explícito de los ComboBoxes para dejar el formulario completamente vacío
-            IdMarcaSeleccionado = null;
+            IdMarcaSeleccionado = 60;
             MarcaMotor = 60;
-            IdTipoEquipoSeleccionado = null;
-            IdGrupoSeleccionado = null;
-            IdCombustibleSeleccionado = null;
-            IdPropietarioSeleccionado = null;
-            IdAdministradorSeleccionado = null;
-            IdUbicacionSeleccionado = null;
-            IdOperadorSeleccionado = null;
-            IdResponsableSeleccionado = null;
-            GradoPropiedadSeleccionado = null;
+            IdTipoEquipoSeleccionado = string.Empty;
+            IdGrupoSeleccionado = string.Empty;
+            IdCombustibleSeleccionado = 7;
+            IdPropietarioSeleccionado = 5;
+            IdAdministradorSeleccionado = 5;
+            IdUbicacionSeleccionado = 12;
+            IdOperadorSeleccionado = 1;
+            IdResponsableSeleccionado = 12;
+            GradoPropiedadSeleccionado = string.Empty;
         }
     }
 }

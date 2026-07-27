@@ -9,7 +9,7 @@
                 <ControlTemplate TargetType="MenuItem">
                     <Grid Background="{TemplateBinding Background}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="70"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
@@ -38,8 +38,8 @@
         <Setter Property="Padding" Value="0,2"/>
         <Setter Property="MinWidth" Value="220"/>
         <Setter Property="Grid.IsSharedSizeScope" Value="False"/>
-        <Setter Property="HorizontalOffset" Value="200"/>
-        <Setter Property="VerticalOffset" Value="-40"/>
+        <Setter Property="HorizontalOffset" Value="260"/>
+        <Setter Property="VerticalOffset" Value="-60"/>
 
         <Setter Property="Template">
             <Setter.Value>

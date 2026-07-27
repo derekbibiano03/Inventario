@@ -7,6 +7,8 @@
 .env
 git rm -r --cached .vs/
 
+
+GalloMeda.InventarioMaqunaria/appsettings.json
 # User-specific files
 *.rsuser
 *.suo

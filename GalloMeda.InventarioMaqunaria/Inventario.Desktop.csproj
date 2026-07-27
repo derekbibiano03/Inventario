@@ -13,6 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Resources\adquisiciones.png" />
 		<None Remove="Resources\AgregarUsuario.png" />
 		<None Remove="Resources\catalogo_icon.png" />
 		<None Remove="Resources\economicos_icon.png" />
@@ -45,6 +46,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Resources\adquisiciones.png" />
 		<Resource Include="Resources\AgregarUsuario.png" />
 		<Resource Include="Resources\catalogo_icon.png" />
 		<Resource Include="Resources\economicos_icon.png" />
@@ -53,6 +55,12 @@
 		<Resource Include="Resources\icono.ico" />
 		<Resource Include="Resources\socios_icon.png" />
 		<Resource Include="Resources\ubicacion_icon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

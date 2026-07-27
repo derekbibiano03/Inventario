@@ -1,20 +1,24 @@
-﻿using Inventario.Data.Models;
+﻿using Inventario.Core.Services.Logs;
+using Inventario.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+
+using System.Linq;
 using System.Text;
 using BCryptNet = BCrypt.Net.BCrypt;
-using System.Linq;
 
 namespace Inventario.Core.Services.Auth
 {
     public class AutenticacionService
     {
         private readonly InventarioContext _context;
+        private readonly LogsService _logsService;
 
-        public AutenticacionService(InventarioContext context)
+        public AutenticacionService(InventarioContext context, LogsService logsService)
         {
             _context = context;
+            _logsService = logsService;
         }
 
         public Usuario? ValidarCredenciales(string nombreUsuario, string contrasenaPlana)
@@ -49,9 +53,8 @@ namespace Inventario.Core.Services.Auth
         }
 
 
-        public bool RegistrarUsuario(string nombreUsuario, string contrasenaPlana, int idRol)
+        public bool RegistrarUsuario(int idUsuarioOperativo, string nombreUsuario, string contrasenaPlana, int idRol)
         {
-            // Genera un hash irreversible agregando un salt aleatorio automáticamente
             string contrasenaHasheada = BCrypt.Net.BCrypt.HashPassword(contrasenaPlana);
 
             var nuevoUsuario = new Usuario
@@ -63,6 +66,10 @@ namespace Inventario.Core.Services.Auth
 
             _context.Usuarios.Add(nuevoUsuario);
             _context.SaveChanges();
+
+            string idGenerado = nuevoUsuario.IdUsuario.ToString();
+
+            _logsService.RegistrarAltaNuevoUsuarioExitoso(idUsuarioOperativo, idGenerado);
             return true;
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventario.Data.Models;
@@ -9,35 +8,33 @@ public partial class CatalogoEconomico
 {
     [NotMapped]
     public bool IsSelected { get; set; }
-
-    [Key]
     public string IdEconomico { get; set; } = null!;
 
     public int? Consecutivo { get; set; }
 
-    public required string IdTipoEquipo { get; set; }
+    public string? IdTipoEquipo { get; set; }
 
-    public required string IdGrupo { get; set; }
+    public string? IdGrupo { get; set; }
 
-    public required int IdCombustible { get; set; }
+    public int? IdCombustible { get; set; }
 
-    public required int IdPropietario { get; set; }
+    public int? IdPropietario { get; set; }
 
-    public required int IdAdministrador { get; set; }
+    public int? IdAdministrador { get; set; }
 
     public int? IdEstatus { get; set; }
 
-    public required int IdOperador { get; set; }
+    public int? IdOperador { get; set; }
 
-    public required int IdResponsable { get; set; }
+    public int? IdResponsable { get; set; }
 
-    public required int IdUbicacion { get; set; }
+    public int? IdUbicacion { get; set; }
 
     public string? Descripcion { get; set; }
 
-    public required string Modelo { get; set; }
+    public string? Modelo { get; set; }
 
-    public required string Serie { get; set; }
+    public string? Serie { get; set; }
 
     public int? PeriodoFabricacion { get; set; }
 
@@ -53,20 +50,23 @@ public partial class CatalogoEconomico
 
     public string? Dimensiones { get; set; }
 
-    public string? THK { get; set; }
+    public string? Thk { get; set; }
+
     public string? Placas { get; set; }
 
-    public required string GradoPropiedad { get; set; }
+    public string? GradoPropiedad { get; set; }
 
     public string? ObservacionesAsignaciones { get; set; }
 
-    public required bool EstatusSeguro { get; set; }
+    public bool? EstatusSeguro { get; set; }
 
     public string? PolizaAdjunta { get; set; }
 
-    public required int IdMarca { get; set; }
+    public int? IdMarca { get; set; }
 
-    public required int MarcaMotor { get; set; }
+    public int? MarcaMotor { get; set; }
+
+    public decimal? ValorAdquisicion { get; set; }
 
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicos { get; set; } = new List<CatalogoMovimientosEconomico>();
 

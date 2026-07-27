@@ -121,7 +121,7 @@
 
                 <StackPanel Grid.Column="2" Orientation="Vertical" Margin="20,10,10,10">
                     <TextBlock Text="Medida en:" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <ComboBox SelectedValue="{Binding EconomicoEdicion.THK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    <ComboBox SelectedValue="{Binding EconomicoEdicion.Thk, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               SelectedValuePath="Content"
                               Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15">
                         <ComboBoxItem Content="Kilometraje" />

@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="Inventario.Desktop.Views.UserControllers.Economicos.RealizarMovimientoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Inventario.Desktop.Views.UserControllers.Economicos"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="AUTO"/>
+            <ColumnDefinition Width="AUTO"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="AUTO"/>
+            <RowDefinition Height="AUTO"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="100,100,10,10">
+
+            <TextBlock Text="SELECCIONAR UBICACION DE SALIDA:" FontWeight="Bold" Margin="0,10,0,10" />
+            <ComboBox 
+                ItemsSource="{Binding UbicacionesFiltro}"
+                DisplayMemberPath="NombreProyecto"
+                SelectedValuePath="IdUbicacion"
+                SelectedValue="{Binding IdUbicacionFiltroSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                Width="380" 
+                Height="30"
+                HorizontalAlignment="Left"
+                Margin="0,0,0,10"/>
+
+            <TextBlock Text="SELECCIONAR UBICACION DE DESTINO:" FontWeight="Bold" Margin="0,10,0,10" />
+            <ComboBox 
+                ItemsSource="{Binding UbicacionesFin}"
+                DisplayMemberPath="NombreProyecto"
+                SelectedValuePath="IdUbicacion"
+                SelectedValue="{Binding IdUbicacionFinSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                Width="380" 
+                Height="30"
+                HorizontalAlignment="Left"
+                Margin="0,0,0,10"/>
+
+            <TextBlock  Grid.Column="0" Text="RUTA DE CARTA PORTE: " FontWeight="SemiBold" Margin="0,22,10,2"/>
+            <TextBlock  Grid.Column="1" Text="{Binding RutaArchivoAdjunto}" Margin="0,2,0,2" Foreground="Blue"/>
+            <Button Grid.Column="1" 
+                Content="BUSCAR CARTA PORTE" 
+                Command="{Binding SeleccionarArchivoCommand}"
+                Margin="0,30,0,0" 
+                Height="30"/>
+
+
+            <TextBlock  Grid.Column="0" Text="RUTA DE CONTROL DE ENVIO: " FontWeight="SemiBold" Margin="0,22,10,2"/>
+            <TextBlock  Grid.Column="1" Text="{Binding RutaArchivoAdjunto2}" Margin="0,2,0,2" Foreground="Blue"/>
+            <Button Grid.Column="1" 
+                Content="BUSCAR CONTROL DE ENVIO" 
+                Command="{Binding SeleccionarArchivo2Command}"
+                Margin="0,30,0,0" 
+                Height="30"/>
+
+
+            <Button 
+                Content="DAR DE ALTA EL MOVIMIENTO"
+                Command="{Binding RegistrarMovimientoCommand}"
+                Width="250" 
+                Height="35"
+                HorizontalAlignment="Left"
+                Margin="0,30,0,0"
+                Background="#007ACC" 
+                Foreground="White" 
+                FontWeight="Bold" />
+            
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="100,100,10,10" Orientation="Vertical">
+
+            <TextBlock Text="BUSCAR Y SELECCIONAR ECONOMICOS (SELECCIÓN MÚLTIPLE):" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,0,5"/>
+
+            <TextBox Text="{Binding TextoBusquedaId, UpdateSourceTrigger=PropertyChanged}" 
+                     Tag="Buscar por ID..." 
+                     Height="30" 
+                     VerticalContentAlignment="Center" 
+                     Margin="0,0,0,5"
+                     Padding="5,0"/>
+
+            <ListBox ItemsSource="{Binding EconomicosFiltrados}" 
+                     Height="200" 
+                     Width="500"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="2">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding IdEconomico}" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,10,0"/>
+                                <TextBlock Text=" - "/>
+                                <TextBlock Text="{Binding Descripcion}" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </CheckBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

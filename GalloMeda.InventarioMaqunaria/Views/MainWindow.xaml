@@ -11,7 +11,7 @@
         Title="Inventario Maquinaria" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="ColumnaMenu" Width="260"/>
+            <ColumnDefinition x:Name="ColumnaMenu" Width="300"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -32,14 +32,47 @@
                         <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/economicos_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
-                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Economicos ▾" VerticalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="ECONOMICOS ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Informacion de Economicos" Tag="VerInventario" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Altas Economicos" Tag="AgregarEconomico" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Subir Archivo" Tag="AgregarArchivo" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Servicios Realizados" Tag="VerServicios" Click="MenuItem_Click"/>
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- INFORMACION ECONOMICOS ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="INFORMACION DE ECONOMICOS" Tag="VerInventario" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="ALTAS ECONOMICOS" Tag="AgregarEconomico" Click="MenuItem_Click"/>
+
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- MOVIMIENTOS ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="NUEVO MOVIMIENTO DE ECONOMICO" Tag="MoverEconomico" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="HISTORIAL DE MOVIMIENTOS DE ECONOMICOS" Tag="HisMoverEconomico" Click="MenuItem_Click"/>
+
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- ARCHIVOS ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="SUBIR ARCHIVOS" Tag="AgregarArchivo" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="SERVICIOS REALIZADOS" Tag="VerServicios" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -47,21 +80,30 @@
                         <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/empleado_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
-                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Personal ▾" VerticalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="PERSONAL ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Operadores" Tag="VerOperadores" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Encargados de Maquinaria" Tag="VerEnMaq" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Propietarios y Administradores de Maquinaria" Tag="ProAdmin" Click="MenuItem_Click"/>
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- PERSONAL ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="OPERADORES" Tag="VerOperadores" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="ENCARGADOS DE MAQUINARIA" Tag="VerEnMaq" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="PROPIETARIOS Y ADMINISTRADORES DE MAQUINARIA" Tag="ProAdmin" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
-
+                        <!-- 
                         <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/socios_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
-                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Proveedores ▾" VerticalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="PROVEEDORES ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
@@ -69,20 +111,32 @@
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
+                        -->
 
                         <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/catalogo_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
-                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Catalogos ▾" VerticalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="CATALOGOS ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Combustibles" Tag="CatCom" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Tipos de Equipos" Tag="CatTipEq" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Servicios" Tag="CatSer" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Grupos" Tag="CatGrp" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Tipo de Estatus" Tag="CatTiEs" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Catalogo de Marcas" Tag="CatMarc" Click="MenuItem_Click"/>
+
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- CATALOGOS ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE COMBUSTIBLES" Tag="CatCom" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE EQUIPOS" Tag="CatTipEq" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE SERVICIOS" Tag="CatSer" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE GRUPOS" Tag="CatGrp" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE ESTATUS" Tag="CatTiEs" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE MARCAS" Tag="CatMarc" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -90,13 +144,24 @@
                         <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/ubicacion_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
-                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Ubicacion ▾" VerticalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="UBICACIONES ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Ubicacion Proyecto" Tag="VerUbicaciones" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Tramos" Tag="VerTramos" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Frentes" Tag="VerFrentes" Click="MenuItem_Click"/>
+
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- UBICACIONES ---" 
+                                                Foreground="#8A92A6" 
+                                                FontWeight="Bold" 
+                                                FontSize="11" 
+                                                Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="UBICACION DE PROYECTOS" Tag="VerUbicaciones" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="TRAMOS" Tag="VerTramos" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="FRENTES" Tag="VerFrentes" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -104,14 +169,63 @@
                         <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/AgregarUsuario.png" Width="30" Height="30" Margin="0,0,8,0"/>
-                                <TextBlock Style="{StaticResource TextoResaltado}" Text="Cuentas ▾" VerticalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="CUENTAS ▾" VerticalAlignment="Center"/>
                             </StackPanel>
                             <Button.ContextMenu>
                                 <ContextMenu Style="{StaticResource MenuModerno}">
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="Agregar Nuevo Usuario" Tag="AddUser" Click="MenuItem_Click"/>
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- USUARIOS CON ACCESO ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="AGREGAR NUEVO USUARIO" Tag="AddUser" Click="MenuItem_Click"/>
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
+
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Resources/adquisiciones.png" Width="30" Height="30" Margin="0,0,8,0"/>
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="ADQUISICIONES Y SERVICIOS ▾" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <Button.ContextMenu>
+                                <ContextMenu Style="{StaticResource MenuModerno}">
+                                    
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- REQUISICIONES ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CREACION DE NUEVA REQUISICION" Tag="AddReq" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="BUSCAR REQUISICIONES" Tag="" Click="MenuItem_Click"/>
+
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- ORDENES DE COMPRA ---" 
+                                               Foreground="#8A92A6" 
+                                               FontWeight="Bold" 
+                                               FontSize="11" 
+                                               Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CREACION DE NUEVA ORDEN DE COMPRA" Tag="" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="BUSCAR ORDENES DE COMPRA" Tag="" Click="MenuItem_Click"/>
+
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+
+
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

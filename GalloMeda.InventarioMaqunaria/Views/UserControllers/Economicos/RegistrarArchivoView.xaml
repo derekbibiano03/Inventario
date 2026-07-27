@@ -10,7 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Fila para el título -->
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="600"/>
             <!-- Fila para selección de Económico -->
             <RowDefinition Height="Auto"/>
             <!-- Fila para selección de Archivo -->
@@ -49,7 +49,7 @@
                      Padding="5,0"/>
 
                 <ListBox ItemsSource="{Binding EconomicosFiltrados}" 
-                     Height="120" 
+                     Height="500" 
                      ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListBox.ItemTemplate>
                         <DataTemplate>

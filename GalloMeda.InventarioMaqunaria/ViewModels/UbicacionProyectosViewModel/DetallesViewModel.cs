@@ -17,11 +17,11 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
     {
         // 1. Declaración de dependencias del servicio de archivos y el contexto de base de datos.
         private readonly GestorArchivosService _archivosService;
-        private CatalogoEconomico _detalle;
+        private CatalogoEconomico? _detalle;
         private ObservableCollection<CatalogoArchivo> _archivosAnexados;
 
         // Propiedad que almacena el objeto principal con los detalles del equipo
-        public CatalogoEconomico Detalle
+        public CatalogoEconomico? Detalle
         {
             get => _detalle;
             set
@@ -50,12 +50,9 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
         {
             // 2. Inicialización del servicio encargado de interactuar con el servidor de archivos Ubuntu.
             _archivosService = new GestorArchivosService();
-
-            // Inicializamos comandos usando expresiones Lambda
+            _archivosAnexados = new ObservableCollection<CatalogoArchivo>();
             AbrirArchivoCommand = new RelayCommand<CatalogoArchivo>(EjecutarAbrirArchivo);
             DescargarArchivoCommand = new RelayCommand<CatalogoArchivo>(EjecutarDescargarArchivo);
-
-            ArchivosAnexados = new ObservableCollection<CatalogoArchivo>();
             CargarDatosCompletos(idEconomico);
         }
 
@@ -78,7 +75,11 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
 
                     foreach (var archivo in listaArchivos)
                     {
-                        ArchivosAnexados.Add(archivo);
+                        if (archivo != null)
+                        {
+                            // Agrega el objeto de archivo a la colección enlazada con la UI.
+                            ArchivosAnexados.Add(archivo);
+                        }
                     }
                 }
             }
@@ -120,45 +121,59 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
 
         private void EjecutarDescargarArchivo(CatalogoArchivo archivo)
         {
-            // 7. Validación de seguridad básica para evitar errores de referencia nula.
+            // Validación previa que confirma la presencia del nombre de archivo.
             if (string.IsNullOrEmpty(archivo?.Archivo)) return;
 
+            // Bloque try-catch para capturar fallos durante la copia de archivos en el sistema.
             try
             {
-                // 8. Solicita la ruta local al servicio. Si no está en caché temporal, la descarga desde Ubuntu en tiempo real de forma transparente.
+                // Solicita la ruta absoluta del origen a través del servicio de archivos.
                 string rutaCompletaOrigen = _archivosService.ObtenerRutaAbsoluta(archivo.Archivo);
 
+                // Comprueba la existencia real del archivo origen antes de intentar copiarlo.
                 if (!File.Exists(rutaCompletaOrigen))
                 {
+                    // Muestra un mensaje de advertencia si la fuente no está disponible.
                     MessageBox.Show($"No se pudo recuperar el archivo de origen desde el servidor.",
                                     "Error de Origen", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // Detiene la ejecución.
                     return;
                 }
 
-                // 9. Configuración y visualización del cuadro de diálogo para salvar el archivo en la ruta elegida por el usuario.
+                // Instanciación del cuadro de diálogo para que el usuario elija dónde guardar el archivo.
                 SaveFileDialog saveFileDialog = new SaveFileDialog
                 {
-                    FileName = archivo.NombreArchivo, // Nombre original descriptivo del archivo (ej: "Ficha_Tecnica.pdf")
+                    // Establece el nombre por defecto utilizando la propiedad de la entidad.
+                    FileName = archivo.NombreArchivo,
+                    // Extrae la extensión del archivo para aplicarla por defecto.
                     DefaultExt = Path.GetExtension(archivo.NombreArchivo),
+                    // Configura los filtros de extensión visibles en el desplegable del SaveFileDialog.
                     Filter = $"Archivos ({Path.GetExtension(archivo.NombreArchivo)})|*{Path.GetExtension(archivo.NombreArchivo)}|Todos los archivos (*.*)|*.*"
                 };
 
+                // Muestra la ventana modal de guardado y comprueba si el usuario hizo clic en "Aceptar/Guardar".
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    // 10. Realiza la copia del archivo temporal localmente recuperado hacia la carpeta elegida por el usuario (ej: Descargas, Escritorio).
-                    File.Copy(rutaCompletaOrigen, saveFileDialog.FileName, true);
+                    // Copia el archivo desde el caché local/servidor hacia la ruta seleccionada sobrescribiendo si existe.
+
+                    File.Copy(rutaCompletaOrigen, saveFileDialog.FileName!, true);
+                    // Notifica al usuario de la correcta descarga y guardado.
                     MessageBox.Show("Archivo descargado y guardado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
+            // Captura de errores inesperados durante el diálogo o la copia física.
             catch (Exception ex)
             {
+                // Muestra el mensaje detallado de la excepción ocurrida.
                 MessageBox.Show($"Error al guardar el archivo: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        // Método auxiliar protegido que dispara el evento PropertyChanged utilizando el nombre del miembro llamador.
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
+            // Dispara el evento si hay suscriptores (la vista WPF) escuchando los cambios.
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

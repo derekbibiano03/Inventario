@@ -9,7 +9,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <helpers:UpperCaseConverter x:Key="MyUpperCaseConverter"/>
+
+        <helpers:UpperCaseConverter x:Key="UpperCaseConverter"/>
 
         <Style x:Key="EstiloDropdownExcel" TargetType="ComboBoxItem">
             <Setter Property="Template">
@@ -20,9 +21,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </UserControl.Resources>
+        </UserControl.Resources>
 
-    <Grid Margin="20">
+        <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -54,7 +55,7 @@
                   AlternatingRowBackground="#F9F9F9">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding IdEconomico,Converter={StaticResource MyUpperCaseConverter}}" Width="auto">
+                <DataGridTextColumn Binding="{Binding IdEconomico, Converter={StaticResource UpperCaseConverter}}" Width="auto">
                     <DataGridTextColumn.HeaderTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">

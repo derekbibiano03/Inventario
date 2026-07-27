@@ -1,4 +1,5 @@
-﻿using Inventario.Core.Services.Auth;
+﻿using GalloMeda.InventarioMaqunaria;
+using Inventario.Core.Services.Auth;
 using Inventario.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -13,22 +14,22 @@ namespace Inventario.Desktop.ViewModels.Auth
 {
     public class AgregarUsuarioViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public ICommand RegistrarUsuarioCommand { get; }
 
-        private string _nombreUsuario;
+        private string _nombreUsuario = string.Empty;
         public string NombreUsuario
         {
             get => _nombreUsuario;
             set { _nombreUsuario = value; OnPropertyChanged(); }
         }
 
-        private string _contrasenaPlana;
+        private string _contrasenaPlana = string.Empty;
         public string ContrasenaPlana
         {
             get => _contrasenaPlana;
@@ -88,6 +89,7 @@ namespace Inventario.Desktop.ViewModels.Auth
 
                 // CORRECCIÓN: Enviamos el IdRolSeleccionado convertido a int (usando .Value) hacia Postgres
                 bool guardadoExitoso = _autenticacionService.RegistrarUsuario(
+                    App.Session.IdUsuario,
                     this.NombreUsuario.Trim(),
                     this.ContrasenaPlana.Trim(),
                     this.IdRolSeleccionado.Value

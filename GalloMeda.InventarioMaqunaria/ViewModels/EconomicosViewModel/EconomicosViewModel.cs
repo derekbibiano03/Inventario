@@ -21,7 +21,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
     public class OpcionFiltroCheckbox : INotifyPropertyChanged
     {
         private bool _isChecked;
-        public string Nombre { get; set; }
+        public string? Nombre { get; set; }
         public int Id { get; set; }
         public bool IsChecked
         {
@@ -34,8 +34,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             }
         }
         public required Action AlCambiarSeleccion { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -47,12 +47,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         private readonly CatalogoEconomicosService _economicosService;
         private readonly ExcelExportService _excelService = new ExcelExportService();
         private readonly InventarioContext _contextoCompartido;
-        private string _busquedaId;
-        private string _busquedaDescripcion;
-        private string _busquedaMarca;
-        private string _busquedaSerie;
-        private string _busquedaTipoEquipo;
-        private string _busquedaUbicacion;
+        private string _busquedaId = string.Empty;
+        private string _busquedaDescripcion = string.Empty;
+        private string _busquedaMarca = string.Empty;
+        private string _busquedaSerie = string.Empty;
+        private string _busquedaTipoEquipo = string.Empty;
+        private string _busquedaUbicacion = string.Empty;
         public ICommand ExportarExcelCommand { get; set; }
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
         public ICollectionView VistaEconomicos { get; set; }
@@ -69,9 +69,28 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         public ObservableCollection<OpcionFiltroCheckbox> FiltroSeriesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroTipoEquipoOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroUbicacionesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
-        public ObservableCollection<CatalogoUbicacionesProyecto> ListaUbicaciones { get; set; }
+        private ObservableCollection<CatalogoUbicacionesProyecto> _listaUbicaciones = new ObservableCollection<CatalogoUbicacionesProyecto>();
+
+        public ObservableCollection<CatalogoUbicacionesProyecto> ListaUbicaciones
+        {
+            get => _listaUbicaciones;
+            set
+            {
+                _listaUbicaciones = value;
+                OnPropertyChanged();
+            }
+        }
         public ICommand VerDetalleCommand { get; }
         public ICommand LimpiarFiltrosCommand { get; }
+
+        private string[] _opciones = Array.Empty<string>();
+
+        public string[] Opciones
+        {
+            get => _opciones;
+            set => _opciones = value;
+        }
+
         public string BusquedaId
         {
             get => _busquedaId;
@@ -147,9 +166,9 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 return;
             }
 
-            string[] idsDeEquiposFiltrados = equiposVisiblesEnTabla.Select(x => x.IdEconomico).ToArray();
-            List<CatalogoEconomico> datosCompletos = _economicosService.ObtenerEconomicosPorListaDeIds(idsDeEquiposFiltrados);
-            byte[] archivoExcelBytes = _excelService.GenerarExcelEconomicos(datosCompletos);
+            string[] idsDeEquiposFiltrados = equiposVisiblesEnTabla.Select(x => x.IdEconomico).Where(id => id != null).Select(id => id!).ToArray(); // Extrae arreglo de llaves válidas asegurando que no contenga nulos.
+            List<CatalogoEconomico> datosCompletos = _economicosService.ObtenerEconomicosPorListaDeIds(idsDeEquiposFiltrados); // Consulta el backend para traer las entidades completas.
+            byte[] archivoExcelBytes = _excelService.GenerarExcelEconomicos(datosCompletos); // Convierte las entidades en una secuencia binaria de Excel.
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
@@ -214,7 +233,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
 
             return resultado;
         }
-        private void RecalcularOpcionesFiltros(string columnaExcluida = null)
+        private void RecalcularOpcionesFiltros(string? columnaExcluida = null)
         {
             if (_isResetting) return;
             _isResetting = true;
@@ -223,71 +242,52 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             // ==========================================
             // 1. RE-POBLAR ID ECONÓMICO
             // ==========================================
-            // Solo regenera la lista de IDs si esta columna no fue la que originó el cambio de selección del usuario
             if (columnaExcluida != "ID")
             {
-                // Extrae el universo de cadenas de texto de IDs económicos que siguen siendo válidos en el DataGrid filtrado
                 var idsVisibles = itemsVisibles.Select(e => e.IdEconomico).Where(id => !string.IsNullOrEmpty(id)).Distinct().ToList();
-                // Limpia por completo la colección observable enlazada directamente al ComboBox del ID en el XAML
                 FiltroIdOpciones.Clear();
-                // Consolida en un conjunto único los IDs que el usuario ya marcó junto con los que siguen resultando visibles en la grilla
-                var idsAMostrar = _estadosId.Where(x => x.Value).Select(x => x.Key).Union(idsVisibles).OrderBy(x => x);
+                var idsAMostrar = _estadosId.Where(x => x.Value).Select(x => x.Key).Union(idsVisibles).Where(id => id != null).OrderBy(x => x);
                 foreach (var id in idsAMostrar)
                 {
-                    // Valida si el ítem cumple con la cadena de caracteres ingresada en el buscador de la cabecera de ID
-                    if (!string.IsNullOrWhiteSpace(BusquedaId) && !id.Contains(BusquedaId, StringComparison.OrdinalIgnoreCase)) continue;
-                    // Registra preventivamente la existencia de la clave de texto en el diccionario de control de estados
-                    _estadosId.TryAdd(id, false);
-                    // Inserta el elemento reactivo acoplado a la acción delegada para mantener la sincronización de la base de datos
-                    FiltroIdOpciones.Add(new OpcionFiltroCheckbox { Nombre = id, IsChecked = _estadosId[id], AlCambiarSeleccion = () => NotificarCheckboxCambiado("ID", id, null) });
+                    if (!string.IsNullOrWhiteSpace(BusquedaId) && !id!.Contains(BusquedaId, StringComparison.OrdinalIgnoreCase)) continue;
+                    _estadosId.TryAdd(id!, false);
+                    FiltroIdOpciones.Add(new OpcionFiltroCheckbox { Nombre = id!, IsChecked = _estadosId[id!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("ID", id!, null) });
                 }
             }
 
             // ==========================================
             // 2. RE-POBLAR DESCRIPCIONES
             // ==========================================
-            // Evalúa si la columna de descripción debe quedar exenta de la limpieza destructiva para no perder el foco del puntero
             if (columnaExcluida != "DESCRIPCION")
             {
-                // Obtiene las descripciones distintas de los equipos que lograron pasar con éxito el predicado lógico del filtro
                 var descVisibles = itemsVisibles.Select(e => e.Descripcion).Where(d => !string.IsNullOrEmpty(d)).Distinct().ToList();
-                // Remueve la totalidad de los objetos Checkbox expuestos previamente en el desplegable de descripciones
                 FiltroDescripcionesOpciones.Clear();
-                // Une mediante operaciones algebraicas de conjuntos LINQ los elementos marcados con las cadenas vigentes en pantalla
-                var descAMostrar = _estadosDescripcion.Where(x => x.Value).Select(x => x.Key).Union(descVisibles).OrderBy(x => x);
+                var descAMostrar = _estadosDescripcion.Where(x => x.Value).Select(x => x.Key).Union(descVisibles).Where(d => d != null).OrderBy(x => x);
                 foreach (var d in descAMostrar)
                 {
-                    // Discrimina el ítem si no contiene la subcadena tipográfica especificada en su cuadro de búsqueda
-                    if (!string.IsNullOrWhiteSpace(BusquedaDescripcion) && !d.Contains(BusquedaDescripcion, StringComparison.OrdinalIgnoreCase)) continue;
-                    // Asegura la inserción de la propiedad de texto dentro del mapa de bits de estados del backend
-                    _estadosDescripcion.TryAdd(d, false);
-                    // Inyecta el nuevo nodo en la lista observable mapeada por binding para refrescar los controles visuales WPF
-                    FiltroDescripcionesOpciones.Add(new OpcionFiltroCheckbox { Nombre = d, IsChecked = _estadosDescripcion[d], AlCambiarSeleccion = () => NotificarCheckboxCambiado("DESCRIPCION", d, null) });
+                    if (!string.IsNullOrWhiteSpace(BusquedaDescripcion) && !d!.Contains(BusquedaDescripcion, StringComparison.OrdinalIgnoreCase)) continue;
+                    _estadosDescripcion.TryAdd(d!, false);
+                    FiltroDescripcionesOpciones.Add(new OpcionFiltroCheckbox { Nombre = d!, IsChecked = _estadosDescripcion[d!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("DESCRIPCION", d!, null) });
                 }
             }
 
             // ==========================================
             // 3. RE-POBLAR MARCAS
             // ==========================================
-            // Comprueba que el origen del evento no pertenezca a la columna Marca para preservar la continuidad de la selección
             if (columnaExcluida != "MARCA")
             {
-                // Mapea los identificadores y nombres comerciales de marcas cuyos activos permanecen visibles en la tabla principal
                 var marcasVisibles = itemsVisibles.Where(e => e.IdMarcaNavigation != null && !string.IsNullOrEmpty(e.IdMarcaNavigation.NombreMarca))
-                    .Select(e => new { Id = e.IdMarca!.Value, Nombre = e.IdMarcaNavigation.NombreMarca }).Distinct().ToList();
-                // Vacía la colección observable vinculada al ComboBox de marcas del encabezado del DataGrid
+                    .Select(e => new { Id = e.IdMarca!.Value, Nombre = e.IdMarcaNavigation!.NombreMarca }).Distinct().ToList();
                 FiltroMarcasOpciones.Clear();
-                // Resuelve una secuencia única de claves enteras integrando lo seleccionado por el usuario y los datos visibles
                 var marcasAMostrarIds = _estadosMarca.Where(x => x.Value).Select(x => x.Key).Union(marcasVisibles.Select(v => v.Id)).Distinct();
                 foreach (var idM in marcasAMostrarIds)
                 {
-                    // Obtiene el nombre plano de la marca desde la lista maestra o asigna un valor comodín en caso de nulos estructurales
-                    var nombreM = Economicos.FirstOrDefault(e => e.IdMarca == idM)?.IdMarcaNavigation?.NombreMarca ?? "Desconocido";
-                    // Ejecuta una validación contra el cuadro de texto del buscador de marcas ignorando la cultura de mayúsculas
+                    // CORRECCIÓN: Se usa la variable auxiliar y el operador de elusión para satisfacer el análisis de nulabilidad
+                    var elementoEncontrado = Economicos.FirstOrDefault(e => e.IdMarca == idM);
+                    var nombreM = elementoEncontrado?.IdMarcaNavigation?.NombreMarca ?? "Desconocido";
+
                     if (!string.IsNullOrWhiteSpace(BusquedaMarca) && !nombreM.Contains(BusquedaMarca, StringComparison.OrdinalIgnoreCase)) continue;
-                    // Guarda el registro entero de la marca en el diccionario volátil de persistencia de estados
                     _estadosMarca.TryAdd(idM, false);
-                    // Añade la opción final a la estructura observable que alimenta al árbol visual en tiempo de ejecución
                     FiltroMarcasOpciones.Add(new OpcionFiltroCheckbox { Id = idM, Nombre = nombreM, IsChecked = _estadosMarca[idM], AlCambiarSeleccion = () => NotificarCheckboxCambiado("MARCA", null, idM) });
                 }
             }
@@ -295,71 +295,53 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             // ==========================================
             // 4. RE-POBLAR SERIES
             // ==========================================
-            // Omite la reconstrucción destructiva de la columna Series si el operador está haciendo clic dentro de ella
             if (columnaExcluida != "SERIE")
             {
-                // Extrae de forma diferenciada las series numéricas de las maquinarias que cumplen con los filtros globales de la grilla
                 var seriesVisibles = itemsVisibles.Select(e => e.Serie).Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
-                // Vacía la lista observable asignada al submenú desplegable de los números de serie del activo
                 FiltroSeriesOpciones.Clear();
-                // Consolida en un orden alfabético las opciones activas guardadas y las filas supervivientes del DataGrid
-                var seriesAMostrar = _estadosSerie.Where(x => x.Value).Select(x => x.Key).Union(seriesVisibles).OrderBy(x => x);
+                var seriesAMostrar = _estadosSerie.Where(x => x.Value).Select(x => x.Key).Union(seriesVisibles).Where(s => s != null).OrderBy(x => x);
                 foreach (var s in seriesAMostrar)
                 {
-                    // Verifica si la propiedad de la serie coincide con los caracteres ingresados en su barra de búsqueda
-                    if (!string.IsNullOrWhiteSpace(BusquedaSerie) && !s.Contains(BusquedaSerie, StringComparison.OrdinalIgnoreCase)) continue;
-                    // Almacena de manera segura la clave en el diccionario para prevenir anomalías de desincronización
-                    _estadosSerie.TryAdd(s, false);
-                    // Inserta el elemento con Checkbox a la lista observable para detonar el renderizado en la UI de WPF
-                    FiltroSeriesOpciones.Add(new OpcionFiltroCheckbox { Nombre = s, IsChecked = _estadosSerie[s], AlCambiarSeleccion = () => NotificarCheckboxCambiado("SERIE", s, null) });
+                    if (!string.IsNullOrWhiteSpace(BusquedaSerie) && !s!.Contains(BusquedaSerie, StringComparison.OrdinalIgnoreCase)) continue;
+                    _estadosSerie.TryAdd(s!, false);
+                    FiltroSeriesOpciones.Add(new OpcionFiltroCheckbox { Nombre = s!, IsChecked = _estadosSerie[s!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("SERIE", s!, null) });
                 }
             }
 
             // ==========================================
             // 5. RE-POBLAR TIPO DE EQUIPO
             // ==========================================
-            // Protege el control visual de Tipo de Equipo de ser limpiado si el cambio proviene de sus propios Checkboxes
             if (columnaExcluida != "TIPO_EQUIPO")
             {
-                // Genera un listado de cadenas con los tipos de equipo asociados a las filas activas y visibles en la interfaz
                 var tiposVisibles = itemsVisibles.Select(e => e.IdTipoEquipo).Where(t => !string.IsNullOrEmpty(t)).Distinct().ToList();
-                // Vacía los elementos previos expuestos en el control ComboBox de categorías de maquinaria
                 FiltroTipoEquipoOpciones.Clear();
-                // Mezcla las selecciones vigentes del operador con las filas lógicas resultantes de los filtros cruzados
-                var tiposAMostrar = _estadosTipoEquipo.Where(x => x.Value).Select(x => x.Key).Union(tiposVisibles).OrderBy(x => x);
+                var tiposAMostrar = _estadosTipoEquipo.Where(x => x.Value).Select(x => x.Key).Union(tiposVisibles).Where(t => t != null).OrderBy(x => x);
                 foreach (var t in tiposAMostrar)
                 {
-                    // Compara la cadena de texto con el parámetro de búsqueda asignado al buscador de tipo de equipo
-                    if (!string.IsNullOrWhiteSpace(BusquedaTipoEquipo) && !t.Contains(BusquedaTipoEquipo, StringComparison.OrdinalIgnoreCase)) continue;
-                    // Añade el elemento al diccionario para mantener persistido si está marcado o desmarcado de forma segura
-                    _estadosTipoEquipo.TryAdd(t, false);
-                    // Registra el ítem final dentro de la colección visible para actualizar el dropdown de la cabecera
-                    FiltroTipoEquipoOpciones.Add(new OpcionFiltroCheckbox { Nombre = t, IsChecked = _estadosTipoEquipo[t], AlCambiarSeleccion = () => NotificarCheckboxCambiado("TIPO_EQUIPO", t, null) });
+                    if (!string.IsNullOrWhiteSpace(BusquedaTipoEquipo) && !t!.Contains(BusquedaTipoEquipo, StringComparison.OrdinalIgnoreCase)) continue;
+                    _estadosTipoEquipo.TryAdd(t!, false);
+                    FiltroTipoEquipoOpciones.Add(new OpcionFiltroCheckbox { Nombre = t!, IsChecked = _estadosTipoEquipo[t!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("TIPO_EQUIPO", t!, null) });
                 }
             }
 
             // ==========================================
             // 6. RE-POBLAR UBICACIONES
             // ==========================================
-            // Valida que la columna Ubicación no sea el foco de interacción actual para no corromper la experiencia del clic
             if (columnaExcluida != "UBICACION")
             {
-                // Genera una lista distinta conteniendo las llaves primarias de las obras o ubicaciones de los registros activos
-                var ubVisibles = itemsVisibles.Where(e => e.IdUbicacion.HasValue).Select(e => e.IdUbicacion.Value).Distinct().ToList();
-                // Remueve la totalidad de las opciones almacenadas en el control observable de frentes de trabajo o proyectos
+                var ubicacionesVisibles = itemsVisibles.Where(e => e.IdUbicacionNavigation != null && !string.IsNullOrEmpty(e.IdUbicacionNavigation.NombreProyecto))
+                    .Select(e => new { Id = e.IdUbicacion!.Value, Nombre = e.IdUbicacionNavigation!.NombreProyecto }).Distinct().ToList();
                 FiltroUbicacionesOpciones.Clear();
-                // Interconecta mediante operaciones unificadas de LINQ las selecciones guardadas y los elementos dinámicos visibles
-                var ubAMostrarIds = _estadosUbicacion.Where(x => x.Value).Select(x => x.Key).Union(ubVisibles).Distinct();
-                foreach (var idU in ubAMostrarIds)
+                var ubicacionesAMostrarIds = _estadosUbicacion.Where(x => x.Value).Select(x => x.Key).Union(ubicacionesVisibles.Select(v => v.Id)).Distinct();
+                foreach (var idM in ubicacionesAMostrarIds)
                 {
-                    // Extrae el nombre explícito del proyecto desde la lista maestra de base de datos cargada al inicializar el módulo
-                    var nombreU = ListaUbicaciones.FirstOrDefault(u => u.IdUbicacion == idU)?.NombreProyecto ?? "Sin Asignar";
-                    // Aplica el filtro tipográfico basándose en el contenido de la barra de búsqueda interna de Ubicaciones
-                    if (!string.IsNullOrWhiteSpace(BusquedaUbicacion) && !nombreU.Contains(BusquedaUbicacion, StringComparison.OrdinalIgnoreCase)) continue;
-                    // Asegura la existencia de la llave entera dentro del mapa de control de estados lógicos del ViewModel
-                    _estadosUbicacion.TryAdd(idU, false);
-                    // Inserta la opción final a la lista observable para actualizar el árbol de nodos gráficos de WPF
-                    FiltroUbicacionesOpciones.Add(new OpcionFiltroCheckbox { Id = idU, Nombre = nombreU, IsChecked = _estadosUbicacion[idU], AlCambiarSeleccion = () => NotificarCheckboxCambiado("UBICACION", null, idU) });
+                    // CORRECCIÓN: Se usa la variable auxiliar y el operador de elusión para satisfacer el análisis de nulabilidad
+                    var elementoEncontrado = Economicos.FirstOrDefault(e => e.IdUbicacion == idM);
+                    var nombreM = elementoEncontrado?.IdUbicacionNavigation?.NombreProyecto ?? "Desconocido";
+
+                    if (!string.IsNullOrWhiteSpace(BusquedaUbicacion) && !nombreM.Contains(BusquedaUbicacion, StringComparison.OrdinalIgnoreCase)) continue;
+                    _estadosUbicacion.TryAdd(idM, false);
+                    FiltroUbicacionesOpciones.Add(new OpcionFiltroCheckbox { Id = idM, Nombre = nombreM, IsChecked = _estadosUbicacion[idM], AlCambiarSeleccion = () => NotificarCheckboxCambiado("UBICACION", null, idM) });
                 }
             }
 
@@ -452,8 +434,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             RecalcularOpcionesFiltros();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }

@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inventario.Desktop.Views.UserControllers.Economicos"
              mc:Ignorable="d" 
+             xmlns:helpers="clr-namespace:Inventario.Desktop.Helpers"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        
     </Grid>
 </UserControl>

@@ -1,5 +1,6 @@
 ﻿using GalloMeda.InventarioMaqunaria;
 using Inventario.Desktop.Views.UserControllers;
+using Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisiciones;
 using Inventario.Desktop.Views.UserControllers.Auth;
 using Inventario.Desktop.Views.UserControllers.Catalogos;
 using Inventario.Desktop.Views.UserControllers.Economicos;
@@ -15,9 +16,8 @@ namespace Inventario.Desktop.Views
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private string _usuarioLogueado;
+        private string _usuarioLogueado = string.Empty;
 
-        // CAMBIO: Nombre de propiedad pública cambiado para evitar conflictos con WPF
         public string UsuarioLogueado
         {
             get => _usuarioLogueado;
@@ -31,37 +31,32 @@ namespace Inventario.Desktop.Views
         public MainWindow(string username)
         {
             InitializeComponent();
+            ContenedorPrincipal.Content = new EconomicosView();
+            string textoPanel = "INVENTARIO DE MAQUINARIA";
 
-            // 2. Vincula la ventana con ella misma para habilitar los enlaces (Bindings)
             this.DataContext = this;
-
-            // 3. Asigna la propiedad dinámica utilizando el parámetro real que viene desde el Login
             this.UsuarioLogueado = username;
-
-            string textoPanel = "Panel de Control de Maquinaria";
             txtPanel.Text = textoPanel;
         }
+
         private void BtnColapsar_Click(object sender, RoutedEventArgs e)
         {
             ColumnaMenu.Width = new GridLength(0);
-
             BtnMostrarMenu.Visibility = Visibility.Visible;
         }
 
         private void BtnMostrar_Click(object sender, RoutedEventArgs e)
         {
             ColumnaMenu.Width = new GridLength(220);
-
             BtnMostrarMenu.Visibility = Visibility.Collapsed;
         }
+
         private void BtnProductosMenu_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button boton)
+            if (sender is Button boton && boton.ContextMenu != null)
             {
                 boton.ContextMenu.PlacementTarget = boton;
-
                 boton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-
                 boton.ContextMenu.IsOpen = true;
             }
         }
@@ -71,110 +66,114 @@ namespace Inventario.Desktop.Views
             string textoPanel = "";
             if (sender is MenuItem itemPresionado)
             {
-                string ID_Interno = itemPresionado.Tag.ToString();
+                string? ID_Interno = itemPresionado.Tag?.ToString();
 
                 switch (ID_Interno)
                 {
-
                     case "AddUser":
                         ContenedorPrincipal.Content = new AgregarUsuario();
-                        textoPanel = "Agregar un nuevo usuario";
+                        textoPanel = "AGREGAR A UN NUEVO USUARIO";
                         break;
 
-                    //Seccion Economicos
-
+                    // Seccion Economicos
                     case "VerInventario":
                         ContenedorPrincipal.Content = new EconomicosView();
-                        textoPanel = "Inventario Maquinaria";
+                        textoPanel = "INVENTARIO DE MAQUINARIA";
+                        break;
+                    case "MoverEconomico":
+                        ContenedorPrincipal.Content = new RealizarMovimientoView();
+                        textoPanel = "REALIZAR UN MOVIMIENTO DE MAQUINARIA";
                         break;
                     case "AgregarEconomico":
                         ContenedorPrincipal.Content = new EconomicosAltaView();
-                        textoPanel = "Alta de nuevo Economico";
+                        textoPanel = "ALTA DE NUEVO ECONOMICO";
                         break;
                     case "AgregarArchivo":
                         ContenedorPrincipal.Content = new RegistrarArchivoView();
-                        textoPanel = "Adjuntar Documento o Imagen";
+                        textoPanel = "ADJUNTAR DOCUMENTO O IMAGEN";
                         break;
                     case "VerServicios":
                         ContenedorPrincipal.Content = new HistorialServiciosView();
-                        textoPanel = "Historial de Servicios";
+                        textoPanel = "HISTORIAL DE SERVICIOS";
+                        break;
+                    case "HisMoverEconomico":
+                        ContenedorPrincipal.Content = new HistorialMovimientosView();
+                        textoPanel = "HISTORIAL DE MOVIMIENTOS";
                         break;
 
-                    //Seccion Personal
-
+                    // Seccion Personal
                     case "VerOperadores":
                         ContenedorPrincipal.Content = new OperadoresView();
-                        textoPanel = "Catalogo de Operadores";
+                        textoPanel = "CATALOGO DE OPERADORES DE MAQUINARIA";
                         break;
                     case "VerEnMaq":
                         ContenedorPrincipal.Content = new EncargadosView();
-                        textoPanel = "Catalogo Encargados de Maquinaria";
+                        textoPanel = "CATALOGO DE ENCARGADOS DE MAQUIINARIA";
                         break;
                     case "ProAdmin":
                         ContenedorPrincipal.Content = new ProAdminView();
-                        textoPanel = "Catalogo de Propietarios y Administradores";
+                        textoPanel = "CATALOGO DE PROPIETARIOS Y ADMINISTRADORES DE MAQUINARIA";
                         break;
 
-                    //Seccion Proveedores
-
+                    // Seccion Proveedores
                     case "VerBrokers":
                         ContenedorPrincipal.Content = new BrokersView();
-                        textoPanel = "Catalogo de Brokers";
+                        textoPanel = "CATALOGO DE BROKERS";
                         break;
 
                     // Seccion Catalogos
-
                     case "CatCom":
                         ContenedorPrincipal.Content = new CombustiblesView();
-                        textoPanel = "Catalogo de Combustibles";
+                        textoPanel = "CATALOGO DE COMBUSTIBLES";
                         break;
                     case "CatTipEq":
                         ContenedorPrincipal.Content = new TiposEquipoView();
-                        textoPanel = "Catalogo de Tipos de Equipos";
+                        textoPanel = "CATALOGO DE TIPOS DE EQUIPOS";
                         break;
                     case "CatSer":
                         ContenedorPrincipal.Content = new ServiciosView();
-                        textoPanel = "Catalogo de Servicios";
+                        textoPanel = "CATALOGO DE SERVICIOS";
                         break;
                     case "CatGrp":
                         ContenedorPrincipal.Content = new GruposView();
-                        textoPanel = "Catalogo de Grupos";
+                        textoPanel = "CATALOGO DE GRUPOS";
                         break;
                     case "CatTiEs":
                         ContenedorPrincipal.Content = new EstatusView();
-                        textoPanel = "Catalogo de Estatus";
+                        textoPanel = "CATALOGO DE ESTATUS";
                         break;
                     case "CatMarc":
                         ContenedorPrincipal.Content = new MarcasView();
-                        textoPanel = "Catalogo de Marcas";
+                        textoPanel = "CATALOGO DE MARCAS";
                         break;
 
-
                     // Seccion Ubicacion Proyetos
-
                     case "VerUbicaciones":
                         ContenedorPrincipal.Content = new UbicacionProyectoView();
-                        textoPanel = "Catalogo de Ubicaciones";
+                        textoPanel = "CATALOGO DE UBICACIONES";
                         break;
                     case "VerTramos":
                         ContenedorPrincipal.Content = new TramosView();
-                        textoPanel = "Catalogo de Tramos";
+                        textoPanel = "CATALOGO DE TRAMOS";
                         break;
                     case "VerFrentes":
                         ContenedorPrincipal.Content = new FrentesView();
-                        textoPanel = "Catalogo de Frentes";
+                        textoPanel = "CATALOGO DE FRENTES";
                         break;
 
-                    
-
-
+                    // Seccion Adquisiciones y servicios
+                    case "AddReq":
+                        ContenedorPrincipal.Content = new AgregarRequisicionView();
+                        textoPanel = "AÑADIR NUEVA REQUISICION";
+                        break;
                 }
                 txtPanel.Text = textoPanel;
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

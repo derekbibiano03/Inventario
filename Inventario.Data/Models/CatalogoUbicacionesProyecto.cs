@@ -11,6 +11,8 @@ public partial class CatalogoUbicacionesProyecto
 
     public string Ubicacion { get; set; } = null!;
 
+    public string? Siglas { get; set; }
+
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicos { get; set; } = new List<CatalogoEconomico>();
 
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicoIdUbicacionLlegadaNavigations { get; set; } = new List<CatalogoMovimientosEconomico>();

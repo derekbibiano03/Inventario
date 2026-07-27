@@ -20,11 +20,11 @@ namespace GalloMeda.InventarioMaqunaria
             // 1. Instanciamos el DbContext único que usará toda la app durante el arranque.
             var context = new InventarioContext();
 
-            // 2. Instanciamos el servicio de autenticación pasándole el contexto.
-            var authService = new AutenticacionService(context);
+            var logsService = new LogsService(context);
 
-            // 3. Instanciamos el servicio de logs pasándole también el contexto de la base de datos.
-            var logsService = new LogsService(context); // <--- LÍNEA NUEVA
+            // 2. Instanciamos el servicio de autenticación pasándole el contexto.
+            var authService = new AutenticacionService(context, logsService);
+
 
             // 4. Instanciamos el ViewModel pasándole AMBOS servicios requeridos por su constructor.
             var loginVM = new LoginViewModel(authService, logsService); // <--- CORREGIDO: Ahora recibe logsService

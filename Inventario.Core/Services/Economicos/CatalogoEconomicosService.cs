@@ -22,7 +22,7 @@ namespace Inventario.Core.Services.Economicos
             _logsService = logsService;
         }
 
-        public CatalogoEconomico ObtenerPorIdParaEditar(string idEconomico)
+        public CatalogoEconomico? ObtenerPorIdParaEditar(string idEconomico)
         {
             return _context.CatalogoEconomicos.FirstOrDefault(e => e.IdEconomico == idEconomico);
         }
@@ -65,7 +65,7 @@ namespace Inventario.Core.Services.Economicos
             return resultado;
         }
 
-        public CatalogoEconomico ObtenerDetalleCompleto(string idEconomico)
+        public CatalogoEconomico? ObtenerDetalleCompleto(string idEconomico)
         {
             return _context.CatalogoEconomicos
                 
@@ -106,18 +106,18 @@ namespace Inventario.Core.Services.Economicos
                 IdEconomico = string.Empty,
                 IdTipoEquipo = dto.IdTipoEquipo,
                 IdGrupo = dto.IdGrupo,
-                IdCombustible = dto.IdCombustible ?? 7,
-                IdPropietario = dto.IdPropietario ?? 5,
-                IdAdministrador = dto.IdAdministrador ?? 5,
-                IdOperador = dto.IdOperador ?? 1,
-                IdResponsable = dto.IdResponsable ?? 12,
-                IdUbicacion = dto.IdUbicacion ?? 13,
-                IdMarca = dto.IdMarca ?? 12,
+                IdCombustible = dto.IdCombustible,
+                IdPropietario = dto.IdPropietario ,
+                IdAdministrador = dto.IdAdministrador,
+                IdOperador = dto.IdOperador,
+                IdResponsable = dto.IdResponsable,
+                IdUbicacion = dto.IdUbicacion,
+                IdMarca = dto.IdMarca,
                 Modelo = dto.Modelo,
                 Serie = dto.Serie,
                 PeriodoFabricacion = dto.PeriodoFab,
                 GradoPropiedad = dto.GradoPropiedad,
-                MarcaMotor = dto.MarcaMotor ?? 12,
+                MarcaMotor = dto.MarcaMotor,
                 ModeloMotor = dto.ModeloMotor,
                 SerieMotor = dto.SerieMotor,
                 FamiliaMotor = dto.FamiliaMotor,
@@ -127,7 +127,7 @@ namespace Inventario.Core.Services.Economicos
                 ObservacionesAsignaciones = dto.Observaciones,
                 Descripcion = grupoSeleccionado.DescripcionGrupo,
                 Horometro = dto.Horometro,
-                THK = dto.THK,
+                Thk = dto.THK,
                 Dimensiones = dto.Dimensiones
             };
 
@@ -135,7 +135,7 @@ namespace Inventario.Core.Services.Economicos
             _context.SaveChanges(); // Aquí la base de datos genera el ID real
 
 
-            string idGenerado = _context.CatalogoEconomicos
+            string? idGenerado = _context.CatalogoEconomicos
                 .FromSqlRaw("SELECT * FROM catalogo_economicos WHERE serie = {0}", dto.Serie)
                 .AsNoTracking()
                 .Select(e => e.IdEconomico)
@@ -152,6 +152,15 @@ namespace Inventario.Core.Services.Economicos
             _logsService.RegistrarAltaEquipoExitoso(idUsuarioOperativo, idGenerado);
 
             return true;
+        }
+
+        public List<CatalogoEconomico> ObtenerEconomicosPorUbicacion(int idUbicacion)
+        {
+            return _context.CatalogoEconomicos
+                .Include(e => e.IdMarcaNavigation)
+                .Where(e => e.IdUbicacion == idUbicacion)
+                .AsNoTracking()
+                .ToList();
         }
 
         public bool ValidarSerieDuplicada(string serie)

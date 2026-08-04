@@ -20,13 +20,12 @@ namespace Inventario.Desktop.Views.UserControllers.Economicos
             var combusServicio = new CatalogoCombustiblesService(context);
             var pyaServicio = new ProAdminService(context);
             var ubicacionService = new UbicacionProyeectoService(context);
-            var operadoresService = new CatalogoOperadoresService(context);
-            var responsableService = new CatalogoEncargadoMaquinariaService(context);
+            var empleadosService = new EmpleadoService(context);
             var economicosService = new CatalogoEconomicosService(context, logsService);
 
             this.DataContext = new EconomicosAltaViewModel(marcasServicio, tipoEquipoServicio, grupoServicio, 
-                                                           combusServicio, pyaServicio, ubicacionService, 
-                                                           operadoresService, responsableService, economicosService);
+                                                           combusServicio, pyaServicio, ubicacionService, empleadosService,
+                                                           economicosService);
 
         }
     }

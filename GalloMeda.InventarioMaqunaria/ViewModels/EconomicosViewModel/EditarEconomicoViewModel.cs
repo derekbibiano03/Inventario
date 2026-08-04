@@ -1,4 +1,5 @@
 ﻿using Inventario.Core.Services.Logs;
+using Inventario.Core.Services.Personal;
 using Inventario.Data;
 using Inventario.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,10 @@ namespace Inventario.Desktop.ViewModels
     {
         public System.Action<bool>? CloseAction { get; set; }
 
+        private readonly EmpleadoService _empleadosService;
+        public ObservableCollection<Empleado> Encargados { get; set; }
+        public ObservableCollection<Empleado> Operadores { get; set; }
+
         public ObservableCollection<CatalogoTiposEquipo> TipoEquipo { get; set; }
 
         public ObservableCollection<CatalogoGrupo> Grupos { get; set; }
@@ -24,13 +29,11 @@ namespace Inventario.Desktop.ViewModels
 
         public ObservableCollection<CatalogoEstatus> Estatus { get; set; }
 
+        public ObservableCollection<Empleado> Empleados { get; set; }
+
         public ObservableCollection<CatalogoTiposCombustible> Combustibles { get; set; }
 
         public ObservableCollection<CatalogoPya> PYA { get; set; }
-
-        public ObservableCollection<CatalogoOperadore> Operadores { get; set; }
-
-        public ObservableCollection<CatalogoResponsableMaquinarium> Responsables { get; set; }
 
         public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; set; }
 
@@ -48,6 +51,13 @@ namespace Inventario.Desktop.ViewModels
 
         public EditarEconomicoViewModel()
         {
+            var context = new InventarioContext();
+            _empleadosService = new EmpleadoService(context);
+
+            Encargados = new ObservableCollection<Empleado>();
+
+            Operadores = new ObservableCollection<Empleado>();
+
             TipoEquipo = new ObservableCollection<CatalogoTiposEquipo>();
 
             Grupos = new ObservableCollection<CatalogoGrupo>();
@@ -59,10 +69,6 @@ namespace Inventario.Desktop.ViewModels
             Combustibles = new ObservableCollection<CatalogoTiposCombustible>();
 
             PYA = new ObservableCollection<CatalogoPya>();
-
-            Operadores = new ObservableCollection<CatalogoOperadore>();
-
-            Responsables = new ObservableCollection<CatalogoResponsableMaquinarium>();
 
             Ubicaciones = new ObservableCollection<CatalogoUbicacionesProyecto>();
 
@@ -95,14 +101,16 @@ namespace Inventario.Desktop.ViewModels
                 var pyaDb = contexto.CatalogoPyas.ToList();
                 foreach (var item in pyaDb) PYA.Add(item);
 
-                var operadoresDb = contexto.CatalogoOperadores.ToList();
-                foreach (var item in operadoresDb) Operadores.Add(item);
-
-                var responsablesDb = contexto.CatalogoResponsableMaquinaria.ToList();
-                foreach (var item in responsablesDb) Responsables.Add(item);
-
                 var ubicacionesDb = contexto.CatalogoUbicacionesProyectos.ToList();
                 foreach (var item in ubicacionesDb) Ubicaciones.Add(item);
+
+                var operaPermitidos = new List<int> { 2, 3, 4, 5, 6, 7 };
+                var operaDb = _empleadosService.ObtenerResponsables(operaPermitidos);
+                foreach (var item in operaDb) Operadores.Add(item);
+
+                var rolesPermitidos = new List<int> { 2,3,4, 5, 6, 7 };
+                var respDb = _empleadosService.ObtenerResponsables(rolesPermitidos);
+                foreach (var item in respDb) Encargados.Add(item);
             }
         }
 

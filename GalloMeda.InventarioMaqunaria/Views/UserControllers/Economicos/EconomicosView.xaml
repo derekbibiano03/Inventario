@@ -271,6 +271,41 @@
                     </DataGridTextColumn.HeaderTemplate>
                 </DataGridTextColumn>
 
+                <DataGridTextColumn Width="Auto" Binding="{Binding TipoSeguro}" IsReadOnly="True">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Tipo Seguro" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                <ComboBox Width="110" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroTiposSeguroOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <ComboBox.Template>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Grid>
+                                                <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
+                                                <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
+                                                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" Padding="5">
+                                                        <StackPanel>
+                                                            <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
+                                                            <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaTipoSeguro, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ComboBox.Template>
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
+
                 <DataGridTemplateColumn Header="Acciones">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

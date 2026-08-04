@@ -59,7 +59,8 @@ namespace Inventario.Core.Services.Economicos
                     IdUbicacionNavigation = e.IdUbicacionNavigation,
                     IdTipoEquipo = e.IdTipoEquipo,
                     IdTipoEquipoNavigation = e.IdTipoEquipoNavigation,
-                    IdMarcaNavigation = e.IdMarcaNavigation
+                    IdMarcaNavigation = e.IdMarcaNavigation,
+                    TipoSeguro = e.TipoSeguro
                 })
                 .ToList();
             return resultado;

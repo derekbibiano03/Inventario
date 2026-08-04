@@ -58,8 +58,8 @@ namespace Inventario.Core
                     worksheet.Cells[fila, 20].Value = item.IdPropietarioNavigation?.Nombre ?? "N/A";
                     worksheet.Cells[fila, 21].Value = item.IdAdministradorNavigation?.Nombre ?? "N/A";
                     worksheet.Cells[fila, 22].Value = item.IdEstatusNavigation?.DescripcionEstatus ?? "N/A";
-                    worksheet.Cells[fila, 23].Value = item.IdOperadorNavigation?.NombreOperador ?? "N/A";
-                    worksheet.Cells[fila, 24].Value = item.IdResponsableNavigation?.NombreResponsable ?? "N/A";
+                    worksheet.Cells[fila, 23].Value = item.IdOperadorNavigation?.NombreEmpleado ?? "N/A";
+                    worksheet.Cells[fila, 24].Value = item.IdResponsableNavigation?.NombreEmpleado ?? "N/A";
                     worksheet.Cells[fila, 25].Value = item.Horometro;
                     worksheet.Cells[fila, 26].Value = item.Placas;
 

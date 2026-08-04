@@ -137,6 +137,10 @@
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE GRUPOS" Tag="CatGrp" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE ESTATUS" Tag="CatTiEs" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE MARCAS" Tag="CatMarc" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE ADQUISICIONES" Tag="CatAdqs" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE MATERIALES" Tag="CatMater" Click="MenuItem_Click"/>
+
+
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>

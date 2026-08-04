@@ -88,14 +88,9 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
         // Método ejecutado al dar clic sobre el archivo en la lista
         private void EjecutarAbrirArchivo(CatalogoArchivo archivo)
         {
-            // 3. Validación de seguridad básica para evitar procesar objetos nulos o vacíos.
             if (string.IsNullOrEmpty(archivo?.Archivo)) return;
-
             try
             {
-                // 4. El ViewModel le solicita al servicio la ruta absoluta del archivo.
-                //    Si usas SFTP, el servicio se conectará a Ubuntu, descargará el archivo de forma oculta a la carpeta temporal de Windows
-                //    y nos devolverá la ruta local resultante. Si usas Samba, resolverá la ruta de red de inmediato.
                 string rutaCompleta = _archivosService.ObtenerRutaAbsoluta(archivo.Archivo);
 
                 // 5. Validación que confirma que el archivo ahora sí existe físicamente en el entorno local para ser abierto.

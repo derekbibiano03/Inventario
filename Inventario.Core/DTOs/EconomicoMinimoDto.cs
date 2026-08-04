@@ -18,6 +18,8 @@ namespace Inventario.Core.DTOs
         public string? NombreMarca { get; set; }
         public float? Horometro { get; set; }
 
+        public string? TipoSeguro { get; set; }
+
         public virtual CatalogoTiposEquipo? IdTipoEquipoNavigation { get; set; }
         public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
         public virtual CatalogoMarca? IdMarcaNavigation { get; set; }

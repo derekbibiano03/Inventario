@@ -115,10 +115,10 @@ Width="1050">
                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Detalle.IdTipoEquipoNavigation.DescripcionTipoEquipo}" Margin="0,4"/>
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Operador Asignado:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Detalle.IdOperadorNavigation.NombreOperador}" Margin="0,4"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Detalle.IdOperadorNavigation.NombreEmpleado}" Margin="0,4"/>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Responsable:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Detalle.IdResponsableNavigation.NombreResponsable}" Margin="0,4"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Detalle.IdResponsableNavigation.NombreEmpleado}" Margin="0,4"/>
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Ubicacion:" FontWeight="SemiBold" Margin="0,4"/>
                         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Detalle.IdUbicacionNavigation.NombreProyecto}" Margin="0,4"/>

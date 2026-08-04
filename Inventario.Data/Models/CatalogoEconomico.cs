@@ -24,10 +24,6 @@ public partial class CatalogoEconomico
 
     public int? IdEstatus { get; set; }
 
-    public int? IdOperador { get; set; }
-
-    public int? IdResponsable { get; set; }
-
     public int? IdUbicacion { get; set; }
 
     public string? Descripcion { get; set; }
@@ -68,6 +64,14 @@ public partial class CatalogoEconomico
 
     public decimal? ValorAdquisicion { get; set; }
 
+    public string? TipoSeguro { get; set; }
+
+    public int? IdOperador { get; set; }
+
+    public int? IdResponsable { get; set; }
+
+    public bool? Verificado { get; set; }
+
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicos { get; set; } = new List<CatalogoMovimientosEconomico>();
 
     public virtual ICollection<EconomicosArchivo> EconomicosArchivos { get; set; } = new List<EconomicosArchivo>();
@@ -82,11 +86,11 @@ public partial class CatalogoEconomico
 
     public virtual CatalogoMarca? IdMarcaNavigation { get; set; }
 
-    public virtual CatalogoOperadore? IdOperadorNavigation { get; set; }
+    public virtual Empleado? IdOperadorNavigation { get; set; }
 
     public virtual CatalogoPya? IdPropietarioNavigation { get; set; }
 
-    public virtual CatalogoResponsableMaquinarium? IdResponsableNavigation { get; set; }
+    public virtual Empleado? IdResponsableNavigation { get; set; }
 
     public virtual CatalogoTiposEquipo? IdTipoEquipoNavigation { get; set; }
 

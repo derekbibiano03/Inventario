@@ -13,25 +13,22 @@ using System.Windows.Input;
 
 namespace Inventario.Desktop.ViewModels.CatalogosViewModel
 {
-    public class GruposViewModel
+    public class GruposViewModel : INotifyPropertyChanged
     {
-
-
         private readonly CatalogoGruposService _gruposService;
 
         public ObservableCollection<CatalogoGrupo> Grupos { get; set; }
 
         public ICommand RegistrarGrupoCommand { get; }
 
-        private string _descripcionCorta;
+        private string _descripcionCorta = string.Empty;
         public string DescripcionCorta
-        { 
+        {
             get => _descripcionCorta;
             set { _descripcionCorta = value; OnPropertyChanged(); }
         }
 
-
-        private string _descripcionCompleta;
+        private string _descripcionCompleta = string.Empty;
         public string DescripcionCompleta
         {
             get => _descripcionCompleta;
@@ -40,7 +37,6 @@ namespace Inventario.Desktop.ViewModels.CatalogosViewModel
                 _descripcionCompleta = value; OnPropertyChanged();
             }
         }
-
 
         public GruposViewModel()
         {
@@ -51,9 +47,10 @@ namespace Inventario.Desktop.ViewModels.CatalogosViewModel
             _ = CargarGruposAsync();
         }
 
-        private void EjecutarRegistrarGrupo() 
+        private void EjecutarRegistrarGrupo()
         {
-            try {
+            try
+            {
 
                 if (string.IsNullOrWhiteSpace(this.DescripcionCorta))
                 {
@@ -68,22 +65,23 @@ namespace Inventario.Desktop.ViewModels.CatalogosViewModel
                     this.DescripcionCorta.Trim(),
                     this.DescripcionCompleta.Trim());
 
-                if (guardarRegistro) 
+                if (guardarRegistro)
                 {
-                    MessageBox.Show("¡Usuario registrado exitosamente con contraseña encriptada (BCrypt)!", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("¡Grupo registrado exitosamente!", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                     LimpiarFormulario();
                 }
-                
-            } 
 
-            catch (Exception ex){
+            }
+
+            catch (Exception ex)
+            {
                 string mensajeError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
                 MessageBox.Show(mensajeError, "Error al Registrar", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
         }
 
-        private void LimpiarFormulario() 
+        private void LimpiarFormulario()
         {
             this.DescripcionCompleta = string.Empty;
             this.DescripcionCorta = string.Empty;
@@ -105,8 +103,9 @@ namespace Inventario.Desktop.ViewModels.CatalogosViewModel
                 Grupos.Add(dato);
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

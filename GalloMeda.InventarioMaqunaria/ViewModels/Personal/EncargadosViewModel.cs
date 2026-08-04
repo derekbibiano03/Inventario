@@ -8,21 +8,22 @@ namespace Inventario.Desktop.ViewModels.Personal
 {
     public class EncargadosViewModel
     {
-        private readonly CatalogoEncargadoMaquinariaService _encargadoService;
-        public ObservableCollection<CatalogoResponsableMaquinarium> Encargados { get; set; }
+        private readonly EmpleadoService _empleadosService;
+        public ObservableCollection<Empleado> Encargados { get; set; }
 
         public EncargadosViewModel()
         {
             var context = new InventarioContext();
-            _encargadoService = new CatalogoEncargadoMaquinariaService(context);
-            Encargados = new ObservableCollection<CatalogoResponsableMaquinarium>();
+            _empleadosService = new EmpleadoService(context);
+            Encargados = new ObservableCollection<Empleado>();
             CargarResponsables();
         }
 
         public void CargarResponsables()
         { 
             Encargados.Clear();
-            var datosEncar = _encargadoService.ObtenerResponsables();
+            var rolesPermitidos = new List<int> { 2, 3, 4, 5, 6, 7 };
+            var datosEncar = _empleadosService.ObtenerResponsables(rolesPermitidos);
             foreach (var dato in datosEncar)
             {
                 Encargados.Add(dato);

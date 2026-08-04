@@ -18,6 +18,4 @@ public partial class Usuario
     public virtual ICollection<HistorialLog> HistorialLogs { get; set; } = new List<HistorialLog>();
 
     public virtual UsuariosRole? IdRolNavigation { get; set; }
-
-    public virtual ICollection<UsuriosRole> UsuriosRoles { get; set; } = new List<UsuriosRole>();
 }

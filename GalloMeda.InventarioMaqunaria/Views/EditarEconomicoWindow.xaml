@@ -91,17 +91,17 @@
 
                     <TextBlock Text="Operador del Económico:" FontWeight="Bold" Margin="0,0,0,5" />
                     <ComboBox ItemsSource="{Binding Operadores}"
-                              DisplayMemberPath="NombreOperador"
-                              SelectedValuePath="IdOperador"
-                              SelectedValue="{Binding EconomicoEdicion.IdOperador, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                              Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
+                          DisplayMemberPath="NombreEmpleado"
+                          SelectedValuePath="NoEmpleado"
+                          SelectedValue="{Binding EconomicoEdicion.IdOperador, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                          Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
 
                     <TextBlock Text="Responsable del Económico:" FontWeight="Bold" Margin="0,0,0,5" />
-                    <ComboBox ItemsSource="{Binding Responsables}"
-                              DisplayMemberPath="NombreResponsable"
-                              SelectedValuePath="IdResponsable"
-                              SelectedValue="{Binding EconomicoEdicion.IdResponsable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                              Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
+                    <ComboBox ItemsSource="{Binding Encargados}"
+                          DisplayMemberPath="NombreEmpleado"
+                          SelectedValuePath="NoEmpleado"
+                          SelectedValue="{Binding EconomicoEdicion.IdResponsable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                          Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
 
                     <TextBlock Text="Ubicación Actual:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <ComboBox ItemsSource="{Binding Ubicaciones}"
@@ -117,6 +117,10 @@
                     <TextBlock Text="Horómetro / Kilometraje:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <TextBox Text="{Binding EconomicoEdicion.Horometro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Valor Adquisicion:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding EconomicoEdicion.ValorAdquisicion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+         Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Vertical" Margin="20,10,10,10">
@@ -124,8 +128,8 @@
                     <ComboBox SelectedValue="{Binding EconomicoEdicion.Thk, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               SelectedValuePath="Content"
                               Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15">
-                        <ComboBoxItem Content="Kilometraje" />
-                        <ComboBoxItem Content="Horometro" />
+                        <ComboBoxItem Content="KILOMETRAJE" />
+                        <ComboBoxItem Content="HOROMETRO" />
                     </ComboBox>
 
                     <TextBlock Text="Marca Motor:" FontWeight="Bold" Margin="0,0,0,5"/>
@@ -157,8 +161,22 @@
                     <TextBox Text="{Binding EconomicoEdicion.PolizaAdjunta, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
 
+                    <TextBlock Text="Tipo de Seguro:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ComboBox SelectedValue="{Binding EconomicoEdicion.TipoSeguro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedValuePath="Content"
+                              Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15">
+                        <ComboBoxItem Content="SEGURO COMPLETO" />
+                        <ComboBoxItem Content="SEGURO EN ALMACEN" />
+                        <ComboBoxItem Content="SEGURO EN CAMPO" />
+                        <ComboBoxItem Content="SIN SEGURO" />
+                    </ComboBox>
+
                     <CheckBox Content="¿Tiene seguro este Económico?" 
                               IsChecked="{Binding EconomicoEdicion.EstatusSeguro, Mode=TwoWay}" 
+                              FontWeight="Bold" Margin="0,5,0,15"/>
+
+                    <CheckBox Content="¿El economico esta verificado?" 
+                              IsChecked="{Binding EconomicoEdicion.Verificado, Mode=TwoWay}" 
                               FontWeight="Bold" Margin="0,5,0,15"/>
                 </StackPanel>
             </Grid>

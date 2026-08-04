@@ -105,8 +105,8 @@
                 <TextBlock Text="Operador el economico:" FontWeight="Bold" Margin="0,00,0,10" />
                 <ComboBox 
                     ItemsSource="{Binding Operadores}"
-                    DisplayMemberPath="NombreOperador"
-                    SelectedValuePath="IdOperador"
+                    DisplayMemberPath="NombreEmpleado"
+                    SelectedValuePath="NoEmpleado"
                     SelectedValue="{Binding IdOperadorSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     Width="250"
                     Height="30"
@@ -116,8 +116,8 @@
                 <TextBlock Text="Responsable del economico:" FontWeight="Bold" Margin="0,0,0,10" />
                 <ComboBox 
                     ItemsSource="{Binding Responsables}"
-                    DisplayMemberPath="NombreResponsable"
-                    SelectedValuePath="IdResponsable"
+                    DisplayMemberPath="NombreEmpleado"
+                    SelectedValuePath="NoEmpleado"
                     SelectedValue="{Binding IdResponsableSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     Width="250"
                     Height="30"
@@ -143,14 +143,15 @@
 
                 <TextBlock Text="Medida en Horometro o Kilometraje:" FontWeight="Bold" Margin="0,0,0,10"/>
                 <ComboBox SelectedValue="{Binding THK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     SelectedValuePath="Content"
-                     Width="250" 
-                     Height="30"
-                     HorizontalAlignment="Left"
-                     Margin="0,0,0,10">
+                          SelectedValuePath="Content"
+                          Width="250" 
+                          Height="30"
+                          HorizontalAlignment="Left"
+                          Margin="0,0,0,10">
                     <ComboBoxItem Content="Kilometraje" />
-                    <ComboBoxItem Content="Horomeetro" />
+                    <ComboBoxItem Content="Horometro" />
                 </ComboBox>
+
                 <TextBlock Text="Observaciones:" FontWeight="Bold" Margin="0,0,0,10"/>
                 <TextBox Text="{Binding Observaciones, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                      HorizontalAlignment="Left" 
@@ -160,6 +161,19 @@
                      AcceptsReturn="True"
                      TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto"/>
+
+                <TextBlock Text="Tipo de Seguro:" FontWeight="Bold" Margin="0,0,0,10"/>
+                <ComboBox SelectedValue="{Binding TipoSeguro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValuePath="Content"
+                          Width="250" 
+                          Height="30"
+                          HorizontalAlignment="Left"
+                          Margin="0,0,0,10">
+                    <ComboBoxItem Content="SEGURO COMPLETO" />
+                    <ComboBoxItem Content="SEGURO EN ALMACEN" />
+                    <ComboBoxItem Content="SEGURO EN CAMPO" />
+                    <ComboBoxItem Content="SIN SEGURO" />
+                </ComboBox>
 
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="2" Margin="30,30,10,0" Orientation="Vertical">

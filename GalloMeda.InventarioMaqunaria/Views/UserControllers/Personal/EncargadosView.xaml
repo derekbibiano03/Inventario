@@ -29,8 +29,8 @@ RowHeight="30"
 AlternatingRowBackground="#F9F9F9">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID Operador" Width="Auto" Binding="{Binding IdResponsable}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Nombre del Operador" Width="*" Binding="{Binding NombreResponsable}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="ID Operador" Width="Auto" Binding="{Binding NoEmpleado}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Nombre del Operador" Width="*" Binding="{Binding NombreEmpleado}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

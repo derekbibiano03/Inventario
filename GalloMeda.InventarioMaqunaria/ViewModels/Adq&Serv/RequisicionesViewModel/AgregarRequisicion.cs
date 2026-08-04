@@ -1,7 +1,7 @@
 ﻿using Inventario.Core.Services.Adq_Serv.AdquisicionService;
+using Inventario.Core.Services.Economicos;
 using Inventario.Core.Services.UbicacionProyecto;
 using Inventario.Data.Models;
-using Inventario.Core.Services.Economicos;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,16 +13,16 @@ using System.Windows.Data;
 
 namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
 {
-    public class AgregarRequisicion
+    public class AgregarRequisicion : INotifyPropertyChanged
     {
         private readonly AdquisicionService _adquisicionesService;
         private readonly InventarioContext _contextoBD;
 
-        public ObservableCollection<CatalogoEconomico> ListaEconomicos { get; set; }
+        public ObservableCollection<CatalogoEconomico> ListaEconomicos { get; set; } = new ObservableCollection<CatalogoEconomico>();
 
         public ICollectionView EconomicosFiltrados { get; set; }
 
-        private string _textoBusquedaId;
+        private string _textoBusquedaId = string.Empty;
         public string TextoBusquedaId
         {
             get => _textoBusquedaId;
@@ -33,20 +33,19 @@ namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
                 EconomicosFiltrados.Refresh();
             }
         }
-        
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; set; }
 
-        private string _idUbicacionSeleccionado;
+        private string _idUbicacionSeleccionado = string.Empty;
         public string IdUbicacionSeleccionado { get => _idUbicacionSeleccionado; set { _idUbicacionSeleccionado = value; OnPropertyChanged(); } }
 
-        public AgregarRequisicion(AdquisicionService adquisicionesService) 
+        public AgregarRequisicion(AdquisicionService adquisicionesService)
         {
             _adquisicionesService = adquisicionesService;
             _contextoBD = new InventarioContext();
@@ -59,7 +58,7 @@ namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
             EconomicosFiltrados.Filter = FiltroBusquedaId;
         }
 
-        public void CargarInformacion() 
+        public void CargarInformacion()
         {
             var datoUbicacion = _adquisicionesService.ObtenerProyectos();
             foreach (var ubi in datoUbicacion) { Ubicaciones.Add(ubi); }
@@ -75,7 +74,6 @@ namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
             }
             return false;
         }
-
 
         private void CargarEconomicosDesdeBD()
         {
@@ -93,11 +91,9 @@ namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
 
         public class OpcionComboBox
         {
-            // Esta propiedad guarda el texto que verá el usuario (ej. "Gallo Meda")
-            public string Texto { get; set; }
+            public string Texto { get; set; } = string.Empty;
 
-            // Esta propiedad guarda el valor interno que obtendrás en código (ej. "GMD")
-            public string Valor { get; set; }
+            public string Valor { get; set; } = string.Empty;
         }
     }
 }

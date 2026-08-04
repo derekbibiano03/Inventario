@@ -28,5 +28,6 @@
 
         // 4. Booleano del seguro
         public required bool EstatusSeguro { get; set; }
+        public string? TipoSeguro { get; set; }
     }
 }

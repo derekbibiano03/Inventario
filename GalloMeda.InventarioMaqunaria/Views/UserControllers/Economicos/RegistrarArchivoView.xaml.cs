@@ -1,4 +1,5 @@
-﻿using Inventario.Desktop.ViewModels.EconomicosViewModel;
+﻿
+using Inventario.Desktop.ViewModels.EconomicosViewModel;
 using Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel;
 using System;
 using System.Collections.Generic;

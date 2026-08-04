@@ -15,6 +15,8 @@ public partial class CatalogoUbicacionesProyecto
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicos { get; set; } = new List<CatalogoEconomico>();
 
+    public virtual ICollection<CatalogoHerramientasMateriale> CatalogoHerramientasMateriales { get; set; } = new List<CatalogoHerramientasMateriale>();
+
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicoIdUbicacionLlegadaNavigations { get; set; } = new List<CatalogoMovimientosEconomico>();
 
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicoIdUbicacionSalidaNavigations { get; set; } = new List<CatalogoMovimientosEconomico>();

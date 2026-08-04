@@ -7,6 +7,7 @@ using Inventario.Core.Services.Personal;
 using Inventario.Core.Services.UbicacionProyecto;
 using Inventario.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -33,8 +34,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         private readonly CatalogoCombustiblesService _combustiblesService;
         private readonly ProAdminService _pyaService;
         private readonly UbicacionProyeectoService _ubicacionService;
-        private readonly CatalogoOperadoresService _operadorService;
-        private readonly CatalogoEncargadoMaquinariaService _responsableService;
+        private readonly EmpleadoService _empleadosService;
         private readonly CatalogoEconomicosService _economicosService;
 
         // COLECCIONES PARA COMBOBOX
@@ -44,8 +44,9 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         public ObservableCollection<CatalogoTiposCombustible> Combustibles { get; set; }
         public ObservableCollection<CatalogoPya> PYA { get; set; }
         public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; set; }
-        public ObservableCollection<CatalogoOperadore> Operadores { get; set; }
-        public ObservableCollection<CatalogoResponsableMaquinarium> Responsables { get; set; }
+        public ObservableCollection<Empleado> Empleados { get; set; }
+        public ObservableCollection<Empleado> Responsables { get; set; }
+        public ObservableCollection<Empleado> Operadores { get; set; }
 
         // VARIABLES DE SELECCIÓN DE COMBOBOX
         private string _idTipoEquipoSeleccionado = "F";
@@ -56,7 +57,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
 
         private int _idCombustibleSeleccionado = 7;
         public int IdCombustibleSeleccionado { get => _idCombustibleSeleccionado; set { _idCombustibleSeleccionado = value; OnPropertyChanged(); } }
-        
+
         private int _idMarcaSeleccionado = 12;
         public int IdMarcaSeleccionado { get => _idMarcaSeleccionado; set { _idMarcaSeleccionado = value; OnPropertyChanged(); } }
 
@@ -90,14 +91,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         private string _serie = "SERIE SIN IDENTIFICAR";
         public string Serie { get => _serie; set { _serie = value; OnPropertyChanged(); } }
 
-        private int _periodoFab = 0;
-        public int PeriodoFab { get => _periodoFab; set { _periodoFab = value; OnPropertyChanged(); } }
+        // CORRECCIÓN: int? permite valores nulos en inputs de texto
+        private int? _periodoFab = 0;
+        public int? PeriodoFab { get => _periodoFab; set { _periodoFab = value; OnPropertyChanged(); } }
 
-        private int _horometro = 0;
-        public int Horometro { get => _horometro; set { _horometro = value; OnPropertyChanged(); } }
-
-        private int _marcaMotor = 12;
-        public int MarcaMotor { get => _marcaMotor; set { _marcaMotor = value; OnPropertyChanged(); } }
+        private int? _horometro = 0;
+        public int? Horometro { get => _horometro; set { _horometro = value; OnPropertyChanged(); } }
 
         private string _modeloMotor = "MODELO DE MOTOR SIN IDENTIFICAR O NO TIENE MOTOR";
         public string ModeloMotor { get => _modeloMotor; set { _modeloMotor = value; OnPropertyChanged(); } }
@@ -120,69 +119,54 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         private string _thk = "SIN IDENTIFICAR HOROMETRO O KILOMETRAJE";
         public string THK { get => _thk; set { _thk = value; OnPropertyChanged(); } }
 
+        private string _tipoSeguro = "SIN SEGURO";
+        public string TipoSeguro { get => _tipoSeguro; set { _tipoSeguro = value; OnPropertyChanged(); } }
+
         private bool _estatusSeguro = false;
         public bool EstatusSeguro { get => _estatusSeguro; set { _estatusSeguro = value; OnPropertyChanged(); } }
 
-
-        
         public EconomicosAltaViewModel(CatalogoMarcasService marcasService,
                                        CatalogoTiposEquipoService tipoEquipoService,
                                        CatalogoGruposService grupoService,
                                        CatalogoCombustiblesService combustibleService,
                                        ProAdminService pyaService,
                                        UbicacionProyeectoService ubicacionService,
-                                       CatalogoOperadoresService operadorService,
-                                       CatalogoEncargadoMaquinariaService responsableService,
+                                       EmpleadoService empleadoService,
                                        CatalogoEconomicosService economicosService)
         {
-            // Asigna un valor por defecto predeterminado al identificador de la marca del motor
             MarcaMotorSeleccionado = 60;
 
-            // Inicializa el servicio de marcas y prepara su colección enlazada a la UI
             _marcasService = marcasService;
             Marcas = new ObservableCollection<CatalogoMarca>();
 
-            // Inicializa el servicio de categorías de equipo y prepara su colección enlazada a la UI
             _tipoEquipoService = tipoEquipoService;
             TipoEquipo = new ObservableCollection<CatalogoTiposEquipo>();
 
-            // Inicializa el servicio de grupos de activos y prepara su colección enlazada a la UI
             _gruposService = grupoService;
             Grupos = new ObservableCollection<CatalogoGrupo>();
 
-            // Inicializa el servicio de combustibles y prepara su colección enlazada a la UI
             _combustiblesService = combustibleService;
             Combustibles = new ObservableCollection<CatalogoTiposCombustible>();
 
-            // Inicializa el servicio de propietarios y administradores, preparando su colección para la UI
             _pyaService = pyaService;
             PYA = new ObservableCollection<CatalogoPya>();
 
-            // Inicializa el servicio de frentes de obra/proyectos junto a su colección para la UI
             _ubicacionService = ubicacionService;
             Ubicaciones = new ObservableCollection<CatalogoUbicacionesProyecto>();
 
-            // Inicializa el servicio de operadores asignados y prepara su colección para la UI
-            _operadorService = operadorService;
-            Operadores = new ObservableCollection<CatalogoOperadore>();
+            _empleadosService = empleadoService;
+            Empleados = new ObservableCollection<Empleado>();
 
-            // Inicializa el servicio de encargados de maquinaria junto a su colección para la UI
-            _responsableService = responsableService;
-            Responsables = new ObservableCollection<CatalogoResponsableMaquinarium>();
+            // CORRECCIÓN: Inicializar explícitamente estas colecciones
+            Responsables = new ObservableCollection<Empleado>();
+            Operadores = new ObservableCollection<Empleado>();
 
-            // CORRECCIÓN: Asigna el comando apuntando al método real de tu clase: 'EjecutarAltaEconomico'
             AltaEconomicoCommand = new RelayCommand(EjecutarAltaEconomico);
 
-            // Abre una conexión aislada a PostgreSQL exclusivamente para operaciones de auditoría interna
             var contexto = new InventarioContext();
-
-            // Instancia el gestor de bitácoras asociándole el contexto de datos recién abierto
             var logsService = new LogsService(contexto);
-
-            // Sobreescribe la variable del servicio asignándole la instancia parametrizada de manera correcta
             _economicosService = new CatalogoEconomicosService(contexto, logsService);
 
-            // Llama a la función interna encargada de descargar y rellenar todos los listados de los ComboBoxes
             CargarTipos();
         }
 
@@ -206,21 +190,21 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             var datosUbi = _ubicacionService.ObtenerUbicaciones();
             foreach (var datoU in datosUbi) { Ubicaciones.Add(datoU); }
 
-            var datosOper = _operadorService.ObtenerOperadores();
-            foreach (var datoOp in datosOper) { Operadores.Add(datoOp); }
+            var rolesPermitidos = new List<int> { 2, 3, 4, 5, 6, 7 };
+            var datosRes = _empleadosService.ObtenerResponsables(rolesPermitidos);
+            foreach (var responsable in datosRes) { Responsables.Add(responsable); }
 
-            var datosRes = _responsableService.ObtenerResponsables();
-            foreach (var dator in datosRes) { Responsables.Add(dator); }
+            var datosOpera = _empleadosService.ObtenerResponsables(rolesPermitidos);
+            // CORRECCIÓN: Se agrega a Operadores, no a Responsables
+            foreach (var operador in datosOpera) { Operadores.Add(operador); }
         }
 
         private void EjecutarAltaEconomico()
         {
             try
             {
-                // GENERADO: Mapeo completo de absolutamente todos los campos del formulario al DTO
                 var dto = new EconomicoAltaDto
                 {
-                    // Identificadores y selecciones de ComboBoxes
                     IdTipoEquipo = this.IdTipoEquipoSeleccionado,
                     IdGrupo = this.IdGrupoSeleccionado,
                     IdCombustible = this.IdCombustibleSeleccionado,
@@ -231,29 +215,23 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                     IdResponsable = this.IdResponsableSeleccionado,
                     GradoPropiedad = this.GradoPropiedadSeleccionado,
                     IdMarca = this.IdMarcaSeleccionado,
-                    // Campos de texto generales del equipo
-
                     Modelo = this.Modelo,
                     Serie = this.Serie,
-                    PeriodoFab = this.PeriodoFab,
+                    PeriodoFab = this.PeriodoFab ?? 0,
                     Placas = this.Placas,
-
-                    // Especificaciones del motor
                     MarcaMotor = this.MarcaMotorSeleccionado,
                     ModeloMotor = this.ModeloMotor,
                     SerieMotor = this.SerieMotor,
                     FamiliaMotor = this.FamiliaMotor,
-
-                    // Documentos, observaciones y estados lógicos
                     Observaciones = this.Observaciones,
                     PolizaAdj = this.PolizaAdj,
                     EstatusSeguro = this.EstatusSeguro,
-                    Horometro = this.Horometro,
+                    Horometro = this.Horometro ?? 0,
                     Dimensiones = this.Dimensiones,
                     THK = this.THK,
+                    TipoSeguro = this.TipoSeguro,
                 };
 
-                // Llamada directa al método de la clase en el .Core
                 _economicosService.RegistrarEconomico(App.Session.IdUsuario, dto);
 
                 MessageBox.Show("¡Guardado exitosamente en PostgreSQL!", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -267,12 +245,10 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
 
         private void LimpiarFormulario()
         {
-            // Restablecimiento de campos de texto e información general
             Serie = string.Empty;
             Observaciones = string.Empty;
             Modelo = string.Empty;
             PeriodoFab = 0;
-            MarcaMotor = 0;
             ModeloMotor = string.Empty;
             SerieMotor = string.Empty;
             FamiliaMotor = string.Empty;
@@ -282,9 +258,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             Horometro = 0;
             Dimensiones = string.Empty;
 
-            // GENERADO: Limpieza y reinicio explícito de los ComboBoxes para dejar el formulario completamente vacío
             IdMarcaSeleccionado = 60;
-            MarcaMotor = 60;
+            MarcaMotorSeleccionado = 60;
             IdTipoEquipoSeleccionado = string.Empty;
             IdGrupoSeleccionado = string.Empty;
             IdCombustibleSeleccionado = 7;

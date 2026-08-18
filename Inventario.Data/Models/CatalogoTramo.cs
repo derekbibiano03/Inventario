@@ -7,11 +7,11 @@ public partial class CatalogoTramo
 {
     public int IdTramo { get; set; }
 
-    public int IdUbicacion { get; set; }
+    public int? IdUbicacion { get; set; }
 
-    public string NombreTramo { get; set; } = null!;
+    public string? NombreTramo { get; set; }
 
     public virtual ICollection<CatalogoFrente> CatalogoFrentes { get; set; } = new List<CatalogoFrente>();
 
-    public virtual CatalogoUbicacionesProyecto IdUbicacionNavigation { get; set; } = null!;
+    public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
 }

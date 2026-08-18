@@ -5,308 +5,244 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:Inventario.Desktop.ViewModels.EconomicosViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    
-    <Grid>
-        
-        <Grid Margin="20">
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <!-- Estilo moderno para los encabezados de las columnas -->
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#1E293B"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+            <Setter Property="BorderBrush" Value="#334155"/>
+        </Style>
+
+        <!-- Estilo para las celdas del DataGrid -->
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="{TemplateBinding Padding}" 
+                                Background="{TemplateBinding Background}" 
+                                BorderThickness="0">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#E2E8F0"/>
+                    <Setter Property="Foreground" Value="#0F172A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Estilo base de botones secundarios -->
+        <Style x:Key="BtnSecondary" TargetType="Button">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E2E8F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Estilo base de botones primarios/acción -->
+        <Style x:Key="BtnPrimary" TargetType="Button">
+            <Setter Property="Background" Value="#0284C7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0369A1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Estilo para los botones de hipervínculo de archivos -->
+        <Style x:Key="BtnLinkArchivo" TargetType="Button">
+            <Setter Property="Foreground" Value="#0284C7"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock Text="{TemplateBinding Content}" 
+                                   TextDecorations="Underline" 
+                                   Foreground="{TemplateBinding Foreground}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#0369A1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#F8FAFC">
+        <Grid Margin="24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-                <Button Content="Limpiar Filtros" 
-        Width="100" Height="28" Margin="0,14,0,0" Background="#E0E0E0" BorderBrush="#CCCCCC"/>
-                <Button Content="Exportar Todo a Excel" 
-        Width="150" 
-        Height="35" 
-        HorizontalAlignment="Right" 
-        VerticalAlignment="Top" 
-        Margin="30,10,10,0"/>
-            </StackPanel>
+            <!-- CONTENEDOR CON BORDE Y SOMBRA PARA EL DATAGRID -->
+            <Border Grid.Row="1" 
+                    Background="White" 
+                    CornerRadius="8" 
+                    BorderBrush="#E2E8F0" 
+                    BorderThickness="1">
 
-            <DataGrid Grid.Row="1" 
-      ItemsSource="{Binding VistaHistorialMovimientos}" 
-      AutoGenerateColumns="False" 
-      CanUserAddRows="False" 
-      HeadersVisibility="Column"
-      GridLinesVisibility="Horizontal"
-      Background="White"
-      BorderBrush="#CCCCCC"
-      BorderThickness="1"
-      RowHeight="35"
-      AlternatingRowBackground="#F9F9F9">
+                <DataGrid ItemsSource="{Binding VistaHistorialMovimientos}" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False" 
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#F1F5F9"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          RowHeight="42"
+                          AlternatingRowBackground="#F8FAFC">
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding IdMovimiento}" Width="auto">
-                        <DataGridTextColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="ID MOVIMIENTO" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <!-- 
-                            <ComboBox Width="110" Height="25" Margin="0,2,0,0"
-                              ItemContainerStyle="{StaticResource EstiloDropdownExcel}"
-                              ItemsSource="{Binding DataContext.FiltroIdOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                <ComboBox.Template>
-                                    <ControlTemplate TargetType="ComboBox">
-                                        <Grid>
-                                            <ToggleButton x:Name="ToggleButton" BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
-                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" CornerRadius="2" Padding="5">
-                                                    <StackPanel>
-                                                        <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
-                                                        <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaId, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                                                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                                        </ScrollViewer>
-                                                    </StackPanel>
-                                                </Border>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ComboBox.Template>
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            -->
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTextColumn.HeaderTemplate>
-                    </DataGridTextColumn>
+                    <DataGrid.Columns>
 
-                    <DataGridTextColumn Width="Auto" Binding="{Binding IdUbicacionLlegadaNavigation.NombreProyecto}" IsReadOnly="True">
-                        <DataGridTextColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="UBICACION INICIAL" HorizontalAlignment="Center" FontWeight="Bold"/>
+                        <DataGridTextColumn Header="ID MOVIMIENTO" 
+                                            Binding="{Binding IdMovimiento}" 
+                                            Width="120"/>
 
-                                    <!-- 
-                            <ComboBox Width="130" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroDescripcionesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                <ComboBox.Template>
-                                    <ControlTemplate TargetType="ComboBox">
-                                        <Grid>
-                                            <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
-                                            <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
-                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="200" Padding="5">
-                                                    <StackPanel>
-                                                        <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
-                                                        <TextBox Width="185" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaDescripcion, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                                                            <ItemsPresenter/>
-                                                        </ScrollViewer>
-                                                    </StackPanel>
-                                                </Border>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ComboBox.Template>
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        -->
+                        <DataGridTextColumn Header="UBICACIÓN INICIAL" 
+                                            Binding="{Binding IdUbicacionSalidaNavigation.NombreProyecto}" 
+                                            Width="*" 
+                                            IsReadOnly="True"/>
 
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTextColumn.HeaderTemplate>
-                    </DataGridTextColumn>
+                        <DataGridTextColumn Header="UBICACIÓN FINAL" 
+                                            Binding="{Binding IdUbicacionLlegadaNavigation.NombreProyecto}" 
+                                            Width="*" 
+                                            IsReadOnly="True"/>
 
-                    <DataGridTextColumn Width="Auto" Binding="{Binding IdUbicacionSalidaNavigation.NombreProyecto}" IsReadOnly="True">
-                        <DataGridTextColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="UBICACION FIN" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <!--
-                            <ComboBox Width="110" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroMarcasOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                <ComboBox.Template>
-                                    <ControlTemplate TargetType="ComboBox">
-                                        <Grid>
-                                            <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
-                                            <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
-                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" Padding="5">
-                                                    <StackPanel>
-                                                        <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
-                                                        <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaMarca, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                                                            <ItemsPresenter/>
-                                                        </ScrollViewer>
-                                                    </StackPanel>
-                                                </Border>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ComboBox.Template>
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        -->
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTextColumn.HeaderTemplate>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Width="Auto" Binding="{Binding IdEconomico}" IsReadOnly="True">
-                        <DataGridTextColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="ECONOMICO" HorizontalAlignment="Center" FontWeight="Bold"/>
-                                    <!-- 
-                            <ComboBox Width="110" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroSeriesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                <ComboBox.Template>
-                                    <ControlTemplate TargetType="ComboBox">
-                                        <Grid>
-                                            <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
-                                            <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
-                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" Padding="5">
-                                                    <StackPanel>
-                                                        <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
-                                                        <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaSerie, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                                                            <ItemsPresenter/>
-                                                        </ScrollViewer>
-                                                    </StackPanel>
-                                                </Border>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ComboBox.Template>
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            -->
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTextColumn.HeaderTemplate>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Width="130" Binding="{Binding IdUsuarioNavigation.NombreUsuario}" IsReadOnly="True">
-                        <DataGridTextColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="USUARIO" HorizontalAlignment="Center" FontWeight="Bold"/>
+                        <DataGridTextColumn Header="ECOLÓGICO / ECONÓMICO" 
+                                            Binding="{Binding IdEconomico}" 
+                                            Width="160" 
+                                            IsReadOnly="True"/>
 
-                                    <!-- 
-                            <ComboBox Width="110" Height="25" Margin="0,2,0,0" ItemContainerStyle="{StaticResource EstiloDropdownExcel}" ItemsSource="{Binding DataContext.FiltroTipoEquipoOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                <ComboBox.Template>
-                                    <ControlTemplate TargetType="ComboBox">
-                                        <Grid>
-                                            <ToggleButton BorderThickness="1" Background="White" BorderBrush="Gray" IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ClickMode="Press" Content="Filtrar ▾"/>
-                                            <Popup Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" PopupAnimation="Slide">
-                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" MinWidth="180" Padding="5">
-                                                    <StackPanel>
-                                                        <TextBlock Text="Buscar:" FontSize="10" Foreground="Gray"/>
-                                                        <TextBox Width="165" Margin="0,2,0,5" Text="{Binding DataContext.BusquedaTipoEquipo, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                                                            <ItemsPresenter/>
-                                                        </ScrollViewer>
-                                                    </StackPanel>
-                                                </Border>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ComboBox.Template>
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Margin="2,1"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            -->
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTextColumn.HeaderTemplate>
-                    </DataGridTextColumn>
+                        <DataGridTextColumn Header="USUARIO" 
+                                            Binding="{Binding IdUsuarioNavigation.NombreUsuario}" 
+                                            Width="140" 
+                                            IsReadOnly="True"/>
 
-                    <!-- Columna adaptada para visualizar/abrir los archivos adjuntos -->
-                    <DataGridTemplateColumn Header="ARCHIVOS" Width="Auto">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="2">
+                        <!-- COLUMNA DE ARCHIVOS ADJUNTOS -->
+                        <!-- COLUMNA DE ARCHIVOS ADJUNTOS CORREGIDA -->
+                        <DataGridTemplateColumn Header="ARCHIVOS ADJUNTOS" Width="200">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="4">
 
-                                    <!-- Botón para Visualizar Archivo 1 -->
-                                    <Button Content="{Binding NombreArchivo}" 
+                                        <!-- Botón Archivo 1 -->
+                                        <Button Content="{Binding NombreArchivo}" 
                         Command="{Binding DataContext.VerArchivoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                        CommandParameter="{Binding Archivo}"
-                        Foreground="#0066CC"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand"
-                        HorizontalAlignment="Left">
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding NombreArchivo}" Value="{x:Null}">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding NombreArchivo}" Value="">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                        CommandParameter="{Binding Archivo}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource BtnLinkArchivo}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding NombreArchivo}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding NombreArchivo}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
 
-                                    <!-- Botón para Visualizar Archivo 2 -->
-                                    <Button Content="{Binding NombreArchivo2}" 
+                                        <!-- Botón Archivo 2 -->
+                                        <Button Content="{Binding NombreArchivo2}" 
                         Command="{Binding DataContext.VerArchivoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                        CommandParameter="{Binding Archivo2}"
-                        Foreground="#0066CC"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Cursor="Hand"
-                        Margin="0,2,0,0"
-                        HorizontalAlignment="Left">
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding NombreArchivo2}" Value="{x:Null}">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding NombreArchivo2}" Value="">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                        CommandParameter="{Binding Archivo2}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource BtnLinkArchivo}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding NombreArchivo2}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding NombreArchivo2}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
 
-                                    <!-- Texto alternativo si no hay ningún archivo -->
-                                    <TextBlock Text="Sin archivos" Foreground="Gray" FontStyle="Italic">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding NombreArchivo}" Value="{x:Null}"/>
-                                                            <Condition Binding="{Binding NombreArchivo2}" Value="{x:Null}"/>
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </MultiDataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                        <!-- Indicador vacío -->
+                                        <TextBlock Text="Sin archivos" Foreground="#94A3B8" FontStyle="Italic" FontSize="11">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding NombreArchivo}" Value="{x:Null}"/>
+                                                                <Condition Binding="{Binding NombreArchivo2}" Value="{x:Null}"/>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
 
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
 
-                </DataGrid.Columns>
-            </DataGrid>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>

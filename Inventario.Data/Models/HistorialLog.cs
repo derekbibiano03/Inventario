@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 
 namespace Inventario.Data.Models;
 
@@ -16,7 +15,9 @@ public partial class HistorialLog
 
     public DateTime? FechaLog { get; set; }
 
-    public IPAddress? IpAddress { get; set; }
+    public string IpAddress { get; set; } = null!;
+
+    public string? UserAgent { get; set; }
 
     public virtual Usuario? IdUsuarioNavigation { get; set; }
 }

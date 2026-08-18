@@ -29,10 +29,8 @@ namespace Inventario.Core.Services.Personal
         }
         public List<Empleado> ObtenerOperadores()
         {
-            var hoy = DateOnly.FromDateTime(DateTime.Now);
 
             var resultado = _context.Empleados
-                .Where(e => e.Ds3.HasValue && e.Ds3.Value > hoy)
                 .Select(e => new Empleado
                 {
                     NoEmpleado = e.NoEmpleado,
@@ -46,7 +44,6 @@ namespace Inventario.Core.Services.Personal
         public List<Empleado> ObtenerOperadoresConFechaNoNula()
         {
             var resultado = _context.Empleados
-                .Where(e => e.Ds3.HasValue) // Filtra para traer solo registros cuya fecha NO sea NULL
                 .Select(e => new Empleado
                 {
                     NoEmpleado = e.NoEmpleado,

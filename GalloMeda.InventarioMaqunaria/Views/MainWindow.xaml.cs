@@ -92,14 +92,11 @@ namespace Inventario.Desktop.Views
                         ContenedorPrincipal.Content = new RegistrarArchivoView();
                         textoPanel = "ADJUNTAR DOCUMENTO O IMAGEN";
                         break;
-                    case "VerServicios":
-                        ContenedorPrincipal.Content = new HistorialServiciosView();
-                        textoPanel = "HISTORIAL DE SERVICIOS";
-                        break;
                     case "HisMoverEconomico":
                         ContenedorPrincipal.Content = new HistorialMovimientosView();
                         textoPanel = "HISTORIAL DE MOVIMIENTOS";
                         break;
+                        
 
                     // Seccion Personal
                     case "VerOperadores":
@@ -129,10 +126,6 @@ namespace Inventario.Desktop.Views
                     case "CatTipEq":
                         ContenedorPrincipal.Content = new TiposEquipoView();
                         textoPanel = "CATALOGO DE TIPOS DE EQUIPOS";
-                        break;
-                    case "CatSer":
-                        ContenedorPrincipal.Content = new ServiciosView();
-                        textoPanel = "CATALOGO DE SERVICIOS";
                         break;
                     case "CatGrp":
                         ContenedorPrincipal.Content = new GruposView();
@@ -165,6 +158,16 @@ namespace Inventario.Desktop.Views
                     case "AddReq":
                         ContenedorPrincipal.Content = new AgregarRequisicionView();
                         textoPanel = "AÑADIR NUEVA REQUISICION";
+                        break;
+
+                    case "HistServ":
+                        ContenedorPrincipal.Content = new AgregarServicioView();
+                        textoPanel = "NUEVO SERVICIOS REALIZADOS";
+                        break;
+
+                    case "VerServicios":
+                        ContenedorPrincipal.Content = new HistorialServicioView();
+                        textoPanel = "HISTORIAL DE SERVICIOS REALIZADOS";
                         break;
                 }
                 txtPanel.Text = textoPanel;

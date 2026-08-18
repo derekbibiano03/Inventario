@@ -5,6 +5,9 @@ using Inventario.Data.Models;
 using Inventario.Desktop.ViewModels.Auth;
 using Inventario.Desktop.Views;
 using InventarioMaquinaria.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -13,6 +16,30 @@ namespace GalloMeda.InventarioMaqunaria
 {
     public partial class App : Application
     {
+
+        public static IServiceProvider ServiceProvider { get; private set; }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            IConfiguration configuration = builder.Build();
+
+            var serviceCollection = new ServiceCollection();
+
+            var connectionString = configuration.GetConnectionString("InventarioConnection");
+
+            serviceCollection.AddDbContext<InventarioContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            );
+
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+        }
+
         public static ISessionService Session { get; private set; } = new SessionService();
 
         private void Application_Startup(object sender, StartupEventArgs e)

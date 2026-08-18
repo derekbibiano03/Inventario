@@ -12,6 +12,4 @@ public partial class CatalogoProveedore
     public string? NumeroContacto { get; set; }
 
     public string? CorreoElectronico { get; set; }
-
-    public virtual ICollection<CatalogoHerramientasMateriale> CatalogoHerramientasMateriales { get; set; } = new List<CatalogoHerramientasMateriale>();
 }

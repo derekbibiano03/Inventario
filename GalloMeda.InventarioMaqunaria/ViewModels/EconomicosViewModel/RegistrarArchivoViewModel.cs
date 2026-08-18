@@ -76,7 +76,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         public RegistrarArchivoViewModel()
         {
             _contextoBD = new InventarioContext();
-            _gestorArchivosService = new GestorArchivosService();
+            _gestorArchivosService = new GestorArchivosService(_contextoBD);
             _logsService = new LogsService(_contextoBD);
 
             SeleccionarArchivoCommand = new RelayCommand(EjecutarSeleccionarArchivo);

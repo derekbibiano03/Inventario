@@ -5,7 +5,7 @@ namespace Inventario.Data.Models;
 
 public partial class Requisicione
 {
-    public string? IdRequisicion { get; set; }
+    public string IdRequisicion { get; set; } = null!;
 
     public int? IdUbicacion { get; set; }
 
@@ -16,6 +16,4 @@ public partial class Requisicione
     public DateOnly? FechaRequisicion { get; set; }
 
     public string? TipoRequisicion { get; set; }
-
-    public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
 }

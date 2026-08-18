@@ -15,6 +15,9 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
 {
     public class DetallesViewModel : INotifyPropertyChanged
     {
+
+        private readonly InventarioContext _contextoBD;
+        private readonly InventarioContext _context;
         // 1. Declaración de dependencias del servicio de archivos y el contexto de base de datos.
         private readonly GestorArchivosService _archivosService;
         private CatalogoEconomico? _detalle;
@@ -48,8 +51,9 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
 
         public DetallesViewModel(string idEconomico)
         {
+            _contextoBD = new InventarioContext();
             // 2. Inicialización del servicio encargado de interactuar con el servidor de archivos Ubuntu.
-            _archivosService = new GestorArchivosService();
+            _archivosService = new GestorArchivosService(_contextoBD);
             _archivosAnexados = new ObservableCollection<CatalogoArchivo>();
             AbrirArchivoCommand = new RelayCommand<CatalogoArchivo>(EjecutarAbrirArchivo);
             DescargarArchivoCommand = new RelayCommand<CatalogoArchivo>(EjecutarDescargarArchivo);

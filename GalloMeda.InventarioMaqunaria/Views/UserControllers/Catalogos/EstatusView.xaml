@@ -12,10 +12,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-            <Button Content="Limpiar Filtros" Width="100" Height="28" Margin="0,14,0,0" Background="#E0E0E0" BorderBrush="#CCCCCC"/>
-        </StackPanel>
-
         <DataGrid Grid.Row="1" 
       ItemsSource="{Binding Estatus}" 
       AutoGenerateColumns="False" 

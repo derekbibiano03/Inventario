@@ -124,7 +124,6 @@ namespace Inventario.Core.Services.Economicos
                 FamiliaMotor = dto.FamiliaMotor,
                 Placas = dto.Placas,
                 EstatusSeguro = dto.EstatusSeguro,
-                PolizaAdjunta = dto.PolizaAdj,
                 ObservacionesAsignaciones = dto.Observaciones,
                 Descripcion = grupoSeleccionado.DescripcionGrupo,
                 Horometro = dto.Horometro,

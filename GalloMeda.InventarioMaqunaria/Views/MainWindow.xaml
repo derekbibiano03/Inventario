@@ -72,7 +72,21 @@
                                     </MenuItem>
 
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="SUBIR ARCHIVOS" Tag="AgregarArchivo" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="SERVICIOS REALIZADOS" Tag="VerServicios" Click="MenuItem_Click"/>
+
+                                    <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
+                                        <MenuItem.Header>
+                                            <TextBlock Text="--- SERVICIOS ---" 
+                                                Foreground="#8A92A6" 
+                                                FontWeight="Bold" 
+                                                FontSize="11" 
+                                                Margin="0,2"/>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="VER SERVICIOS REALIZADOS" Tag="VerServicios" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="REGISTRAR 
+                                              NUEVO SERVICIO" Tag="HistServ" Click="MenuItem_Click"/>
+
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
@@ -93,7 +107,7 @@
                                                Margin="0,2"/>
                                         </MenuItem.Header>
                                     </MenuItem>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="OPERADORES" Tag="VerOperadores" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="EMPLEADOS" Tag="VerOperadores" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="ENCARGADOS DE MAQUINARIA" Tag="VerEnMaq" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="PROPIETARIOS Y ADMINISTRADORES DE MAQUINARIA" Tag="ProAdmin" Click="MenuItem_Click"/>
                                 </ContextMenu>
@@ -133,7 +147,6 @@
 
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE COMBUSTIBLES" Tag="CatCom" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE EQUIPOS" Tag="CatTipEq" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE SERVICIOS" Tag="CatSer" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE GRUPOS" Tag="CatGrp" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE ESTATUS" Tag="CatTiEs" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE MARCAS" Tag="CatMarc" Click="MenuItem_Click"/>

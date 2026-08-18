@@ -157,9 +157,6 @@
                               SelectedValuePath="IdEstatus"
                               SelectedValue="{Binding EconomicoEdicion.IdEstatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                               Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
-                    <TextBlock Text="Póliza Adjunta:" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBox Text="{Binding EconomicoEdicion.PolizaAdjunta, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                             Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
 
                     <TextBlock Text="Tipo de Seguro:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <ComboBox SelectedValue="{Binding EconomicoEdicion.TipoSeguro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

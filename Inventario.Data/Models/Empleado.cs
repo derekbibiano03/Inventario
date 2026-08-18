@@ -11,7 +11,7 @@ public partial class Empleado
 
     public int? IdRolEmpleado { get; set; }
 
-    public DateOnly? Ds3 { get; set; }
+    public DateTime? Ds3 { get; set; }
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicoIdOperadorNavigations { get; set; } = new List<CatalogoEconomico>();
 

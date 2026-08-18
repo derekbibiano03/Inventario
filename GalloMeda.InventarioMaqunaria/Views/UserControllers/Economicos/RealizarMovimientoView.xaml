@@ -5,104 +5,290 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inventario.Desktop.Views.UserControllers.Economicos"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="AUTO"/>
-            <ColumnDefinition Width="AUTO"/>
-        </Grid.ColumnDefinitions>
+             d:DesignHeight="650" d:DesignWidth="1100">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="AUTO"/>
-            <RowDefinition Height="AUTO"/>
-        </Grid.RowDefinitions>
+    <UserControl.Resources>
+        <!-- Estilo para la etiqueta superior de cada campo -->
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#334155"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="100,100,10,10">
+        <!-- Estilo de ComboBox moderno -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
-            <TextBlock Text="SELECCIONAR UBICACION DE SALIDA:" FontWeight="Bold" Margin="0,10,0,10" />
-            <ComboBox 
-                ItemsSource="{Binding UbicacionesFiltro}"
-                DisplayMemberPath="NombreProyecto"
-                SelectedValuePath="IdUbicacion"
-                SelectedValue="{Binding IdUbicacionFiltroSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                Width="380" 
-                Height="30"
-                HorizontalAlignment="Left"
-                Margin="0,0,0,10"/>
+        <!-- Estilo de TextBox con Watermark/Placeholder mediante Tag -->
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4">
+                            <Grid Margin="{TemplateBinding Padding}">
+                                <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                <TextBlock x:Name="PlaceholderText" 
+                                           Text="{TemplateBinding Tag}" 
+                                           Foreground="#94A3B8" 
+                                           IsHitTestVisible="False" 
+                                           VerticalAlignment="Center"
+                                           Visibility="Collapsed"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value=""/>
+                                    <Condition Property="IsFocused" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Visibility" TargetName="PlaceholderText" Value="Visible"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-            <TextBlock Text="SELECCIONAR UBICACION DE DESTINO:" FontWeight="Bold" Margin="0,10,0,10" />
-            <ComboBox 
-                ItemsSource="{Binding UbicacionesFin}"
-                DisplayMemberPath="NombreProyecto"
-                SelectedValuePath="IdUbicacion"
-                SelectedValue="{Binding IdUbicacionFinSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                Width="380" 
-                Height="30"
-                HorizontalAlignment="Left"
-                Margin="0,0,0,10"/>
+        <!-- Estilo base de botones secundarios -->
+        <Style x:Key="BtnSecondary" TargetType="Button">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#334155"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E2E8F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-            <TextBlock  Grid.Column="0" Text="RUTA DE CARTA PORTE: " FontWeight="SemiBold" Margin="0,22,10,2"/>
-            <TextBlock  Grid.Column="1" Text="{Binding RutaArchivoAdjunto}" Margin="0,2,0,2" Foreground="Blue"/>
-            <Button Grid.Column="1" 
-                Content="BUSCAR CARTA PORTE" 
-                Command="{Binding SeleccionarArchivoCommand}"
-                Margin="0,30,0,0" 
-                Height="30"/>
+        <!-- Estilo base de botones primarios -->
+        <Style x:Key="BtnPrimary" TargetType="Button">
+            <Setter Property="Background" Value="#0284C7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0369A1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
 
+    <Grid Background="#F8FAFC">
+        <Grid Margin="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="1.2*"/>
+            </Grid.ColumnDefinitions>
 
-            <TextBlock  Grid.Column="0" Text="RUTA DE CONTROL DE ENVIO: " FontWeight="SemiBold" Margin="0,22,10,2"/>
-            <TextBlock  Grid.Column="1" Text="{Binding RutaArchivoAdjunto2}" Margin="0,2,0,2" Foreground="Blue"/>
-            <Button Grid.Column="1" 
-                Content="BUSCAR CONTROL DE ENVIO" 
-                Command="{Binding SeleccionarArchivo2Command}"
-                Margin="0,30,0,0" 
-                Height="30"/>
+            <!-- SECCIÓN IZQUIERDA: FORMULARIO DE UBICACIONES Y ARCHIVOS -->
+            <Border Grid.Column="0" 
+                    Background="White" 
+                    CornerRadius="8" 
+                    BorderBrush="#E2E8F0" 
+                    BorderThickness="1" 
+                    Padding="20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
 
+                        <TextBlock Text="DATOS DEL MOVIMIENTO" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Foreground="#0F172A" 
+                                   Margin="0,0,0,16"/>
 
-            <Button 
-                Content="DAR DE ALTA EL MOVIMIENTO"
-                Command="{Binding RegistrarMovimientoCommand}"
-                Width="250" 
-                Height="35"
-                HorizontalAlignment="Left"
-                Margin="0,30,0,0"
-                Background="#007ACC" 
-                Foreground="White" 
-                FontWeight="Bold" />
-            
+                        <!-- Ubicación de Salida -->
+                        <TextBlock Text="SELECCIONAR UBICACIÓN DE SALIDA" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox ItemsSource="{Binding UbicacionesFiltro}"
+                                  DisplayMemberPath="NombreProyecto"
+                                  SelectedValuePath="IdUbicacion"
+                                  SelectedValue="{Binding IdUbicacionFiltroSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                  Margin="0,0,0,16"/>
 
-        </StackPanel>
+                        <!-- Ubicación de Destino -->
+                        <TextBlock Text="SELECCIONAR UBICACIÓN DE DESTINO" Style="{StaticResource FieldLabel}"/>
+                        <ComboBox ItemsSource="{Binding UbicacionesFin}"
+                                  DisplayMemberPath="NombreProyecto"
+                                  SelectedValuePath="IdUbicacion"
+                                  SelectedValue="{Binding IdUbicacionFinSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                  Margin="0,0,0,20"/>
 
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="100,100,10,10" Orientation="Vertical">
+                        <Separator Background="#E2E8F0" Margin="0,0,0,20"/>
 
-            <TextBlock Text="BUSCAR Y SELECCIONAR ECONOMICOS (SELECCIÓN MÚLTIPLE):" 
-                       FontWeight="SemiBold" 
-                       Margin="0,0,0,5"/>
+                        <TextBlock Text="DOCUMENTOS DE SOPORTE" 
+                                   FontSize="14" 
+                                   FontWeight="Bold" 
+                                   Foreground="#0F172A" 
+                                   Margin="0,0,0,12"/>
 
-            <TextBox Text="{Binding TextoBusquedaId, UpdateSourceTrigger=PropertyChanged}" 
-                     Tag="Buscar por ID..." 
-                     Height="30" 
-                     VerticalContentAlignment="Center" 
-                     Margin="0,0,0,5"
-                     Padding="5,0"/>
+                        <!-- Archivo 1: Carta Porte -->
+                        <TextBlock Text="CARTA PORTE" Style="{StaticResource FieldLabel}"/>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-            <ListBox ItemsSource="{Binding EconomicosFiltrados}" 
-                     Height="200" 
-                     Width="500"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="2">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding IdEconomico}" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,10,0"/>
-                                <TextBlock Text=" - "/>
-                                <TextBlock Text="{Binding Descripcion}" Margin="10,0,0,0"/>
-                            </StackPanel>
-                        </CheckBox>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                            <Border Grid.Column="0" 
+                                    Background="#F1F5F9" 
+                                    BorderBrush="#CBD5E1" 
+                                    BorderThickness="1,1,0,1" 
+                                    CornerRadius="4,0,0,4" 
+                                    Padding="10,0">
+                                <TextBlock Text="{Binding RutaArchivoAdjunto}" 
+                                           VerticalAlignment="Center" 
+                                           TextTrimming="CharacterEllipsis" 
+                                           Foreground="#0284C7" 
+                                           FontSize="11"/>
+                            </Border>
 
-        </StackPanel>
+                            <Button Grid.Column="1" 
+                                    Content="BUSCAR" 
+                                    Command="{Binding SeleccionarArchivoCommand}" 
+                                    Style="{StaticResource BtnSecondary}"/>
+                        </Grid>
+
+                        <!-- Archivo 2: Control de Envío -->
+                        <TextBlock Text="CONTROL DE ENVÍO" Style="{StaticResource FieldLabel}"/>
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" 
+                                    Background="#F1F5F9" 
+                                    BorderBrush="#CBD5E1" 
+                                    BorderThickness="1,1,0,1" 
+                                    CornerRadius="4,0,0,4" 
+                                    Padding="10,0">
+                                <TextBlock Text="{Binding RutaArchivoAdjunto2}" 
+                                           VerticalAlignment="Center" 
+                                           TextTrimming="CharacterEllipsis" 
+                                           Foreground="#0284C7" 
+                                           FontSize="11"/>
+                            </Border>
+
+                            <Button Grid.Column="1" 
+                                    Content="BUSCAR" 
+                                    Command="{Binding SeleccionarArchivo2Command}" 
+                                    Style="{StaticResource BtnSecondary}"/>
+                        </Grid>
+
+                        <!-- Botón de alta -->
+                        <Button Content="DAR DE ALTA EL MOVIMIENTO"
+                                Command="{Binding RegistrarMovimientoCommand}"
+                                Style="{StaticResource BtnPrimary}"
+                                Margin="0,12,0,0"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- SECCIÓN DERECHA: SELECCIÓN DE EQUIPOS ECONÓMICOS -->
+            <Border Grid.Column="2" 
+                    Background="White" 
+                    CornerRadius="8" 
+                    BorderBrush="#E2E8F0" 
+                    BorderThickness="1" 
+                    Padding="20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" 
+                               Text="SELECCIONAR EQUIPOS ECONÓMICOS" 
+                               FontSize="16" 
+                               FontWeight="Bold" 
+                               Foreground="#0F172A" 
+                               Margin="0,0,0,12"/>
+
+                    <!-- Búsqueda -->
+                    <TextBox Grid.Row="1" 
+                             Text="{Binding TextoBusquedaId, UpdateSourceTrigger=PropertyChanged}" 
+                             Tag="Buscar por ID o descripción..." 
+                             Margin="0,0,0,12"/>
+
+                    <!-- Lista con CheckBox -->
+                    <ListBox Grid.Row="2" 
+                             ItemsSource="{Binding EconomicosFiltrados}" 
+                             Background="Transparent" 
+                             BorderBrush="#E2E8F0" 
+                             BorderThickness="1"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="8,6"/>
+                                <Setter Property="Margin" Value="0,1"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalContentAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Margin="4,0,0,0">
+                                        <TextBlock Text="{Binding IdEconomico}" FontWeight="Bold" Foreground="#0284C7" Margin="0,0,8,0"/>
+                                        <TextBlock Text="—" Foreground="#94A3B8" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Descripcion}" Foreground="#334155" TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

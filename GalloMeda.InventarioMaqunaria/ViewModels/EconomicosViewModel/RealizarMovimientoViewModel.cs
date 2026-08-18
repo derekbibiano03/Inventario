@@ -1,15 +1,10 @@
 ﻿using GalloMeda.InventarioMaqunaria;
-using Inventario.Core.Services.Auth;
-using Inventario.Core.Services.Catalogos;
 using Inventario.Core.Services.Economicos;
 using Inventario.Core.Services.UbicacionProyecto;
 using Inventario.Data.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;

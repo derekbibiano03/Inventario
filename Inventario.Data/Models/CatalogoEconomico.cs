@@ -56,8 +56,6 @@ public partial class CatalogoEconomico
 
     public bool? EstatusSeguro { get; set; }
 
-    public string? PolizaAdjunta { get; set; }
-
     public int? IdMarca { get; set; }
 
     public int? MarcaMotor { get; set; }
@@ -75,6 +73,8 @@ public partial class CatalogoEconomico
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicos { get; set; } = new List<CatalogoMovimientosEconomico>();
 
     public virtual ICollection<EconomicosArchivo> EconomicosArchivos { get; set; } = new List<EconomicosArchivo>();
+
+    public virtual ICollection<HistorialServicio> HistorialServicios { get; set; } = new List<HistorialServicio>();
 
     public virtual CatalogoPya? IdAdministradorNavigation { get; set; }
 
@@ -97,6 +97,4 @@ public partial class CatalogoEconomico
     public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
 
     public virtual CatalogoMarca? MarcaMotorNavigation { get; set; }
-
-    public virtual ICollection<ServiciosEconomico> ServiciosEconomicos { get; set; } = new List<ServiciosEconomico>();
 }

@@ -17,15 +17,15 @@ public partial class CatalogoMovimientosEconomico
 
     public DateTime? FechaMovimiento { get; set; }
 
-    public string? NombreArchivo { get; set; }
-
-    public string? Archivo { get; set; }
-
     public string? NombreArchivo2 { get; set; }
 
     public string? Archivo2 { get; set; }
 
     public int? IdUsuario { get; set; }
+
+    public string? NombreArchivo { get; set; }
+
+    public string? Archivo { get; set; }
 
     public virtual CatalogoEconomico? IdEconomicoNavigation { get; set; }
 

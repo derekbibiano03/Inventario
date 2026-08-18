@@ -9,7 +9,7 @@ public partial class CatalogoPya
 
     public int? IdRolPya { get; set; }
 
-    public string Nombre { get; set; } = null!;
+    public string? Nombre { get; set; }
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicoIdAdministradorNavigations { get; set; } = new List<CatalogoEconomico>();
 

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -28,9 +29,9 @@ namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
             get => _textoBusquedaId;
             set
             {
-                _textoBusquedaId = value;
+                _textoBusquedaId = value ?? string.Empty;
                 OnPropertyChanged();
-                EconomicosFiltrados.Refresh();
+                EconomicosFiltrados?.Refresh();
             }
         }
 
@@ -42,8 +43,16 @@ namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
 
         public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; set; }
 
-        private string _idUbicacionSeleccionado = string.Empty;
-        public string IdUbicacionSeleccionado { get => _idUbicacionSeleccionado; set { _idUbicacionSeleccionado = value; OnPropertyChanged(); } }
+        private int? _idUbicacionSeleccionado;
+        public int? IdUbicacionSeleccionado
+        {
+            get => _idUbicacionSeleccionado;
+            set
+            {
+                _idUbicacionSeleccionado = value;
+                OnPropertyChanged();
+            }
+        }
 
         public AgregarRequisicion(AdquisicionService adquisicionesService)
         {
@@ -66,10 +75,12 @@ namespace Inventario.Desktop.ViewModels.Adq_Serv.RequisicionesViewModel
 
         private bool FiltroBusquedaId(object obj)
         {
-            if (string.IsNullOrEmpty(TextoBusquedaId)) return true;
+            if (string.IsNullOrWhiteSpace(TextoBusquedaId)) return true;
 
             if (obj is CatalogoEconomico economico)
             {
+                if (string.IsNullOrEmpty(economico.IdEconomico)) return false;
+
                 return economico.IdEconomico.IndexOf(TextoBusquedaId, StringComparison.OrdinalIgnoreCase) >= 0;
             }
             return false;

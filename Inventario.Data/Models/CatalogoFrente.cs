@@ -7,9 +7,9 @@ public partial class CatalogoFrente
 {
     public int IdFrente { get; set; }
 
-    public int IdTramo { get; set; }
+    public int? IdTramo { get; set; }
 
-    public string NombreFrente { get; set; } = null!;
+    public string? NombreFrente { get; set; }
 
-    public virtual CatalogoTramo IdTramoNavigation { get; set; } = null!;
+    public virtual CatalogoTramo? IdTramoNavigation { get; set; }
 }

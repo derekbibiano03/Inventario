@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <item>
 	<!-- Versión más reciente publicada -->
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 
 	<!-- Enlace directo al instalador o ejecutable ZIP compilado -->
 	<url>https://github.com/derekbibiano03/Inventario/releases/download/v1.0.1/InventarioSetup.zip</url>

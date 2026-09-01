@@ -30,6 +30,9 @@ namespace GalloMeda.InventarioMaqunaria
             // Ejecutamos la lógica base de inicialización del marco WPF.
             base.OnStartup(e);
 
+            // Suscribimos el evento que exige cerrar la aplicación para permitir la sobreescritura de archivos.
+            AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+
             // Inicia la verificación automática de actualizaciones.
             AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/master/update.xml");
 
@@ -138,6 +141,13 @@ namespace GalloMeda.InventarioMaqunaria
                 // Cerramos la aplicación tras notificar el error.
                 this.Shutdown();
             }
+        }
+
+        // Método que se activa automáticamente cuando el usuario acepta descargar la actualización.
+        private void AutoUpdater_ApplicationExitEvent()
+        {
+            // Cierra inmediatamente los hilos y procesos de la aplicación WPF para desocupar el .exe
+            Application.Current.Shutdown();
         }
     }
 }

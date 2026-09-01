@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/icono.ico"
-        Title="Inicio de Sesion" Height="450" Width="800">
+        Title="Inicio de Sesion VERSION 1.0.7" Height="450" Width="800">
     <Grid>
 
         <StackPanel VerticalAlignment="Center" Width="400">

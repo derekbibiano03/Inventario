@@ -1,6 +1,5 @@
 name: Compilar y Publicar Actualizacion
 
-# Se ejecuta automáticamente cada vez que haces push a la rama main
 on:
   push:
     branches:
@@ -11,13 +10,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1. Obtiene el código fuente desde GitHub
+    # 1. Obtiene el código fuente (versión actualizada v4)
     - name: Checkout del código
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    # 2. Configura el entorno de .NET
+    # 2. Configura el entorno de .NET (versión actualizada v4)
     - name: Configurar .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
@@ -25,22 +24,22 @@ jobs:
     - name: Restaurar NuGet
       run: dotnet restore
 
-    # 4. Compila y publica la aplicación en una carpeta
+    # 4. Compila y publica buscando automáticamente cualquier archivo .csproj en la solución
     - name: Compilar WPF
-      run: dotnet publish Inventario.Desktop/Inventario.Desktop.csproj -c Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
+      run: dotnet publish --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
 
     # 5. Comprime la compilación en un ZIP
     - name: Comprimir ejecutable
       run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
 
-    # 6. Genera un Tag único basado en la fecha y hora para evitar errores de etiquetas duplicadas
+    # 6. Genera un Tag único basado en la fecha y hora
     - name: Generar Tag dinamico
       id: tag
       run: echo "tag_name=v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')" >> $env:GITHUB_OUTPUT
 
-    # 7. Crea la Release pública en GitHub y sube el ZIP compilado
+    # 7. Crea la Release en GitHub (versión actualizada v2)
     - name: Publicar Release en GitHub
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ./InventarioSetup.zip
         tag_name: ${{ steps.tag.outputs.tag_name }}

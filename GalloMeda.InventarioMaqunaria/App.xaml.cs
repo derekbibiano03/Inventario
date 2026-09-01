@@ -29,7 +29,7 @@ namespace GalloMeda.InventarioMaqunaria
         {
             // Ejecutamos la lógica base de inicialización del marco WPF.
             base.OnStartup(e);
-            AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/main/update.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/master/update.xml");
 
             // Capturamos cualquier excepción no controlada en el hilo principal para mostrar un mensaje claro.
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>

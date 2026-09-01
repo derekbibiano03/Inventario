@@ -10,11 +10,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1. Obtiene el código fuente (versión actualizada v4)
+    # 1. Obtiene el código fuente
     - name: Checkout del código
       uses: actions/checkout@v4
 
-    # 2. Configura el entorno de .NET (versión actualizada v4)
+    # 2. Configura el entorno de .NET
     - name: Configurar .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -24,9 +24,9 @@ jobs:
     - name: Restaurar NuGet
       run: dotnet restore
 
-    # 4. Compila y publica buscando automáticamente cualquier archivo .csproj en la solución
+    # 4. Compila y publica apuntando únicamente al proyecto ejecutable WPF
     - name: Compilar WPF
-      run: dotnet publish --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
+      run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
 
     # 5. Comprime la compilación en un ZIP
     - name: Comprimir ejecutable
@@ -37,7 +37,7 @@ jobs:
       id: tag
       run: echo "tag_name=v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')" >> $env:GITHUB_OUTPUT
 
-    # 7. Crea la Release en GitHub (versión actualizada v2)
+    # 7. Crea la Release en GitHub
     - name: Publicar Release en GitHub
       uses: softprops/action-gh-release@v2
       with:

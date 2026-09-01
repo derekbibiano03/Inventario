@@ -4,7 +4,7 @@ name: Compilar y Publicar Actualizacion
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:

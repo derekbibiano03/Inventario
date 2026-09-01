@@ -24,6 +24,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         private readonly GestorArchivosService _gestorArchivosService;
 
         public ObservableCollection<CatalogoEconomico> ListaEconomicos { get; set; } = new ObservableCollection<CatalogoEconomico>();
+        public ObservableCollection<string> ListaArchivosSeleccionados { get; set; } = new ObservableCollection<string>();
+
         public ICollectionView EconomicosFiltrados { get; set; }
 
         private string _textoBusquedaId = string.Empty;
@@ -38,26 +40,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             }
         }
 
-        private string _rutaArchivoOriginal = string.Empty;
-        public string RutaArchivoOriginal
-        {
-            get => _rutaArchivoOriginal;
-            set
-            {
-                _rutaArchivoOriginal = value;
-                OnPropertyChanged();
-                NombreArchivoOriginal = string.IsNullOrEmpty(value) ? "" : Path.GetFileName(value);
-                (GuardarArchivoCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            }
-        }
-
-        private string _nombreArchivoOriginal = string.Empty;
-        public string NombreArchivoOriginal
-        {
-            get => _nombreArchivoOriginal;
-            set { _nombreArchivoOriginal = value; OnPropertyChanged(); }
-        }
-
         private string _fechaAltaActual = DateTime.Now.ToString("dd/MM/yyyy");
         public string FechaAltaActual
         {
@@ -69,7 +51,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             }
         }
 
-        public ICommand SeleccionarArchivoCommand { get; }
+        public ICommand SeleccionarArchivosCommand { get; }
+        public ICommand EliminarArchivoCommand { get; }
         public ICommand GuardarArchivoCommand { get; }
         public int UsuarioLog { get; private set; }
 
@@ -79,7 +62,14 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             _gestorArchivosService = new GestorArchivosService(_contextoBD);
             _logsService = new LogsService(_contextoBD);
 
-            SeleccionarArchivoCommand = new RelayCommand(EjecutarSeleccionarArchivo);
+            ListaArchivosSeleccionados.CollectionChanged += (s, e) =>
+            {
+                (GuardarArchivoCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                OnPropertyChanged(nameof(ListaArchivosSeleccionados));
+            };
+
+            SeleccionarArchivosCommand = new RelayCommand(EjecutarSeleccionarArchivos);
+            EliminarArchivoCommand = new RelayCommand<string>(EjecutarEliminarArchivo);
             GuardarArchivoCommand = new RelayCommand(EjecutarGuardarArchivo, CanGuardarArchivo);
 
             CargarEconomicosDesdeBD();
@@ -113,17 +103,32 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             return false;
         }
 
-        private void EjecutarSeleccionarArchivo()
+        private void EjecutarSeleccionarArchivos()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Archivos permitidos (*.pdf;*.png;*.jpg;*.tif;*.JPEG)|*.pdf;*.png;*.jpg;*.tif;*.JPEG",
-                Title = "Seleccione el documento o imagen"
+                Title = "Seleccione los documentos o imágenes",
+                Multiselect = true // Permite seleccionar varios archivos a la vez
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                RutaArchivoOriginal = openFileDialog.FileName;
+                foreach (string ruta in openFileDialog.FileNames)
+                {
+                    if (!ListaArchivosSeleccionados.Contains(ruta))
+                    {
+                        ListaArchivosSeleccionados.Add(ruta);
+                    }
+                }
+            }
+        }
+
+        private void EjecutarEliminarArchivo(string? ruta)
+        {
+            if (!string.IsNullOrEmpty(ruta) && ListaArchivosSeleccionados.Contains(ruta))
+            {
+                ListaArchivosSeleccionados.Remove(ruta);
             }
         }
 
@@ -139,54 +144,54 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             if (!idsSeleccionados.Any())
             {
                 MessageBox.Show("Debes seleccionar al menos un económico.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
+            if (!ListaArchivosSeleccionados.Any())
+            {
+                MessageBox.Show("Debes agregar al menos un archivo.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                List<(CatalogoArchivo Archivo, string IdEconomico)> archivosProcesados = new List<(CatalogoArchivo, string)>();
-                foreach (string idEconomico in idsSeleccionados)
-                {
-                    // Llama al método manual de GestorArchivosService que sube por SFTP y genera las entidades
-                    var (nuevoArchivo, nuevaRelacion) = _gestorArchivosService.RegistrarArchivoEconomico(RutaArchivoOriginal, idEconomico);
-
-                    _contextoBD.CatalogoArchivos.Add(nuevoArchivo);
-                    _contextoBD.EconomicosArchivos.Add(nuevaRelacion);
-
-                    archivosProcesados.Add((nuevoArchivo, idEconomico));
-                }
+                // Registra los archivos en FTP, crea CatalogoArchivos y genera EconomicosArchivos para todos los económicos seleccionados
+                var registrosProcesados = _gestorArchivosService.RegistrarArchivosEconomicos(
+                    ListaArchivosSeleccionados.ToList(),
+                    idsSeleccionados
+                );
 
                 _contextoBD.SaveChanges();
+
                 UsuarioLog = App.Session.IdUsuario;
-                foreach (var item in archivosProcesados)
+                foreach (var item in registrosProcesados)
                 {
                     _logsService.RegistrarDocumentoAdjuntoExitoso(UsuarioLog, item.Archivo.Archivo, item.IdEconomico);
                 }
 
-                MessageBox.Show($"Archivo adjuntado con éxito a {idsSeleccionados.Count} económico(s).", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Se asociaron {ListaArchivosSeleccionados.Count} archivo(s) a {idsSeleccionados.Count} económico(s) correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                 LimpiarFormulario();
             }
             catch (DbUpdateException ex)
             {
                 string mensajeBD = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-                MessageBox.Show($"Error de PostgreSQL al insertar registro:\n{mensajeBD}", "Error de Base de Datos", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error de Base de Datos al insertar registros:\n{mensajeBD}", "Error de Base de Datos", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
                 string mensajeReal = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-                MessageBox.Show($"Error crítico al procesar archivo:\n{mensajeReal}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error crítico al procesar archivos:\n{mensajeReal}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private bool CanGuardarArchivo()
         {
-            return !string.IsNullOrEmpty(RutaArchivoOriginal) && ListaEconomicos != null && ListaEconomicos.Any(x => x.IsSelected);
+            return ListaArchivosSeleccionados.Any() && ListaEconomicos != null && ListaEconomicos.Any(x => x.IsSelected);
         }
 
         private void LimpiarFormulario()
         {
-            RutaArchivoOriginal = string.Empty;
+            ListaArchivosSeleccionados.Clear();
             TextoBusquedaId = string.Empty;
 
             foreach (var economico in ListaEconomicos)

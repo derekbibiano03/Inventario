@@ -5,9 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inventario.Desktop.Views.UserControllers.Economicos"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800">
 
-    <!-- Envoltorio con barra de desplazamiento vertical automática -->
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <Grid Margin="20">
             <Grid.RowDefinitions>
@@ -16,7 +15,7 @@
                 <RowDefinition Height="Auto"/>
                 <!-- Fila 1: Selección de Económicos -->
                 <RowDefinition Height="Auto"/>
-                <!-- Fila 2: Selección de Archivo -->
+                <!-- Fila 2: Selección Múltiple de Archivos -->
                 <RowDefinition Height="Auto"/>
                 <!-- Fila 3: Previsualización de metadatos -->
                 <RowDefinition Height="Auto"/>
@@ -25,13 +24,13 @@
 
             <!-- Título del Formulario -->
             <TextBlock Grid.Row="0" 
-                       Text="Adjuntar Documento o Imagen del Economico" 
+                       Text="Adjuntar Documentos o Imágenes a Económicos" 
                        FontSize="20" 
                        FontWeight="Bold" 
                        Margin="0,0,0,20" 
                        Foreground="#333333"/>
 
-            <!-- Sección 1: Selección de Económicos (Múltiple) -->
+            <!-- Sección 1: Selección de Económicos -->
             <StackPanel Grid.Row="1" Margin="0,0,0,15">
                 <TextBlock Text="Buscar y Seleccionar Económicos (Selección Múltiple):" 
                            FontWeight="SemiBold" 
@@ -45,7 +44,7 @@
                          Padding="5,0"/>
 
                 <ListBox ItemsSource="{Binding EconomicosFiltrados}" 
-                         Height="200" 
+                         Height="180" 
                          ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -62,35 +61,48 @@
                 </ListBox>
             </StackPanel>
 
-            <!-- Sección 2: Selección del Archivo Físico -->
+            <!-- Sección 2: Selección Múltiple de Archivos -->
             <StackPanel Grid.Row="2" Margin="0,0,0,15">
-                <TextBlock Text="Documento (PDF o Imagen):" 
-                           FontWeight="SemiBold" 
-                           Margin="0,0,0,5"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <Grid Margin="0,0,0,5">
+                    <TextBlock Text="Archivos Seleccionados (PDF o Imagen):" 
+                               FontWeight="SemiBold" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Center"/>
 
-                    <TextBox Grid.Column="0" 
-                             Text="{Binding RutaArchivoOriginal, Mode=TwoWay}" 
-                             IsReadOnly="True" 
-                             Height="30" 
-                             VerticalContentAlignment="Center" 
-                             Background="#F5F5F5" 
-                             Padding="5,0"/>
-
-                    <Button Grid.Column="1" 
-                            Content="Buscar Archivo..." 
-                            Command="{Binding SeleccionarArchivoCommand}" 
-                            Width="120" 
-                            Margin="10,0,0,0" 
-                            Height="30"/>
+                    <Button Content="Agregar Archivos..." 
+                            Command="{Binding SeleccionarArchivosCommand}" 
+                            Width="140" 
+                            Height="30" 
+                            HorizontalAlignment="Right"/>
                 </Grid>
+
+                <ListBox ItemsSource="{Binding ListaArchivosSeleccionados}" 
+                         Height="120" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" ToolTip="{Binding}"/>
+                                <Button Grid.Column="1" 
+                                        Content="X" 
+                                        Foreground="Red" 
+                                        FontWeight="Bold" 
+                                        Width="25" 
+                                        Height="20" 
+                                        Margin="10,0,0,0"
+                                        Command="{Binding DataContext.EliminarArchivoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
 
-            <!-- Sección 3: Datos que se guardarán en CatalogoArchivos -->
+            <!-- Sección 3: Resumen -->
             <Border Grid.Row="3" 
                     Background="#FAFAFA" 
                     BorderBrush="#E0E0E0" 
@@ -99,7 +111,7 @@
                     Padding="15" 
                     Margin="0,10,0,0">
                 <StackPanel>
-                    <TextBlock Text="Detalles del Registro a dar de Alta" 
+                    <TextBlock Text="Resumen de Carga" 
                                FontWeight="Bold" 
                                Foreground="#555555" 
                                Margin="0,0,0,10"/>
@@ -114,13 +126,11 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Nombre del Archivo Original -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Nombre Archivo: " FontWeight="SemiBold" Margin="0,2,10,2"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding NombreArchivoOriginal}" Margin="0,2,0,2" Foreground="Blue"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Total de Archivos: " FontWeight="SemiBold" Margin="0,2,10,2"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ListaArchivosSeleccionados.Count}" Margin="0,2,0,2" Foreground="Blue" FontWeight="Bold"/>
 
-                        <!-- Fecha de Alta automática -->
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Fecha Alta: " FontWeight="SemiBold" Margin="0,2,10,2"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding FechaAltaActual, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Margin="0,2,0,2"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding FechaAltaActual}" Margin="0,2,0,2"/>
                     </Grid>
                 </StackPanel>
             </Border>

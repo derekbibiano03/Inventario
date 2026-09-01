@@ -5,10 +5,11 @@
 		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows</TargetFramework>
-		<SignAssembly>false</SignAssembly>
 		<Nullable>enable</Nullable>
+		<SignAssembly>false</SignAssembly>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
+
 		<ApplicationIcon>Resources\icono.ico</ApplicationIcon>
 	</PropertyGroup>
 
@@ -18,6 +19,7 @@
 		<None Remove="Resources\catalogo_icon.png" />
 		<None Remove="Resources\economicos_icon.png" />
 		<None Remove="Resources\empleado_icon.png" />
+		<None Remove="Resources\gallo_meda_icon.png" />
 		<None Remove="Resources\icono.ico" />
 		<None Remove="Resources\socios_icon.png" />
 		<None Remove="Resources\ubicacion_icon.png" />
@@ -61,9 +63,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="appsettings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
+
+	<Target Name="SignBinariesPostBuild" AfterTargets="Build;Publish">
+		<PropertyGroup>
+			<TargetDirToSign>$(TargetDir)</TargetDirToSign>
+		</PropertyGroup>
+		<Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /f &quot;C:\Proyecto\GalloMedaCert.pfx&quot; /p &quot;MiPasswordSeguro123&quot; /fd SHA256 &quot;$(TargetDirToSign)*.dll&quot;" ContinueOnError="true" />
+		<Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /f &quot;C:\Proyecto\GalloMedaCert.pfx&quot; /p &quot;MiPasswordSeguro123&quot; /fd SHA256 &quot;$(TargetDirToSign)*.exe&quot;" ContinueOnError="true" />
+	</Target>
 
 </Project>

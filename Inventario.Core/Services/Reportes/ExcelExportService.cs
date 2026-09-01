@@ -44,6 +44,7 @@ namespace Inventario.Core
                     worksheet.Cells[fila, 5].Value = item.Serie;
                     worksheet.Cells[fila, 6].Value = item.PeriodoFabricacion;
                     worksheet.Cells[fila, 7].Value = item.Motor;
+                    worksheet.Cells[fila, 8].Value = item.MarcaMotorNavigation?.NombreMarca ?? "SNI IDENTIFICAR";
                     worksheet.Cells[fila, 9].Value = item.ModeloMotor;
                     worksheet.Cells[fila, 10].Value = item.SerieMotor;
                     worksheet.Cells[fila, 11].Value = item.FamiliaMotor;

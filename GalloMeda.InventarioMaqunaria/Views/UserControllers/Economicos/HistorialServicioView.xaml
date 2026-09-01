@@ -22,7 +22,7 @@
         </Style>
 
         <Style TargetType="DataGridCell">
-            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="Padding" Value="8,8"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DataGridCell">
@@ -64,14 +64,34 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="WrappedTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid Background="#F8FAFC">
         <Grid Margin="24">
             <Grid.RowDefinitions>
+                <!-- FILA O: BARRA SUPERIOR DE FILTRADO -->
                 <RowDefinition Height="Auto"/>
+                <!-- FILA 1: DATAGRID -->
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+
+            <!-- PANEL DE BUSQUEDA POR ID ECONOMICO -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+                <TextBlock Text="Buscar por ID Económico:" 
+                           VerticalAlignment="Center" 
+                           FontWeight="SemiBold" 
+                           Margin="0,0,10,0" 
+                           Foreground="#334155"/>
+                <TextBox Width="200" 
+                         Height="32" 
+                         VerticalContentAlignment="Center" 
+                         Padding="5,0"
+                         Text="{Binding FiltroNoEconomico, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
 
             <Border Grid.Row="1" 
                     Background="White" 
@@ -87,7 +107,6 @@
                           HorizontalGridLinesBrush="#F1F5F9"
                           Background="Transparent"
                           BorderThickness="0"
-                          RowHeight="45"
                           AlternatingRowBackground="#F8FAFC">
 
                     <DataGrid.Columns>
@@ -109,11 +128,13 @@
                         <DataGridTextColumn Header="TIPO DE MANTENIMIENTO" 
                                             Binding="{Binding TipoMantenimiento}" 
                                             Width="150" 
+                                            ElementStyle="{StaticResource WrappedTextBlockStyle}"
                                             IsReadOnly="True"/>
 
                         <DataGridTextColumn Header="ANOTACIONES" 
                                             Binding="{Binding Anotaciones}" 
                                             Width="*" 
+                                            ElementStyle="{StaticResource WrappedTextBlockStyle}"
                                             IsReadOnly="True"/>
 
                         <DataGridTextColumn Header="ODOMETRO REAL" 
@@ -121,32 +142,28 @@
                                             Width="130" 
                                             IsReadOnly="True"/>
 
-                        <!-- COLUMNA DE ARCHIVOS ADJUNTOS DINÁMICA -->
                         <DataGridTemplateColumn Header="ARCHIVOS ADJUNTOS" Width="220">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="4">
-                                        <!-- Renderiza dinámicamente cada archivo ligado al servicio -->
+                                    <Grid Margin="0">
                                         <ItemsControl ItemsSource="{Binding ServicioArchivos}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <!-- El Hyperlink debe ir dentro de un TextBlock -->
-                                                    <TextBlock Margin="0,2">
-                                <Hyperlink Command="{Binding DataContext.VerArchivoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                           CommandParameter="{Binding IdArchivoNavigation}">
-                                    <Run Text="{Binding IdArchivoNavigation.NombreArchivo}" />
-                                </Hyperlink>
+                                                    <TextBlock Margin="0,2" TextWrapping="Wrap">
+                                                        <Hyperlink Command="{Binding DataContext.VerArchivoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                                                   CommandParameter="{Binding IdArchivoNavigation}">
+                                                            <Run Text="{Binding IdArchivoNavigation.NombreArchivo}" />
+                                                        </Hyperlink>
                                                     </TextBlock>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
 
-                                        <!-- Muestra "Sin archivos" si la lista ServicioArchivos está vacía -->
                                         <TextBlock Text="Sin archivos" 
-                           Foreground="#94A3B8" 
-                           FontStyle="Italic" 
-                           FontSize="11"
-                           VerticalAlignment="Center">
+                                                   Foreground="#94A3B8" 
+                                                   FontStyle="Italic" 
+                                                   FontSize="11"
+                                                   VerticalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -169,6 +186,6 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
-        </Grid>
+        </Grid>s
     </Grid>
 </UserControl>

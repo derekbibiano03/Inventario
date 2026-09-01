@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <helpers:UpperCaseConverter x:Key="UpperCaseConverter"/>
 
-        <!-- Palette Palette / Variables de Estilo -->
+        <!-- Palette / Variables de Estilo -->
         <SolidColorBrush x:Key="PrimaryBrush" Color="#1E88E5"/>
         <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#1565C0"/>
         <SolidColorBrush x:Key="DangerBrush" Color="#E53935"/>
@@ -50,7 +50,7 @@
             <Setter Property="Foreground" Value="#37474F"/>
         </Style>
 
-        <!-- Template Reutilizable para el ComboBox Filtro (Estilo Excel) -->
+        <!-- Template Reutilizable Corregido (ItemsControl reemplaza a ItemsPresenter) -->
         <ControlTemplate x:Key="FiltroExcelComboBoxTemplate" TargetType="ComboBox">
             <Grid>
                 <ToggleButton x:Name="ToggleButton" 
@@ -64,6 +64,7 @@
                               Foreground="{StaticResource TextSecondaryBrush}"
                               Height="22"
                               Padding="4,0"/>
+
                 <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
                     <Border Background="White" BorderBrush="{StaticResource BorderColorBrush}" BorderThickness="1" MinWidth="180" CornerRadius="4" Padding="8">
                         <Border.Effect>
@@ -73,8 +74,10 @@
                             <TextBlock Text="Buscar:" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" FontWeight="SemiBold" Margin="0,0,0,4"/>
                             <TextBox Height="24" Margin="0,0,0,6" Padding="4,2" FontSize="12"
                                      Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
                             <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto">
-                                <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                <ItemsControl ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}"
+                                              ItemTemplate="{Binding ItemTemplate, RelativeSource={RelativeSource TemplatedParent}}"/>
                             </ScrollViewer>
                         </StackPanel>
                     </Border>
@@ -82,22 +85,12 @@
             </Grid>
         </ControlTemplate>
 
-        <!-- Template para los CheckBox de las listas desplegables -->
+        <!-- Template para los CheckBox -->
         <DataTemplate x:Key="ItemFiltroCheckBoxTemplate">
             <CheckBox Content="{Binding Nombre}" 
                       IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" 
                       Margin="2,2" FontSize="11"/>
         </DataTemplate>
-
-        <Style x:Key="EstiloDropdownExcel" TargetType="ComboBoxItem">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBoxItem">
-                        <ContentPresenter />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
     </UserControl.Resources>
 
@@ -127,7 +120,7 @@
                     Style="{StaticResource BtnPrimary}"/>
         </Grid>
 
-        <!-- Contenedor del DataGrid con Bordes Suaves -->
+        <!-- Contenedor del DataGrid -->
         <Border Grid.Row="1" CornerRadius="6" BorderThickness="1" BorderBrush="{StaticResource BorderColorBrush}" ClipToBounds="True">
             <DataGrid ItemsSource="{Binding VistaEconomicos}" 
                       AutoGenerateColumns="False" 
@@ -139,7 +132,9 @@
                       RowHeight="38"
                       ColumnHeaderHeight="55"
                       AlternatingRowBackground="#FAFAFA"
-                      BorderThickness="0">
+                      BorderThickness="0"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
@@ -153,17 +148,15 @@
                 </DataGrid.ColumnHeaderStyle>
 
                 <DataGrid.Columns>
-
                     <!-- ID -->
-                    <DataGridTextColumn Binding="{Binding IdEconomico, Converter={StaticResource UpperCaseConverter}}" Width="Auto">
+                    <DataGridTextColumn Binding="{Binding IdEconomico, Converter={StaticResource UpperCaseConverter}}" Width="110">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="ID" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                     <ComboBox Width="100" 
                                               Template="{StaticResource FiltroExcelComboBoxTemplate}"
-                                              Tag="{Binding DataContext.BusquedaId, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              ItemContainerStyle="{StaticResource EstiloDropdownExcel}"
+                                              Tag="{Binding DataContext.BusquedaId, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               ItemsSource="{Binding DataContext.FiltroIdOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               ItemTemplate="{StaticResource ItemFiltroCheckBoxTemplate}"/>
                                 </StackPanel>
@@ -172,15 +165,14 @@
                     </DataGridTextColumn>
 
                     <!-- Descripción -->
-                    <DataGridTextColumn Width="*" Binding="{Binding Descripcion}" IsReadOnly="True">
+                    <DataGridTextColumn Width="280" Binding="{Binding Descripcion}" IsReadOnly="True">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="Descripción" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                     <ComboBox Width="120" 
                                               Template="{StaticResource FiltroExcelComboBoxTemplate}"
-                                              Tag="{Binding DataContext.BusquedaDescripcion, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              ItemContainerStyle="{StaticResource EstiloDropdownExcel}" 
+                                              Tag="{Binding DataContext.BusquedaDescripcion, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               ItemsSource="{Binding DataContext.FiltroDescripcionesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               ItemTemplate="{StaticResource ItemFiltroCheckBoxTemplate}"/>
                                 </StackPanel>
@@ -189,15 +181,14 @@
                     </DataGridTextColumn>
 
                     <!-- Marca -->
-                    <DataGridTextColumn Width="Auto" Binding="{Binding NombreMarca}" IsReadOnly="True">
+                    <DataGridTextColumn Width="140" Binding="{Binding NombreMarca}" IsReadOnly="True">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="Marca" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                     <ComboBox Width="100" 
                                               Template="{StaticResource FiltroExcelComboBoxTemplate}"
-                                              Tag="{Binding DataContext.BusquedaMarca, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              ItemContainerStyle="{StaticResource EstiloDropdownExcel}" 
+                                              Tag="{Binding DataContext.BusquedaMarca, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               ItemsSource="{Binding DataContext.FiltroMarcasOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               ItemTemplate="{StaticResource ItemFiltroCheckBoxTemplate}"/>
                                 </StackPanel>
@@ -206,18 +197,17 @@
                     </DataGridTextColumn>
 
                     <!-- Modelo -->
-                    <DataGridTextColumn Header="Modelo" Width="Auto" Binding="{Binding Modelo}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Modelo" Width="120" Binding="{Binding Modelo}" IsReadOnly="True"/>
 
                     <!-- No. Serie -->
-                    <DataGridTextColumn Width="Auto" Binding="{Binding Serie}" IsReadOnly="True">
+                    <DataGridTextColumn Width="140" Binding="{Binding Serie}" IsReadOnly="True">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="No. Serie" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                     <ComboBox Width="100" 
                                               Template="{StaticResource FiltroExcelComboBoxTemplate}"
-                                              Tag="{Binding DataContext.BusquedaSerie, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              ItemContainerStyle="{StaticResource EstiloDropdownExcel}" 
+                                              Tag="{Binding DataContext.BusquedaSerie, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               ItemsSource="{Binding DataContext.FiltroSeriesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               ItemTemplate="{StaticResource ItemFiltroCheckBoxTemplate}"/>
                                 </StackPanel>
@@ -233,8 +223,7 @@
                                     <TextBlock Text="Tipo Equipo" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                     <ComboBox Width="110" 
                                               Template="{StaticResource FiltroExcelComboBoxTemplate}"
-                                              Tag="{Binding DataContext.BusquedaTipoEquipo, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              ItemContainerStyle="{StaticResource EstiloDropdownExcel}" 
+                                              Tag="{Binding DataContext.BusquedaTipoEquipo, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               ItemsSource="{Binding DataContext.FiltroTipoEquipoOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               ItemTemplate="{StaticResource ItemFiltroCheckBoxTemplate}"/>
                                 </StackPanel>
@@ -250,8 +239,7 @@
                                     <TextBlock Text="Ubicación" HorizontalAlignment="Center" Margin="0,0,0,4"/>
                                     <ComboBox Width="110" 
                                               Template="{StaticResource FiltroExcelComboBoxTemplate}"
-                                              Tag="{Binding DataContext.BusquedaUbicacion, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              ItemContainerStyle="{StaticResource EstiloDropdownExcel}" 
+                                              Tag="{Binding DataContext.BusquedaUbicacion, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               ItemsSource="{Binding DataContext.FiltroUbicacionesOpciones, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               ItemTemplate="{StaticResource ItemFiltroCheckBoxTemplate}"/>
                                 </StackPanel>
@@ -260,7 +248,7 @@
                     </DataGridTextColumn>
 
                     <!-- Acciones Unificadas -->
-                    <DataGridTemplateColumn Header="Acciones" Width="Auto">
+                    <DataGridTemplateColumn Header="Acciones" Width="140">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -269,6 +257,7 @@
                                             CommandParameter="{Binding IdEconomico}"
                                             Style="{StaticResource BtnSecondary}"
                                             Padding="8,3" FontSize="11" Margin="2,0"/>
+
                                     <Button Content="Editar" 
                                             Command="{Binding DataContext.EditarCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding IdEconomico}"

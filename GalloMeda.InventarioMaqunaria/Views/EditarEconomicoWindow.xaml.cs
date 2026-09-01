@@ -8,23 +8,23 @@ namespace Inventario.Desktop.Views
     /// </summary>
     public partial class EditarEconomicoWindow : Window
     {
-        // CORRECCIÓN: El constructor de la ventana ahora recibe correctamente un entero (int) en lugar de una cadena (string).
         public EditarEconomicoWindow(string idEconomico)
         {
             InitializeComponent();
 
             var viewModel = new EditarEconomicoViewModel();
 
-            viewModel.CargarDatosEconomico(idEconomico);
-
+            // LÍNEA CRÍTICA: Asignar DataContext PRIMERO
             this.DataContext = viewModel;
+
+            // LÍNEA CRÍTICA: Cargar datos DESPUÉS de que el DataContext ya existe
+            viewModel.CargarDatosEconomico(idEconomico);
 
             if (viewModel.CloseAction == null)
             {
                 viewModel.CloseAction = new System.Action<bool>((bool resultado) =>
                 {
                     this.DialogResult = resultado;
-
                     this.Close();
                 });
             }

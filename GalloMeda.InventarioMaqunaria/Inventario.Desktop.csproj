@@ -66,4 +66,12 @@
 	  </None>
 	</ItemGroup>
 
+	<Target Name="SignBinariesPostBuild" AfterTargets="Build;Publish">
+		<PropertyGroup>
+			<TargetDirToSign>$(TargetDir)</TargetDirToSign>
+		</PropertyGroup>
+		<Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /f &quot;C:\Proyecto\GalloMedaCert.pfx&quot; /p &quot;MiPasswordSeguro123&quot; /fd SHA256 &quot;$(TargetDirToSign)*.dll&quot;" ContinueOnError="true" />
+		<Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /f &quot;C:\Proyecto\GalloMedaCert.pfx&quot; /p &quot;MiPasswordSeguro123&quot; /fd SHA256 &quot;$(TargetDirToSign)*.exe&quot;" ContinueOnError="true" />
+	</Target>
+
 </Project>

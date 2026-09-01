@@ -1,6 +1,6 @@
 ﻿using Inventario.Core.Services;
 using Inventario.Core.Services.Auth;
-using Inventario.Core.Services.Logs; // <--- IMPORTANTE: Agrega este using para usar LogsService
+using Inventario.Core.Services.Logs;
 using Inventario.Data.Models;
 using Inventario.Desktop.ViewModels.Auth;
 using Inventario.Desktop.Views;
@@ -8,77 +8,130 @@ using InventarioMaquinaria.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
-using System.Data;
+using System;
+using System.IO;
 using System.Windows;
 
 namespace GalloMeda.InventarioMaqunaria
 {
+    // Define la clase principal de la aplicación WPF heredando de Application.
     public partial class App : Application
     {
+        // Propiedad estática para almacenar el proveedor de servicios de inyección de dependencias.
+        public static IServiceProvider ServiceProvider { get; private set; } = null!;
 
-        public static IServiceProvider ServiceProvider { get; private set; }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
-            IConfiguration configuration = builder.Build();
-
-            var serviceCollection = new ServiceCollection();
-
-            var connectionString = configuration.GetConnectionString("InventarioConnection");
-
-            serviceCollection.AddDbContext<InventarioContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-            );
-
-            ServiceProvider = serviceCollection.BuildServiceProvider();
-        }
-
+        // Propiedad estática para mantener la sesión del usuario activo en la aplicación.
         public static ISessionService Session { get; private set; } = new SessionService();
 
-        private void Application_Startup(object sender, StartupEventArgs e)
+        // Sobrescribimos el método OnStartup que es el punto de entrada real de la aplicación WPF.
+        protected override void OnStartup(StartupEventArgs e)
         {
-            // 1. Instanciamos el DbContext único que usará toda la app durante el arranque.
-            var context = new InventarioContext();
+            // Ejecutamos la lógica base de inicialización del marco WPF.
+            base.OnStartup(e);
 
-            var logsService = new LogsService(context);
-
-            // 2. Instanciamos el servicio de autenticación pasándole el contexto.
-            var authService = new AutenticacionService(context, logsService);
-
-
-            // 4. Instanciamos el ViewModel pasándole AMBOS servicios requeridos por su constructor.
-            var loginVM = new LoginViewModel(authService, logsService); // <--- CORREGIDO: Ahora recibe logsService
-
-            // 5. Creamos la ventana de Login y asignamos su DataContext.
-            var loginWindow = new Auth();
-            loginWindow.DataContext = loginVM;
-
-            this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-
-            bool? result = loginWindow.ShowDialog();
-
-            if (result == true && loginVM.IsAutenticado)
+            // Capturamos cualquier excepción no controlada en el hilo principal para mostrar un mensaje claro.
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                // CORRECCIÓN EXPLICITA: Forzamos la lectura directa de la sesión global actualizada
-                string usuarioConfirmado = App.Session.Username;
+                // Extraemos el objeto de excepción arrojado por el sistema.
+                Exception ex = (Exception)args.ExceptionObject;
+                // Desplegamos un mensaje con la causa exacta del fallo.
+                MessageBox.Show($"Error no controlado en la aplicación:\n\n{ex.Message}\n\n{ex.InnerException?.Message}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+            };
 
-                // Enviamos el string resuelto al constructor del MainWindow
-                var mainWindow = new MainWindow(usuarioConfirmado);
-                this.MainWindow = mainWindow;
+            try
+            {
+                // Creamos el lector de configuración apuntando a la ruta del ejecutable.
+                var builder = new ConfigurationBuilder()
+                    // Establecemos el directorio base donde se ejecuta el programa.
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    // Indicamos que lea el archivo appsettings.json de forma obligatoria.
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
+                // Construimos la configuración para acceder a las claves e incrustaciones.
+                IConfiguration configuration = builder.Build();
 
-                this.ShutdownMode = ShutdownMode.OnMainWindowClose;
-                mainWindow.Show();
+                // Inicializamos la colección de servicios del contenedor IoC.
+                var serviceCollection = new ServiceCollection();
+
+                // Extraemos la cadena de conexión especificada en el archivo appsettings.json.
+                var connectionString = configuration.GetConnectionString("InventarioConnection");
+
+                // Verificamos que la cadena de conexión exista y no esté vacía.
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    // Disparamos un error informativo en caso de que la clave no esté presente.
+                    throw new InvalidOperationException("No se encontró la cadena de conexión 'InventarioConnection' en el archivo appsettings.json.");
+                }
+
+                // Registramos el contexto de datos de EF Core usando una versión fija de MariaDB/MySQL sin autodetección de red.
+                serviceCollection.AddDbContext<InventarioContext>(options =>
+                    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)))
+                );
+
+                // Registramos las clases concretas directamente en el contenedor de dependencias sin interfaz.
+                serviceCollection.AddScoped<LogsService>();
+                serviceCollection.AddScoped<AutenticacionService>();
+
+                // Compilamos la fábrica del proveedor de servicios.
+                ServiceProvider = serviceCollection.BuildServiceProvider();
+
+                // Creamos un alcance de ejecución para resolver las instancias necesarias en el Login.
+                using (var scope = ServiceProvider.CreateScope())
+                {
+                    // Resolvemos el DbContext configurado desde el contenedor de dependencias.
+                    var context = scope.ServiceProvider.GetRequiredService<InventarioContext>();
+
+                    // Creamos el servicio de logs inyectándole el contexto válido.
+                    var logsService = new LogsService(context);
+
+                    // Creamos el servicio de autenticación inyectándole el contexto y el servicio de logs.
+                    var authService = new AutenticacionService(context, logsService);
+
+                    // Creamos el ViewModel asociándolo a sus dependencias inicializadas.
+                    var loginVM = new LoginViewModel(authService, logsService);
+
+                    // Instanciamos la vista del Login.
+                    var loginWindow = new Auth();
+
+                    // Asignamos el DataContext a la vista.
+                    loginWindow.DataContext = loginVM;
+
+                    // Configuramos el modo de cierre para impedir la salida prematura al ocultar la ventana.
+                    this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+                    // Mostramos la ventana de Login en modo modal.
+                    bool? result = loginWindow.ShowDialog();
+
+                    // Validamos si la autenticación fue exitosa.
+                    if (result == true && loginVM.IsAutenticado)
+                    {
+                        // Leemos la propiedad del usuario autenticado en la sesión global.
+                        string usuarioConfirmado = App.Session.Username;
+
+                        // Instanciamos la ventana principal enviando el usuario.
+                        var mainWindow = new MainWindow(usuarioConfirmado);
+
+                        // Asignamos la ventana principal a la propiedad global de WPF.
+                        this.MainWindow = mainWindow;
+
+                        // Establecemos que al cerrar la ventana principal finalice toda la aplicación.
+                        this.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+                        // Desplegamos la ventana principal.
+                        mainWindow.Show();
+                    }
+                    else
+                    {
+                        // Finalizamos el proceso si el login falla o es cancelado.
+                        this.Shutdown();
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
+                // Desplegamos la ventana con la excepción capturada durante la inicialización.
+                MessageBox.Show($"Error al iniciar la aplicación:\n\n{ex.Message}\n\nDetalle: {ex.InnerException?.Message}", "Error de Inicialización", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Cerramos la aplicación tras notificar el error.
                 this.Shutdown();
             }
         }

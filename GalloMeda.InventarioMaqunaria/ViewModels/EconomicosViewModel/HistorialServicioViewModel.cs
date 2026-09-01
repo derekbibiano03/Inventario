@@ -3,13 +3,9 @@ using Inventario.Core.DTOs;
 using Inventario.Core.Services.Economicos;
 using Inventario.Data.Models;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Data;
@@ -44,6 +40,20 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
         public ObservableCollection<HistorialServicio> HistorialServicio { get; set; }
         public ObservableCollection<string> ArchivosSeleccionados { get; set; }
+
+        // PROPIEDAD PARA EL FILTRO DEL DATA GRID
+        private string _filtroNoEconomico = string.Empty;
+        public string FiltroNoEconomico
+        {
+            get => _filtroNoEconomico;
+            set
+            {
+                _filtroNoEconomico = value;
+                OnPropertyChanged();
+                // Notifica a la vista que debe re-evaluar la condición del filtro
+                VistaHistorialServicios?.Refresh();
+            }
+        }
 
         private string _noEconomico = null;
         public string NoEconomico
@@ -87,14 +97,14 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             _economicosService = economicosService;
             _historialServicio = historialServiciosService;
             _gestorArchivosService = gestorArchivosService;
-            
 
-            // CORRECCIÓN: Inicialización de colecciones obligatoria
             Economicos = new ObservableCollection<EconomicoMinimoDto>();
             HistorialServicio = new ObservableCollection<HistorialServicio>();
             ArchivosSeleccionados = new ObservableCollection<string>();
 
+            // ASIGNACIÓN Y CONFIGURACIÓN DEL PREDICADO DE FILTRADO
             VistaHistorialServicios = CollectionViewSource.GetDefaultView(HistorialServicio);
+            VistaHistorialServicios.Filter = FiltrarPorEconomico;
 
             AltaServicioCommand = new RelayCommand(AltaServicio);
             SeleccionarArchivosCommand = new RelayCommand(SeleccionarArchivos);
@@ -103,6 +113,20 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
 
             CargarTipos();
             CargarHistorialMovimientos();
+        }
+
+        // MÉTODO PREDICADO QUE FILTRA CADA REGISTRO DE LA LISTA
+        private bool FiltrarPorEconomico(object obj)
+        {
+            // Valida que el objeto sea una entidad de tipo HistorialServicio
+            if (obj is not HistorialServicio servicio) return false;
+
+            // Si la caja de texto está vacía o es espacio en blanco, muestra todos los registros
+            if (string.IsNullOrWhiteSpace(FiltroNoEconomico)) return true;
+
+            // Valida que el NoEconomico del servicio contenga el texto digitado (ignora mayúsculas/minúsculas)
+            return servicio.NoEconomico != null &&
+                   servicio.NoEconomico.Contains(FiltroNoEconomico, StringComparison.OrdinalIgnoreCase);
         }
 
         public void CargarHistorialMovimientos()
@@ -124,7 +148,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             {
                 string rutaCompleta = _gestorArchivosService.ObtenerRutaAbsoluta(archivo.Archivo);
 
-                // 5. Validación que confirma que el archivo ahora sí existe físicamente en el entorno local para ser abierto.
                 if (!File.Exists(rutaCompleta))
                 {
                     MessageBox.Show($"No se pudo recuperar el archivo físico desde el servidor de almacenamiento.",
@@ -132,11 +155,10 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                     return;
                 }
 
-                // 6. Ejecuta el proceso de inicio del sistema operativo para abrir el archivo con su visor predeterminado (ej: Adobe Reader o Navegador).
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = rutaCompleta,
-                    UseShellExecute = true // Requerido en .NET Core / .NET 5+ para que use el visor predeterminado del sistema.
+                    UseShellExecute = true
                 });
             }
             catch (Exception ex)
@@ -222,7 +244,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                 Anotaciones = string.Empty;
                 Horaskilometrosreales = string.Empty;
 
-                // Recargar lista
                 CargarHistorialMovimientos();
             }
             catch (Exception ex)

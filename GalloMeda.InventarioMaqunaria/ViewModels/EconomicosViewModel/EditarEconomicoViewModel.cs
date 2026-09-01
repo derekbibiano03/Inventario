@@ -9,149 +9,188 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Inventario.Desktop.ViewModels
 {
     public class EditarEconomicoViewModel : INotifyPropertyChanged
     {
+        // Delegado para cerrar la ventana desde el ViewModel
         public System.Action<bool>? CloseAction { get; set; }
 
+        // Contexto de base de datos
+        private readonly InventarioContext _contexto;
         private readonly EmpleadoService _empleadosService;
+
+        // Colecciones observables para los ComboBox
         public ObservableCollection<Empleado> Encargados { get; set; }
         public ObservableCollection<Empleado> Operadores { get; set; }
-
         public ObservableCollection<CatalogoTiposEquipo> TipoEquipo { get; set; }
-
         public ObservableCollection<CatalogoGrupo> Grupos { get; set; }
-
         public ObservableCollection<CatalogoMarca> Marcas { get; set; }
-
         public ObservableCollection<CatalogoEstatus> Estatus { get; set; }
-
         public ObservableCollection<Empleado> Empleados { get; set; }
-
         public ObservableCollection<CatalogoTiposCombustible> Combustibles { get; set; }
-
         public ObservableCollection<CatalogoPya> PYA { get; set; }
-
         public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; set; }
 
+        // Entidad principal
         private CatalogoEconomico? _economicoEdicion;
-
         public CatalogoEconomico? EconomicoEdicion
         {
             get => _economicoEdicion;
-            set { _economicoEdicion = value; OnPropertyChanged(); }
+            set
+            {
+                _economicoEdicion = value;
+                OnPropertyChanged();
+            }
         }
 
-        public ICommand GuardarCambiosCommand { get; private set; }
+        // Propiedad wrapper bindada directamente al ComboBox en XAML
+        private CatalogoGrupo? _grupoSeleccionado;
+        public CatalogoGrupo? GrupoSeleccionado
+        {
+            get => _grupoSeleccionado;
+            set
+            {
+                _grupoSeleccionado = value;
+                if (EconomicoEdicion != null)
+                {
+                    // Asigna la clave foránea a la entidad principal
+                    EconomicoEdicion.IdGrupo = value?.IdGrupo;
+                }
+                OnPropertyChanged();
+            }
+        }
 
+        // Comandos
+        public ICommand GuardarCambiosCommand { get; private set; }
         public ICommand CancelarCommand { get; private set; }
 
+        // Constructor
         public EditarEconomicoViewModel()
         {
-            var context = new InventarioContext();
-            _empleadosService = new EmpleadoService(context);
+            _contexto = new InventarioContext();
+            _empleadosService = new EmpleadoService(_contexto);
 
             Encargados = new ObservableCollection<Empleado>();
-
             Operadores = new ObservableCollection<Empleado>();
-
             TipoEquipo = new ObservableCollection<CatalogoTiposEquipo>();
-
             Grupos = new ObservableCollection<CatalogoGrupo>();
-
             Marcas = new ObservableCollection<CatalogoMarca>();
-
             Estatus = new ObservableCollection<CatalogoEstatus>();
-
             Combustibles = new ObservableCollection<CatalogoTiposCombustible>();
-
             PYA = new ObservableCollection<CatalogoPya>();
-
             Ubicaciones = new ObservableCollection<CatalogoUbicacionesProyecto>();
 
             GuardarCambiosCommand = new RelayCommand(EjecutarGuardarCambios);
-
             CancelarCommand = new RelayCommand(EjecutarCancelar);
 
             CargarCatalogos();
         }
 
+        // Carga los catálogos en memoria
         private void CargarCatalogos()
         {
-            using (var contexto = new InventarioContext())
+            var tiposDb = _contexto.CatalogoTiposEquipos.AsNoTracking().ToList();
+            foreach (var item in tiposDb)
             {
-                var tiposDb = contexto.CatalogoTiposEquipos.ToList();
-                foreach (var item in tiposDb) TipoEquipo.Add(item);
-
-                var gruposDb = contexto.CatalogoGrupos.ToList();
-                foreach (var item in gruposDb) Grupos.Add(item);
-
-                var marcasDb = contexto.CatalogoMarcas.ToList();
-                foreach (var item in marcasDb) Marcas.Add(item);
-
-                var estatusDb = contexto.CatalogoEstatuses.ToList();
-                foreach (var item in estatusDb) Estatus.Add(item);
-
-                var combustiblesDb = contexto.CatalogoTiposCombustibles.ToList();
-                foreach (var item in combustiblesDb) Combustibles.Add(item);
-
-                var pyaDb = contexto.CatalogoPyas.ToList();
-                foreach (var item in pyaDb) PYA.Add(item);
-
-                var ubicacionesDb = contexto.CatalogoUbicacionesProyectos.ToList();
-                foreach (var item in ubicacionesDb) Ubicaciones.Add(item);
-
-                var operaPermitidos = new List<int> { 2, 3, 4, 5, 6, 7 };
-                var operaDb = _empleadosService.ObtenerResponsables(operaPermitidos);
-                foreach (var item in operaDb) Operadores.Add(item);
-
-                var rolesPermitidos = new List<int> { 2,3,4, 5, 6, 7 };
-                var respDb = _empleadosService.ObtenerResponsables(rolesPermitidos);
-                foreach (var item in respDb) Encargados.Add(item);
+                item.IdTipoEquipo = item.IdTipoEquipo.Trim();
+                TipoEquipo.Add(item);
             }
+
+            var gruposDb = _contexto.CatalogoGrupos.AsNoTracking().ToList();
+            foreach (var item in gruposDb)
+            {
+                item.IdGrupo = item.IdGrupo.Trim();
+                Grupos.Add(item);
+            }
+
+            var marcasDb = _contexto.CatalogoMarcas.AsNoTracking().ToList();
+            foreach (var item in marcasDb) Marcas.Add(item);
+
+            var estatusDb = _contexto.CatalogoEstatuses.AsNoTracking().ToList();
+            foreach (var item in estatusDb) Estatus.Add(item);
+
+            var combustiblesDb = _contexto.CatalogoTiposCombustibles.AsNoTracking().ToList();
+            foreach (var item in combustiblesDb) Combustibles.Add(item);
+
+            var pyaDb = _contexto.CatalogoPyas.AsNoTracking().ToList();
+            foreach (var item in pyaDb) PYA.Add(item);
+
+            var ubicacionesDb = _contexto.CatalogoUbicacionesProyectos.AsNoTracking().ToList();
+            foreach (var item in ubicacionesDb) Ubicaciones.Add(item);
+
+            var operaPermitidos = new List<int> { 2, 3, 4, 5, 6, 7 };
+            var operaDb = _empleadosService.ObtenerResponsables(operaPermitidos);
+            foreach (var item in operaDb) Operadores.Add(item);
+
+            var rolesPermitidos = new List<int> { 2, 3, 4, 5, 6, 7 };
+            var respDb = _empleadosService.ObtenerResponsables(rolesPermitidos);
+            foreach (var item in respDb) Encargados.Add(item);
         }
 
+        // Carga la información del registro económico
         public void CargarDatosEconomico(string idEconomico)
         {
-            using (var contexto = new InventarioContext())
-            {
-                var economico = contexto.CatalogoEconomicos.FirstOrDefault(e => e.IdEconomico == idEconomico);
+            var economico = _contexto.CatalogoEconomicos
+                .FirstOrDefault(e => e.IdEconomico == idEconomico);
 
-                if (economico != null)
+            if (economico != null)
+            {
+                // Limpieza de cadenas
+                if (!string.IsNullOrEmpty(economico.IdGrupo))
                 {
-                    EconomicoEdicion = economico;
+                    economico.IdGrupo = economico.IdGrupo.Trim();
+                }
+
+                if (!string.IsNullOrEmpty(economico.IdTipoEquipo))
+                {
+                    economico.IdTipoEquipo = economico.IdTipoEquipo.Trim();
+                }
+
+                EconomicoEdicion = economico;
+
+                if (!string.IsNullOrEmpty(economico.IdGrupo))
+                {
+                    // 1. Intenta buscar primero por clave/IdGrupo exacto
+                    var grupoEncontrado = Grupos.FirstOrDefault(g => g.IdGrupo.Equals(economico.IdGrupo, StringComparison.OrdinalIgnoreCase));
+
+                    // 2. Si no lo encuentra por clave (como pasa con 'adb'), busca por coincidencia en DescripcionGrupo
+                    if (grupoEncontrado == null)
+                    {
+                        grupoEncontrado = Grupos.FirstOrDefault(g => g.DescripcionGrupo.Contains(economico.IdGrupo, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // Asigna el grupo encontrado en el catálogo para seleccionar el elemento en la UI
+                    if (grupoEncontrado != null)
+                    {
+                        GrupoSeleccionado = grupoEncontrado;
+                    }
                 }
             }
         }
 
+        // Persiste los cambios
         private void EjecutarGuardarCambios()
         {
             if (EconomicoEdicion == null) return;
 
             try
             {
-                using (var contexto = new InventarioContext())
-                {
-                    var logsService = new LogsService(contexto);
-
-                    contexto.Entry(EconomicoEdicion).State = EntityState.Modified;
-
-                    contexto.SaveChanges();
-
-                    logsService.RegistrarModificacionEquipo(GalloMeda.InventarioMaqunaria.App.Session.IdUsuario, EconomicoEdicion.IdEconomico);
-                }
-
+                var logsService = new LogsService(_contexto);
+                _contexto.SaveChanges();
+                logsService.RegistrarModificacionEquipo(GalloMeda.InventarioMaqunaria.App.Session.IdUsuario, EconomicoEdicion.IdEconomico);
                 CloseAction?.Invoke(true);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Ocurrió un error al guardar los cambios: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                MessageBox.Show($"Error al guardar: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+        // Cancela la edición
         private void EjecutarCancelar()
         {
             CloseAction?.Invoke(false);

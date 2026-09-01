@@ -5,133 +5,123 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisiciones"
              >
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="AUTO"/>
-            <ColumnDefinition Width="AUTO"/>
-
-        </Grid.ColumnDefinitions>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="AUTO"/>
-            <RowDefinition Height="AUTO"/>
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="100,100,10,10">
-
-            <TextBlock Text="SELECCIONAR RAZON SOCIAL:" FontWeight="Bold" Margin="0,0,0,10"/>
-            <ComboBox 
-            x:Name="cmbOpciones"
-            DisplayMemberPath="Texto"
-            SelectedValuePath="Valor"
-            Width="380" 
-            Height="30"
-            HorizontalAlignment="Left"/>
-
-            <TextBlock Text="SELECCIONAR PROYECTO:" FontWeight="Bold" Margin="0,10,0,10" />
-            <ComboBox 
-            ItemsSource="{Binding Ubicaciones}"
-            DisplayMemberPath="NombreProyecto"
-            SelectedValuePath="IdUbicacion"
-            SelectedValue="{Binding IdUbicacionSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-            Width="380" 
-            Height="30"
-            HorizontalAlignment="Left"
-            Margin="0,0,0,10"/>
-
-            <TextBlock Text="SELECCIONAR TIPO DE REQUISICION:" FontWeight="Bold" Margin="0,10,0,10" />
-            <ComboBox 
-                x:Name="cmbOpcionesTipo"
-                DisplayMemberPath="Texto"
-                SelectedValuePath="Valor"
-                Width="380" 
-                Height="30"
-                HorizontalAlignment="Left"
-                Margin="0,0,0,10"/>
-
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Border Margin="20" Background="White" Padding="20" CornerRadius="5">
             <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="AUTO"/>
-                        <ColumnDefinition Width="AUTO"/>
 
-                    </Grid.ColumnDefinitions>
+                <!-- ENCABEZADO -->
+                <TextBlock Text="REQUISICIÓN DE COMPRA" FontSize="18" FontWeight="Bold" HorizontalAlignment="Right"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,20">
+                    <TextBox Width="150"/>
+                    <TextBlock Text=" - Fecha Actual Automática" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
 
-                    <TextBlock Margin="0,10,0,0" Text="SELECCIONAR LA REQUISICION COMPLETA" />
-                    <!-- 
-                        <TextBox Grid.Column="0" 
-                        Text="{Binding , Mode=TwoWay}" 
-                        IsReadOnly="True"     
-                        Height="30"
-                        Width="250"
-                        Margin="0,30,0,0"
-                        VerticalContentAlignment="Center" 
-                        Background="#F5F5F5" 
-                        Padding="5,0"/>
-                    -->
-                    <Button Grid.Column="1" 
-                        Content="Buscar Archivo..." 
-                        Command="{Binding }" 
-                        Width="120" 
-                        Margin="10,30,0,0" 
-                        Height="30"/>               
-                </Grid>
-                
+                <!-- DATOS GENERALES -->
+                <GroupBox Header="Información General" FontWeight="Bold" Margin="0,0,0,15">
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Atención A:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Margin="0,2"/>
+
+                        <TextBlock Text="Solicitante:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Margin="0,2"/>
+
+                        <TextBlock Text="Obra Solicitante:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Margin="0,2"/>
+                    </Grid>
+                </GroupBox>
+
+                <!-- DATOS DEL ACTIVO -->
+                <GroupBox Header="Datos de la Unidad, Máquina o Equipo" FontWeight="Bold" Margin="0,0,0,15">
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="5">
+                            <TextBlock Text="No. Económico:"/>
+                            <TextBox/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5">
+                            <TextBlock Text="Descripción:"/>
+                            <TextBox/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="2" Margin="5">
+                            <TextBlock Text="Modelo:"/>
+                            <TextBox/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="5">
+                            <TextBlock Text="Motor:"/>
+                            <TextBox/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="5">
+                            <TextBlock Text="Marca:"/>
+                            <TextBox/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="2" Margin="5">
+                            <TextBlock Text="No. Serie:"/>
+                            <TextBox/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- TABLA DE CONCEPTOS -->
+                <GroupBox Header="Conceptos de Orden de Compra" FontWeight="Bold" Margin="0,0,0,15">
+                    <StackPanel>
+                        <DataGrid AutoGenerateColumns="False" CanUserAddRows="True" Height="200" Margin="0,0,0,10">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="PART." Width="50"/>
+                                <DataGridTextColumn Header="DESCRIPCIÓN" Width="*"/>
+                                <DataGridTextColumn Header="NO. DE PART." Width="120"/>
+                                <DataGridTextColumn Header="UNIDAD" Width="80"/>
+                                <DataGridTextColumn Header="CANTIDAD" Width="80"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button Content="Añadir Concepto" Width="120" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- OBSERVACIONES Y FIRMAS -->
+                <GroupBox Header="Observaciones y Autorización" FontWeight="Bold" Margin="0,0,0,15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="Comentarios / Observaciones:"/>
+                            <TextBox AcceptsReturn="True" Height="60" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1">
+                            <TextBlock Text="Nombre del Autorizante:"/>
+                            <TextBox/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- BOTÓN GENERAR WORD -->
+                <Button Content="Generar Documento Word" 
+                        Height="40" Background="#007ACC" Foreground="White" FontWeight="Bold" FontSize="14"/>
+
             </StackPanel>
-
-            <Button 
-                Content="DAR DE ALTA LA REQUISICION"
-                Width="250" 
-                Height="35"
-                HorizontalAlignment="Left"
-                Margin="0,30,0,0"
-                Background="#007ACC" 
-                Foreground="White" 
-                FontWeight="Bold" />
-
-        </StackPanel>
-
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="100,100,10,10" Orientation="Vertical">
-
-            <TextBlock Text="BUSCAR Y SELECCIONAR ECONOMICOS (SELECCIÓN MÚLTIPLE OPCIONAL):" 
-                FontWeight="SemiBold" 
-                Margin="0,0,0,5"/>
-
-            <TextBox Text="{Binding TextoBusquedaId, UpdateSourceTrigger=PropertyChanged}" 
-                Tag="Buscar por ID..." 
-                Height="30" 
-                VerticalContentAlignment="Center" 
-                Margin="0,0,0,5"
-                Padding="5,0"/>
-
-            <ListBox ItemsSource="{Binding EconomicosFiltrados}" 
-                    Height="200" 
-                     Width="500"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" 
-                    Margin="2">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding IdEconomico}" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,10,0"/>
-                                <TextBlock Text=" - "/>
-                                <TextBlock Text="{Binding Descripcion}" Margin="10,0,0,0"/>
-                            </StackPanel>
-                        </CheckBox>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-
-            <Button Content="GENERAR ARCHIVO EXCEL" 
-                Width="250" 
-                    HorizontalAlignment="Left"
-                Height="35" 
-                Margin="0,10,0,0"
-                Background="#4B803E" 
-                Foreground="White" 
-                FontWeight="Bold" 
-                BorderBrush="{x:Null}"/>
-
-        </StackPanel>
-    </Grid>
+        </Border>
+    </ScrollViewer>
 </UserControl>

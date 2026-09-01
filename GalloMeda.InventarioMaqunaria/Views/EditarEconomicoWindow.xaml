@@ -24,7 +24,7 @@
             </StackPanel>
         </Border>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -43,8 +43,7 @@
                     <TextBlock Text="Grupo / Descripción:" FontWeight="Bold" Margin="0,0,0,5" />
                     <ComboBox ItemsSource="{Binding Grupos}"
                               DisplayMemberPath="DescripcionGrupo"
-                              SelectedValuePath="IdGrupo"
-                              SelectedValue="{Binding EconomicoEdicion.IdGrupo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding GrupoSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                               Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
 
                     <TextBlock Text="Marca:" FontWeight="Bold" Margin="0,0,0,5" />
@@ -130,6 +129,7 @@
                               Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15">
                         <ComboBoxItem Content="KILOMETRAJE" />
                         <ComboBoxItem Content="HOROMETRO" />
+                        <ComboBoxItem Content="NO APLICA" />
                     </ComboBox>
 
                     <TextBlock Text="Marca Motor:" FontWeight="Bold" Margin="0,0,0,5"/>

@@ -23,6 +23,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         private bool _isChecked;
         public string? Nombre { get; set; }
         public int Id { get; set; }
+
         public bool IsChecked
         {
             get => _isChecked;
@@ -33,6 +34,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 AlCambiarSeleccion?.Invoke();
             }
         }
+
         public required Action AlCambiarSeleccion { get; set; }
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -47,6 +49,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         private readonly CatalogoEconomicosService _economicosService;
         private readonly ExcelExportService _excelService = new ExcelExportService();
         private readonly InventarioContext _contextoCompartido;
+
         private string _busquedaId = string.Empty;
         private string _busquedaDescripcion = string.Empty;
         private string _busquedaMarca = string.Empty;
@@ -54,10 +57,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         private string _busquedaTipoEquipo = string.Empty;
         private string _busquedaUbicacion = string.Empty;
         private string _busquedaTipoSeguro = string.Empty;
+
         public ICommand ExportarExcelCommand { get; set; }
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
         public ICollectionView VistaEconomicos { get; set; }
         public ICommand EditarCommand { get; }
+
         private Dictionary<string, bool> _estadosId = new Dictionary<string, bool>();
         private Dictionary<string, bool> _estadosDescripcion = new Dictionary<string, bool>();
         private Dictionary<int, bool> _estadosMarca = new Dictionary<int, bool>();
@@ -65,13 +70,13 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         private Dictionary<string, bool> _estadosTipoEquipo = new Dictionary<string, bool>();
         private Dictionary<int, bool> _estadosUbicacion = new Dictionary<int, bool>();
         private Dictionary<string, bool> _estadosTipoSeguro = new Dictionary<string, bool>();
+
         public ObservableCollection<OpcionFiltroCheckbox> FiltroIdOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroDescripcionesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroMarcasOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroSeriesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroTipoEquipoOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroUbicacionesOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
-
         public ObservableCollection<OpcionFiltroCheckbox> FiltroTiposSeguroOpciones { get; set; } = new ObservableCollection<OpcionFiltroCheckbox>();
 
         private ObservableCollection<CatalogoUbicacionesProyecto> _listaUbicaciones = new ObservableCollection<CatalogoUbicacionesProyecto>();
@@ -99,52 +104,88 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
         public string BusquedaId
         {
             get => _busquedaId;
-            set { _busquedaId = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
+            set
+            {
+                _busquedaId = value;
+                OnPropertyChanged();
+                FiltrarListaCheckboxes(FiltroIdOpciones, _busquedaId);
+            }
         }
+
         public string BusquedaDescripcion
         {
             get => _busquedaDescripcion;
-            set { _busquedaDescripcion = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
+            set
+            {
+                _busquedaDescripcion = value;
+                OnPropertyChanged();
+                FiltrarListaCheckboxes(FiltroDescripcionesOpciones, _busquedaDescripcion);
+            }
         }
+
         public string BusquedaMarca
         {
             get => _busquedaMarca;
-            set { _busquedaMarca = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
+            set
+            {
+                _busquedaMarca = value;
+                OnPropertyChanged();
+                FiltrarListaCheckboxes(FiltroMarcasOpciones, _busquedaMarca);
+            }
         }
+
         public string BusquedaSerie
         {
             get => _busquedaSerie;
-            set { _busquedaSerie = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
+            set
+            {
+                _busquedaSerie = value;
+                OnPropertyChanged();
+                FiltrarListaCheckboxes(FiltroSeriesOpciones, _busquedaSerie);
+            }
         }
+
         public string BusquedaTipoEquipo
         {
             get => _busquedaTipoEquipo;
-            set { _busquedaTipoEquipo = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
+            set
+            {
+                _busquedaTipoEquipo = value;
+                OnPropertyChanged();
+                FiltrarListaCheckboxes(FiltroTipoEquipoOpciones, _busquedaTipoEquipo);
+            }
         }
+
         public string BusquedaUbicacion
         {
             get => _busquedaUbicacion;
-            set { _busquedaUbicacion = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
+            set
+            {
+                _busquedaUbicacion = value;
+                OnPropertyChanged();
+                FiltrarListaCheckboxes(FiltroUbicacionesOpciones, _busquedaUbicacion);
+            }
         }
 
         public string BusquedaTipoSeguro
         {
             get => _busquedaTipoSeguro;
-            set { _busquedaTipoSeguro = value; OnPropertyChanged(); RecalcularOpcionesFiltros(); }
+            set
+            {
+                _busquedaTipoSeguro = value;
+                OnPropertyChanged();
+                FiltrarListaCheckboxes(FiltroTiposSeguroOpciones, _busquedaTipoSeguro);
+            }
         }
+
         public EconomicosViewModel()
         {
             VerDetalleCommand = new RelayCommand<string>(AbrirVentanaDetalle);
             LimpiarFiltrosCommand = new RelayCommand<object>(x => LimpiarFiltros());
             EditarCommand = new RelayCommand<string>(AbrirVentanaEditar);
 
-            // Crea la conexión única con la base de datos PostgreSQL para este módulo
             _contextoCompartido = new InventarioContext();
-
-            // CORRECCIÓN: Instancia primero el servicio de logs con el contexto compartido
             var logsService = new LogsService(_contextoCompartido);
-
-            // CORRECCIÓN: Pasa ambos objetos requeridos al constructor del servicio para evitar el NullReferenceException
             _economicosService = new CatalogoEconomicosService(_contextoCompartido, logsService);
 
             Economicos = new ObservableCollection<EconomicoMinimoDto>();
@@ -155,6 +196,30 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             ExportarExcelCommand = new RelayCommand(EjecutarExportacion);
 
             CargarEconomicos();
+        }
+
+        // Método de filtrado real que remueve físicamente de la vista los items no coincidentes
+        private void FiltrarListaCheckboxes(ObservableCollection<OpcionFiltroCheckbox> coleccion, string textoBusqueda)
+        {
+            ICollectionView vista = CollectionViewSource.GetDefaultView(coleccion);
+            if (vista == null) return;
+
+            if (string.IsNullOrWhiteSpace(textoBusqueda))
+            {
+                vista.Filter = null;
+            }
+            else
+            {
+                vista.Filter = item =>
+                {
+                    if (item is OpcionFiltroCheckbox opcion)
+                    {
+                        return !string.IsNullOrEmpty(opcion.Nombre) &&
+                               opcion.Nombre.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase);
+                    }
+                    return false;
+                };
+            }
         }
 
         private void AbrirVentanaEditar(string id)
@@ -177,9 +242,9 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 return;
             }
 
-            string[] idsDeEquiposFiltrados = equiposVisiblesEnTabla.Select(x => x.IdEconomico).Where(id => id != null).Select(id => id!).ToArray(); // Extrae arreglo de llaves válidas asegurando que no contenga nulos.
-            List<CatalogoEconomico> datosCompletos = _economicosService.ObtenerEconomicosPorListaDeIds(idsDeEquiposFiltrados); // Consulta el backend para traer las entidades completas.
-            byte[] archivoExcelBytes = _excelService.GenerarExcelEconomicos(datosCompletos); // Convierte las entidades en una secuencia binaria de Excel.
+            string[] idsDeEquiposFiltrados = equiposVisiblesEnTabla.Select(x => x.IdEconomico).Where(id => id != null).Select(id => id!).ToArray();
+            List<CatalogoEconomico> datosCompletos = _economicosService.ObtenerEconomicosPorListaDeIds(idsDeEquiposFiltrados);
+            byte[] archivoExcelBytes = _excelService.GenerarExcelEconomicos(datosCompletos);
 
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
@@ -193,6 +258,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 File.WriteAllBytes(saveFileDialog.FileName, archivoExcelBytes);
             }
         }
+
         private bool FiltroEjecucion(object item)
         {
             var economico = item as EconomicoMinimoDto;
@@ -200,42 +266,36 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
 
             bool resultado = true;
 
-            // Filtro ID
             var idsSeleccionados = _estadosId.Where(x => x.Value).Select(x => x.Key).ToList();
             if (idsSeleccionados.Any())
             {
                 resultado = resultado && economico.IdEconomico != null && idsSeleccionados.Contains(economico.IdEconomico);
             }
 
-            // Filtro Descripción
             var descripcionesSeleccionadas = _estadosDescripcion.Where(x => x.Value).Select(x => x.Key).ToList();
             if (descripcionesSeleccionadas.Any())
             {
                 resultado = resultado && economico.Descripcion != null && descripcionesSeleccionadas.Contains(economico.Descripcion);
             }
 
-            // Filtro Marca
             var marcasSeleccionadas = _estadosMarca.Where(x => x.Value).Select(x => x.Key).ToList();
             if (marcasSeleccionadas.Any())
             {
                 resultado = resultado && economico.IdMarca.HasValue && marcasSeleccionadas.Contains(economico.IdMarca.Value);
             }
 
-            // Filtro Número de Serie
             var seriesSeleccionadas = _estadosSerie.Where(x => x.Value).Select(x => x.Key).ToList();
             if (seriesSeleccionadas.Any())
             {
                 resultado = resultado && economico.Serie != null && seriesSeleccionadas.Contains(economico.Serie);
             }
 
-            // Filtro Tipo de Equipo
             var tipoequiposSeleccionadas = _estadosTipoEquipo.Where(x => x.Value).Select(x => x.Key).ToList();
             if (tipoequiposSeleccionadas.Any())
             {
                 resultado = resultado && economico.IdTipoEquipo != null && tipoequiposSeleccionadas.Contains(economico.IdTipoEquipo);
             }
 
-            // Filtro Ubicación
             var ubicacionesSeleccionadas = _estadosUbicacion.Where(x => x.Value).Select(x => x.Key).ToList();
             if (ubicacionesSeleccionadas.Any())
             {
@@ -250,15 +310,13 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
 
             return resultado;
         }
+
         private void RecalcularOpcionesFiltros(string? columnaExcluida = null)
         {
             if (_isResetting) return;
             _isResetting = true;
             var itemsVisibles = Economicos.Where(FiltroEjecucion).ToList();
 
-            // ==========================================
-            // 1. RE-POBLAR ID ECONÓMICO
-            // ==========================================
             if (columnaExcluida != "ID")
             {
                 var idsVisibles = itemsVisibles.Select(e => e.IdEconomico).Where(id => !string.IsNullOrEmpty(id)).Distinct().ToList();
@@ -266,15 +324,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 var idsAMostrar = _estadosId.Where(x => x.Value).Select(x => x.Key).Union(idsVisibles).Where(id => id != null).OrderBy(x => x);
                 foreach (var id in idsAMostrar)
                 {
-                    if (!string.IsNullOrWhiteSpace(BusquedaId) && !id!.Contains(BusquedaId, StringComparison.OrdinalIgnoreCase)) continue;
                     _estadosId.TryAdd(id!, false);
                     FiltroIdOpciones.Add(new OpcionFiltroCheckbox { Nombre = id!, IsChecked = _estadosId[id!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("ID", id!, null) });
                 }
+                FiltrarListaCheckboxes(FiltroIdOpciones, BusquedaId);
             }
 
-            // ==========================================
-            // 2. RE-POBLAR DESCRIPCIONES
-            // ==========================================
             if (columnaExcluida != "DESCRIPCION")
             {
                 var descVisibles = itemsVisibles.Select(e => e.Descripcion).Where(d => !string.IsNullOrEmpty(d)).Distinct().ToList();
@@ -282,15 +337,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 var descAMostrar = _estadosDescripcion.Where(x => x.Value).Select(x => x.Key).Union(descVisibles).Where(d => d != null).OrderBy(x => x);
                 foreach (var d in descAMostrar)
                 {
-                    if (!string.IsNullOrWhiteSpace(BusquedaDescripcion) && !d!.Contains(BusquedaDescripcion, StringComparison.OrdinalIgnoreCase)) continue;
                     _estadosDescripcion.TryAdd(d!, false);
                     FiltroDescripcionesOpciones.Add(new OpcionFiltroCheckbox { Nombre = d!, IsChecked = _estadosDescripcion[d!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("DESCRIPCION", d!, null) });
                 }
+                FiltrarListaCheckboxes(FiltroDescripcionesOpciones, BusquedaDescripcion);
             }
 
-            // ==========================================
-            // 3. RE-POBLAR MARCAS
-            // ==========================================
             if (columnaExcluida != "MARCA")
             {
                 var marcasVisibles = itemsVisibles.Where(e => e.IdMarcaNavigation != null && !string.IsNullOrEmpty(e.IdMarcaNavigation.NombreMarca))
@@ -299,19 +351,15 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 var marcasAMostrarIds = _estadosMarca.Where(x => x.Value).Select(x => x.Key).Union(marcasVisibles.Select(v => v.Id)).Distinct();
                 foreach (var idM in marcasAMostrarIds)
                 {
-                    // CORRECCIÓN: Se usa la variable auxiliar y el operador de elusión para satisfacer el análisis de nulabilidad
                     var elementoEncontrado = Economicos.FirstOrDefault(e => e.IdMarca == idM);
                     var nombreM = elementoEncontrado?.IdMarcaNavigation?.NombreMarca ?? "Desconocido";
 
-                    if (!string.IsNullOrWhiteSpace(BusquedaMarca) && !nombreM.Contains(BusquedaMarca, StringComparison.OrdinalIgnoreCase)) continue;
                     _estadosMarca.TryAdd(idM, false);
                     FiltroMarcasOpciones.Add(new OpcionFiltroCheckbox { Id = idM, Nombre = nombreM, IsChecked = _estadosMarca[idM], AlCambiarSeleccion = () => NotificarCheckboxCambiado("MARCA", null, idM) });
                 }
+                FiltrarListaCheckboxes(FiltroMarcasOpciones, BusquedaMarca);
             }
 
-            // ==========================================
-            // 4. RE-POBLAR SERIES
-            // ==========================================
             if (columnaExcluida != "SERIE")
             {
                 var seriesVisibles = itemsVisibles.Select(e => e.Serie).Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
@@ -319,15 +367,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 var seriesAMostrar = _estadosSerie.Where(x => x.Value).Select(x => x.Key).Union(seriesVisibles).Where(s => s != null).OrderBy(x => x);
                 foreach (var s in seriesAMostrar)
                 {
-                    if (!string.IsNullOrWhiteSpace(BusquedaSerie) && !s!.Contains(BusquedaSerie, StringComparison.OrdinalIgnoreCase)) continue;
                     _estadosSerie.TryAdd(s!, false);
                     FiltroSeriesOpciones.Add(new OpcionFiltroCheckbox { Nombre = s!, IsChecked = _estadosSerie[s!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("SERIE", s!, null) });
                 }
+                FiltrarListaCheckboxes(FiltroSeriesOpciones, BusquedaSerie);
             }
 
-            // ==========================================
-            // 5. RE-POBLAR TIPO DE EQUIPO
-            // ==========================================
             if (columnaExcluida != "TIPO_EQUIPO")
             {
                 var tiposVisibles = itemsVisibles.Select(e => e.IdTipoEquipo).Where(t => !string.IsNullOrEmpty(t)).Distinct().ToList();
@@ -335,15 +380,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 var tiposAMostrar = _estadosTipoEquipo.Where(x => x.Value).Select(x => x.Key).Union(tiposVisibles).Where(t => t != null).OrderBy(x => x);
                 foreach (var t in tiposAMostrar)
                 {
-                    if (!string.IsNullOrWhiteSpace(BusquedaTipoEquipo) && !t!.Contains(BusquedaTipoEquipo, StringComparison.OrdinalIgnoreCase)) continue;
                     _estadosTipoEquipo.TryAdd(t!, false);
                     FiltroTipoEquipoOpciones.Add(new OpcionFiltroCheckbox { Nombre = t!, IsChecked = _estadosTipoEquipo[t!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("TIPO_EQUIPO", t!, null) });
                 }
+                FiltrarListaCheckboxes(FiltroTipoEquipoOpciones, BusquedaTipoEquipo);
             }
 
-            // ==========================================
-            // 6. RE-POBLAR UBICACIONES
-            // ==========================================
             if (columnaExcluida != "UBICACION")
             {
                 var ubicacionesVisibles = itemsVisibles.Where(e => e.IdUbicacionNavigation != null && !string.IsNullOrEmpty(e.IdUbicacionNavigation.NombreProyecto))
@@ -352,14 +394,13 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 var ubicacionesAMostrarIds = _estadosUbicacion.Where(x => x.Value).Select(x => x.Key).Union(ubicacionesVisibles.Select(v => v.Id)).Distinct();
                 foreach (var idM in ubicacionesAMostrarIds)
                 {
-                    // CORRECCIÓN: Se usa la variable auxiliar y el operador de elusión para satisfacer el análisis de nulabilidad
                     var elementoEncontrado = Economicos.FirstOrDefault(e => e.IdUbicacion == idM);
                     var nombreM = elementoEncontrado?.IdUbicacionNavigation?.NombreProyecto ?? "Desconocido";
 
-                    if (!string.IsNullOrWhiteSpace(BusquedaUbicacion) && !nombreM.Contains(BusquedaUbicacion, StringComparison.OrdinalIgnoreCase)) continue;
                     _estadosUbicacion.TryAdd(idM, false);
                     FiltroUbicacionesOpciones.Add(new OpcionFiltroCheckbox { Id = idM, Nombre = nombreM, IsChecked = _estadosUbicacion[idM], AlCambiarSeleccion = () => NotificarCheckboxCambiado("UBICACION", null, idM) });
                 }
+                FiltrarListaCheckboxes(FiltroUbicacionesOpciones, BusquedaUbicacion);
             }
 
             if (columnaExcluida != "TIPO_SEGURO")
@@ -369,23 +410,19 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 var tiposSegurosAMostrar = _estadosTipoSeguro.Where(x => x.Value).Select(x => x.Key).Union(tipoSeguroVisibles).Where(s => s != null).OrderBy(x => x);
                 foreach (var s in tiposSegurosAMostrar)
                 {
-                    if (!string.IsNullOrWhiteSpace(BusquedaTipoSeguro) && !s!.Contains(BusquedaTipoSeguro, StringComparison.OrdinalIgnoreCase)) continue;
                     _estadosTipoSeguro.TryAdd(s!, false);
                     FiltroTiposSeguroOpciones.Add(new OpcionFiltroCheckbox { Nombre = s!, IsChecked = _estadosTipoSeguro[s!], AlCambiarSeleccion = () => NotificarCheckboxCambiado("TIPO_SEGURO", s!, null) });
                 }
+                FiltrarListaCheckboxes(FiltroTiposSeguroOpciones, BusquedaTipoSeguro);
             }
 
-            // Libera la bandera de bloqueo permitiendo que el sistema procese con normalidad las interacciones subsiguientes
             _isResetting = false;
         }
 
-        // CAPTURA LA ACCIÓN FÍSICA DEL CHECKBOX Y SINCRONIZA LOS DICCIONARIOS ESPECIFICANDO QUÉ COLUMNA MUTÓ
         private void NotificarCheckboxCambiado(string columnaOrigen, string claveTexto, int? claveId)
         {
-            // Aborta de inmediato la ejecución si el sistema se encuentra bloqueado re-poblando colecciones
             if (_isResetting) return;
 
-            // Actualiza los diccionarios de estados de texto si la clave de texto suministrada es válida
             if (claveTexto != null)
             {
                 if (columnaOrigen == "ID" && FiltroIdOpciones.FirstOrDefault(x => x.Nombre == claveTexto) is var idOpt && idOpt != null) _estadosId[claveTexto] = idOpt.IsChecked;
@@ -395,17 +432,13 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 if (columnaOrigen == "TIPO_SEGURO" && FiltroTiposSeguroOpciones.FirstOrDefault(x => x.Nombre == claveTexto) is var tipsegOpt && tipsegOpt != null) _estadosTipoSeguro[claveTexto] = tipsegOpt.IsChecked;
             }
 
-            // Actualiza los diccionarios de estados numéricos si el identificador entero posee un valor asignado
             if (claveId.HasValue)
             {
                 if (columnaOrigen == "MARCA" && FiltroMarcasOpciones.FirstOrDefault(x => x.Id == claveId.Value) is var marcaOpt && marcaOpt != null) _estadosMarca[claveId.Value] = marcaOpt.IsChecked;
                 if (columnaOrigen == "UBICACION" && FiltroUbicacionesOpciones.FirstOrDefault(x => x.Id == claveId.Value) is var ubOpt && ubOpt != null) _estadosUbicacion[claveId.Value] = ubOpt.IsChecked;
             }
 
-            // Refresca la vista predeterminada de la grilla de datos para aplicar las nuevas reglas del predicado del filtro
             VistaEconomicos.Refresh();
-
-            // Invoca la reconstrucción del resto de los filtros de las columnas pasando el identificador de la columna de origen
             RecalcularOpcionesFiltros(columnaOrigen);
         }
 
@@ -419,6 +452,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             _busquedaSerie = string.Empty;
             _busquedaTipoEquipo = string.Empty;
             _busquedaUbicacion = string.Empty;
+            _busquedaTipoSeguro = string.Empty;
 
             OnPropertyChanged(nameof(BusquedaId));
             OnPropertyChanged(nameof(BusquedaDescripcion));
@@ -426,18 +460,18 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
             OnPropertyChanged(nameof(BusquedaSerie));
             OnPropertyChanged(nameof(BusquedaTipoEquipo));
             OnPropertyChanged(nameof(BusquedaUbicacion));
+            OnPropertyChanged(nameof(BusquedaTipoSeguro));
 
-            // Limpiamos de raíz los diccionarios de estados seleccionados
             _estadosId.Clear();
             _estadosDescripcion.Clear();
             _estadosMarca.Clear();
             _estadosSerie.Clear();
             _estadosTipoEquipo.Clear();
             _estadosUbicacion.Clear();
+            _estadosTipoSeguro.Clear();
 
             _isResetting = false;
 
-            // Restablece la tabla completa y las opciones cruzadas
             VistaEconomicos.Refresh();
             RecalcularOpcionesFiltros();
         }
@@ -461,7 +495,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
                 Economicos.Add(item);
             }
 
-            // Construcción inicial en cascada
             RecalcularOpcionesFiltros();
         }
 

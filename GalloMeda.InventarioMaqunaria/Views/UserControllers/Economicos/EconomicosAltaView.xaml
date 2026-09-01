@@ -139,7 +139,8 @@
                 <TextBox Text="{Binding Placas, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="250" Height="30" Margin="0,0,0,10"/>
 
                 <TextBlock Text="Horometro / Kilometraje:" FontWeight="Bold" Margin="0,0,0,10"/>
-                <TextBox Text="{Binding Horometro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="250" Height="30" Margin="0,0,0,10"/>
+                <TextBox Text="{Binding Horometro, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" 
+         HorizontalAlignment="Left" Width="250" Height="30" Margin="0,0,0,10"/>
 
                 <TextBlock Text="Medida en Horometro o Kilometraje:" FontWeight="Bold" Margin="0,0,0,10"/>
                 <ComboBox SelectedValue="{Binding THK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

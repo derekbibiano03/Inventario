@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
+		<Version>1.0.7</Version>
+		<AssemblyVersion>1.0.7.0</AssemblyVersion>
+		<FileVersion>1.0.7.0</FileVersion>
 		<DebugType>embedded</DebugType>
 		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
 		<OutputType>WinExe</OutputType>
@@ -9,10 +11,8 @@
 		<SignAssembly>false</SignAssembly>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-
 		<ApplicationIcon>Resources\icono.ico</ApplicationIcon>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<None Remove="Resources\adquisiciones.png" />
 		<None Remove="Resources\AgregarUsuario.png" />
@@ -24,7 +24,6 @@
 		<None Remove="Resources\socios_icon.png" />
 		<None Remove="Resources\ubicacion_icon.png" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="AutoUpdater.NET.Official" Version="1.9.3" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
@@ -40,16 +39,13 @@
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
 		<PackageReference Include="SSH.NET" Version="2026.0.0" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
 		<ProjectReference Include="..\Inventario.Data\Inventario.Data.csproj" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<Folder Include="Converters\" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<Resource Include="Resources\adquisiciones.png" />
 		<Resource Include="Resources\AgregarUsuario.png" />
@@ -61,19 +57,9 @@
 		<Resource Include="Resources\socios_icon.png" />
 		<Resource Include="Resources\ubicacion_icon.png" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <None Update="appsettings.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
-
-	<Target Name="SignBinariesPostBuild" AfterTargets="Build;Publish">
-		<PropertyGroup>
-			<TargetDirToSign>$(TargetDir)</TargetDirToSign>
-		</PropertyGroup>
-		<Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /f &quot;C:\Proyecto\GalloMedaCert.pfx&quot; /p &quot;MiPasswordSeguro123&quot; /fd SHA256 &quot;$(TargetDirToSign)*.dll&quot;" ContinueOnError="true" />
-		<Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe&quot; sign /f &quot;C:\Proyecto\GalloMedaCert.pfx&quot; /p &quot;MiPasswordSeguro123&quot; /fd SHA256 &quot;$(TargetDirToSign)*.exe&quot;" ContinueOnError="true" />
-	</Target>
-
 </Project>

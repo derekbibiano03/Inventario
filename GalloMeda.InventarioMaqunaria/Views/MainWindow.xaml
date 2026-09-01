@@ -23,7 +23,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Background="#1E2022">
-                    <TextBlock Style="{StaticResource TextoResaltado}" Padding="65,0,0,0"  Text="MÓDULOS" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBlock Style="{StaticResource TextoResaltado}" Padding="65,0,0,0"  Text="APARTADOS" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <Button Content="☰" Width="30" Height="30" Background="Transparent" Foreground="White" BorderThickness="0" FontSize="16" HorizontalAlignment="Right" Click="BtnColapsar_Click"/>
                 </Grid>
 

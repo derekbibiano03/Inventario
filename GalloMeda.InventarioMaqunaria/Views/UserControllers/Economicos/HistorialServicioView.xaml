@@ -186,6 +186,6 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
-        </Grid>s
+        </Grid>
     </Grid>
 </UserControl>

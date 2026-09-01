@@ -1,4 +1,5 @@
-﻿using Inventario.Core.Services;
+﻿using AutoUpdaterDotNET;
+using Inventario.Core.Services;
 using Inventario.Core.Services.Auth;
 using Inventario.Core.Services.Logs;
 using Inventario.Data.Models;
@@ -28,6 +29,7 @@ namespace GalloMeda.InventarioMaqunaria
         {
             // Ejecutamos la lógica base de inicialización del marco WPF.
             base.OnStartup(e);
+            AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/main/update.xml");
 
             // Capturamos cualquier excepción no controlada en el hilo principal para mostrar un mensaje claro.
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>

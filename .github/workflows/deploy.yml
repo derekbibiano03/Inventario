@@ -1,0 +1,43 @@
+name: Compilar y Publicar Actualizacion
+
+# Se ejecuta automáticamente cada vez que haces push a la rama main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    # 1. Obtiene el código fuente desde GitHub
+    - name: Checkout del código
+      uses: actions/checkout@v3
+
+    # 2. Configura el entorno de .NET
+    - name: Configurar .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Cambia según tu versión de .NET
+
+    # 3. Restaura las dependencias del proyecto
+    - name: Restaurar NuGet
+      run: dotnet restore
+
+    # 4. Compila y publica la aplicación en una carpeta
+    - name: Compilar WPF
+      run: dotnet publish Inventario.Desktop/Inventario.Desktop.csproj -c Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
+
+    # 5. Comprime la compilación en un ZIP
+    - name: Comprimir ejecutable
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
+
+    # 6. Crea una release automática en GitHub y sube el ZIP
+    - name: Publicar Release en GitHub
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./InventarioSetup.zip
+        tag_name: v1.0.1 # Puedes automatizar este número de versión
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/icono.ico"
-        Title="Inicio de Sesion VERSION 1.0.7" Height="450" Width="800">
+        Title="Gallo Meda Inicio de Sesion" Height="450" Width="800">
     <Grid>
 
         <StackPanel VerticalAlignment="Center" Width="400">
@@ -20,6 +20,7 @@
             <PasswordBox x:Name="TxtContrasena" Margin="0,0,0,25" Height="30" VerticalContentAlignment="Center" Padding="5,0,0,0"/>
 
             <Button Content="Iniciar Sesión" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=TxtContrasena}" Height="38" Background="#1A365D" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
+            <TextBlock Style="{StaticResource TextoGeneral}" FontSize="12" Text="Cualquier duda sugerencia o problema contactar al correo dbibiano@enlaceferroviario.com" Margin="0,0,5,5" Foreground="#4A5568" />
         </StackPanel>
         
     </Grid>

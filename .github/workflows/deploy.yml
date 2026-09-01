@@ -14,19 +14,19 @@ jobs:
     - name: Checkout del código
       uses: actions/checkout@v4
 
-    # 2. Configura el entorno de .NET
+    # 2. Configura el entorno de .NET 10
     - name: Configurar .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
 
     # 3. Restaura las dependencias del proyecto
     - name: Restaurar NuGet
       run: dotnet restore
 
-    # 4. Compila y publica apuntando únicamente al proyecto ejecutable WPF
+    # 4. Compila y publica el ejecutable WPF con la versión explícita
     - name: Compilar WPF
-      run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
+      run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false /p:Version=1.0.11 /p:AssemblyVersion=1.0.11.0 /p:FileVersion=1.0.11.0
 
     # 5. Comprime la compilación en un ZIP
     - name: Comprimir ejecutable

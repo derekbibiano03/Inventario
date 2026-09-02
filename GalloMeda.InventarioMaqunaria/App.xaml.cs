@@ -34,7 +34,7 @@ namespace GalloMeda.InventarioMaqunaria
             AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
 
             // Inicia la verificación automática de actualizaciones.
-            AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/master/update.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/main/update.xml");
 
             // Capturamos cualquier excepción no controlada en el hilo principal para mostrar un mensaje claro.
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>

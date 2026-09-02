@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
 	<PropertyGroup>
-		<Version>1.3.0</Version>
-		<AssemblyVersion>1.3.0.0</AssemblyVersion>
-		<FileVersion>1.3.0.0</FileVersion>
+		<!-- Versión instalada en el equipo del usuario (menor a la del XML para probar el salto) -->
+		<Version>1.3.1</Version>
+		<AssemblyVersion>1.3.1.0</AssemblyVersion>
+		<FileVersion>1.3.1.0</FileVersion>
 		<DebugType>embedded</DebugType>
 		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
 		<OutputType>WinExe</OutputType>
@@ -13,6 +15,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Resources\icono.ico</ApplicationIcon>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<None Remove="Resources\adquisiciones.png" />
 		<None Remove="Resources\AgregarUsuario.png" />
@@ -24,6 +27,7 @@
 		<None Remove="Resources\socios_icon.png" />
 		<None Remove="Resources\ubicacion_icon.png" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="AutoUpdater.NET.Official" Version="1.9.3" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
@@ -39,13 +43,16 @@
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
 		<PackageReference Include="SSH.NET" Version="2026.0.0" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
 		<ProjectReference Include="..\Inventario.Data\Inventario.Data.csproj" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<Folder Include="Converters\" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<Resource Include="Resources\adquisiciones.png" />
 		<Resource Include="Resources\AgregarUsuario.png" />
@@ -57,9 +64,11 @@
 		<Resource Include="Resources\socios_icon.png" />
 		<Resource Include="Resources\ubicacion_icon.png" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+
 </Project>

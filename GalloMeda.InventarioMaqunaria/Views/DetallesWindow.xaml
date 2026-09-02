@@ -133,30 +133,32 @@ Width="1050">
             </StackPanel>
         </ScrollViewer>
 
-        <GroupBox Grid.Row="3" Header="Documentos y Archivos Anexados" FontWeight="Bold" Padding="10">
-            <ListBox ItemsSource="{Binding ArchivosAnexados}" BorderThickness="0" HorizontalContentAlignment="Stretch">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+        <GroupBox Grid.Row="3" Header="Documentos y Archivos Anexados" FontWeight="Bold" Padding="10" Height="150">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ListBox ItemsSource="{Binding ArchivosAnexados}" BorderThickness="0" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Column="0" VerticalAlignment="Center">
-                    <Hyperlink Command="{Binding DataContext.AbrirArchivoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                               CommandParameter="{Binding}">
-                        <TextBlock Text="{Binding NombreArchivo}" FontSize="13"/>
-                    </Hyperlink>
-                </TextBlock>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                        <Hyperlink Command="{Binding DataContext.AbrirArchivoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                   CommandParameter="{Binding}">
+                            <TextBlock Text="{Binding NombreArchivo}" FontSize="13"/>
+                        </Hyperlink>
+                    </TextBlock>
 
-                            <Button Grid.Column="1" Content="Descargar" Padding="8,3" Margin="5,0,0,0"
-                    Command="{Binding DataContext.DescargarArchivoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                    CommandParameter="{Binding}"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                                <Button Grid.Column="1" Content="Descargar" Padding="8,3" Margin="5,0,0,0"
+                        Command="{Binding DataContext.DescargarArchivoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
         </GroupBox>
     </Grid>
 </Window>

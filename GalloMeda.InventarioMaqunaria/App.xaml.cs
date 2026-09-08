@@ -24,7 +24,7 @@ namespace GalloMeda.InventarioMaqunaria
         {
             base.OnStartup(e);
             AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
-            AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/main/update.xml");
+            AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/master/update.xml");
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 Exception ex = (Exception)args.ExceptionObject;

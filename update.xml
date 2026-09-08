@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <item>
-	<!-- Versión del servidor: Debe ser superior a la del ejecutable para disparar la actualización -->
-	<version>1.4.0</version>
+	<!-- Versión del servidor: Debe ser estrictamente SUPERIOR a la del .csproj -->
+	<version>1.4.1</version>
 
 	<!-- Enlace de descarga directa del instalador comprimido -->
 	<url>https://github.com/derekbibiano03/Inventario/releases/latest/download/InventarioSetup.zip</url>
 
 	<!-- Enlace exacto del Tag de la release para mostrar las notas en la ventana emergente -->
-	<changelog>https://github.com/derekbibiano03/Inventario/releases/tag/v1.4.0</changelog>
+	<changelog>https://github.com/derekbibiano03/Inventario/releases/tag/v1.4.1</changelog>
 
 	<!-- Define si la actualización debe forzarse sin opción a cancelar -->
 	<mandatory>false</mandatory>

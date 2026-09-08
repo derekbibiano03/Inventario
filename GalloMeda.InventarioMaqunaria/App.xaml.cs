@@ -18,30 +18,16 @@ namespace GalloMeda.InventarioMaqunaria
     // Define la clase principal de la aplicación WPF heredando de Application.
     public partial class App : Application
     {
-        // Propiedad estática para almacenar el proveedor de servicios de inyección de dependencias.
         public static IServiceProvider ServiceProvider { get; private set; } = null!;
-
-        // Propiedad estática para mantener la sesión del usuario activo en la aplicación.
         public static ISessionService Session { get; private set; } = new SessionService();
-
-        // Sobrescribimos el método OnStartup que es el punto de entrada real de la aplicación WPF.
         protected override void OnStartup(StartupEventArgs e)
         {
-            // Ejecutamos la lógica base de inicialización del marco WPF.
             base.OnStartup(e);
-
-            // Suscribimos el evento que exige cerrar la aplicación para permitir la sobreescritura de archivos.
             AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
-
-            // Inicia la verificación automática de actualizaciones.
             AutoUpdater.Start("https://raw.githubusercontent.com/derekbibiano03/Inventario/main/update.xml");
-
-            // Capturamos cualquier excepción no controlada en el hilo principal para mostrar un mensaje claro.
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                // Extraemos el objeto de excepción arrojado por el sistema.
                 Exception ex = (Exception)args.ExceptionObject;
-                // Desplegamos un mensaje con la causa exacta del fallo.
                 MessageBox.Show($"Error no controlado en la aplicación:\n\n{ex.Message}\n\n{ex.InnerException?.Message}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
             };
 

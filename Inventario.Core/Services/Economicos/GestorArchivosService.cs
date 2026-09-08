@@ -323,5 +323,38 @@ namespace Inventario.Core.Services.Economicos
             // Devuelve la ruta física completa del archivo alojado temporalmente en la máquina
             return rutaLocalTemporal;
         }
+
+        public void EliminarArchivosServicio(List<int> idsArchivos)
+        {
+            if (idsArchivos == null || idsArchivos.Count == 0) return;
+
+            // 1. Obtener los registros de la tabla intermedia / archivos
+            var relaciones = _context.ServicioArchivos
+                                      .Where(sa => idsArchivos.Contains(sa.IdArchivoNavigation.IdArchivo))
+                                      .ToList();
+
+            var archivos = _context.CatalogoArchivos
+                                   .Where(a => idsArchivos.Contains(a.IdArchivo))
+                                   .ToList();
+
+            // 2. Eliminar físicamente los archivos del disco o servidor FTP si aplica
+            foreach (var archivo in archivos)
+            {
+                if (!string.IsNullOrEmpty(archivo.Archivo))
+                {
+                    string rutaAbsoluta = ObtenerRutaAbsoluta(archivo.Archivo);
+                    if (System.IO.File.Exists(rutaAbsoluta))
+                    {
+                        System.IO.File.Delete(rutaAbsoluta);
+                    }
+                }
+            }
+
+            // 3. Remover los registros de la base de datos
+            _context.ServicioArchivos.RemoveRange(relaciones);
+            _context.CatalogoArchivos.RemoveRange(archivos);
+
+            _context.SaveChanges();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Inventario.Core.DTOs;
 using Inventario.Core.Services.Economicos;
 using Inventario.Data.Models;
+using Inventario.Desktop.Views;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -25,6 +26,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         public ICommand SeleccionarArchivosCommand { get; }
         public ICommand EliminarArchivoCommand { get; }
         public ICommand VerArchivoCommand { get; }
+        public ICommand EliminarServicioCommand { get; }
+        public ICommand AbrirEditarServicioCommand { get; }
 
         private ICollectionView _vistaHistorialServicios;
         public ICollectionView VistaHistorialServicios
@@ -109,7 +112,9 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             AltaServicioCommand = new RelayCommand(AltaServicio);
             SeleccionarArchivosCommand = new RelayCommand(SeleccionarArchivos);
             EliminarArchivoCommand = new RelayCommand<string>(EliminarArchivo);
+            EliminarServicioCommand = new RelayCommand<HistorialServicio>(EliminarServicio);
             VerArchivoCommand = new RelayCommand<CatalogoArchivo>(EjecutarAbrirArchivo);
+            AbrirEditarServicioCommand = new RelayCommand<HistorialServicio>(AbrirEditarServicio);
 
             CargarTipos();
             CargarHistorialMovimientos();
@@ -127,6 +132,53 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             // Valida que el NoEconomico del servicio contenga el texto digitado (ignora mayúsculas/minúsculas)
             return servicio.NoEconomico != null &&
                    servicio.NoEconomico.Contains(FiltroNoEconomico, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void AbrirEditarServicio(HistorialServicio? servicio)
+        {
+            if (servicio == null) return;
+
+            var editViewModel = new EditarServicioViewModel(servicio, _historialServicio, _gestorArchivosService);
+            var ventanaEditar = new EditarServicioView(editViewModel)
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            if (ventanaEditar.ShowDialog() == true)
+            {
+                CargarHistorialMovimientos();
+            }
+        }
+
+        private void EliminarServicio(HistorialServicio? servicio)
+        {
+            if (servicio == null) return;
+
+            // Solicita confirmación al usuario antes de proceder
+            var resultado = MessageBox.Show(
+                $"¿Está seguro de eliminar el registro de servicio ID '{servicio.IdServicio}' del económico '{servicio.NoEconomico}'?\n\nEsta acción también eliminará sus archivos adjuntos asociados y no se puede deshacer.",
+                "Confirmar Eliminación",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (resultado == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    // Llama al servicio para borrar de la base de datos
+                    _historialServicio.EliminarServicio(servicio.IdServicio);
+
+                    MessageBox.Show("El registro de servicio ha sido eliminado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Refresca la tabla
+                    CargarHistorialMovimientos();
+                }
+                catch (Exception ex)
+                {
+                    string mensajeError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                    MessageBox.Show($"Error al intentar eliminar el servicio: {mensajeError}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         public void CargarHistorialMovimientos()

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <item>
 	<!-- Versión del servidor: Debe ser superior a la del ejecutable para disparar la actualización -->
-	<version>1.3.0</version>
+	<version>1.4.0</version>
 
 	<!-- Enlace de descarga directa del instalador comprimido -->
 	<url>https://github.com/derekbibiano03/Inventario/releases/latest/download/InventarioSetup.zip</url>

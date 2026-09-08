@@ -42,7 +42,7 @@ public partial class CatalogoEconomico
 
     public string? FamiliaMotor { get; set; }
 
-    public decimal? Horometro { get; set; }
+    public decimal Horometro { get; set; }
 
     public string? Dimensiones { get; set; }
 

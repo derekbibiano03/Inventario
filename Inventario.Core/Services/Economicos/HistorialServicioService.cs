@@ -53,18 +53,13 @@ namespace Inventario.Core.Services.Economicos
 
         public string? ObtenerArchivoTemporalDesdeFtp(string rutaRemotaServidor)
         {
-            // Validación de la entrada; si el parámetro es nulo o vacío, termina el proceso.
             if (string.IsNullOrWhiteSpace(rutaRemotaServidor))
             {
                 return null;
             }
-
             try
             {
-                // 1. Limpiamos cualquier prefijo 'ftp://' o prefijos incorrectos que vengan en el string.
                 string rutaLimpia = rutaRemotaServidor.Replace("ftp://", "", StringComparison.OrdinalIgnoreCase).TrimStart('/');
-
-                // 2. Construimos la URL HTTP base asegurándonos de que comience con http:// o https://.
                 string urlWeb;
                 if (rutaLimpia.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                     rutaLimpia.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
@@ -73,40 +68,25 @@ namespace Inventario.Core.Services.Economicos
                 }
                 else
                 {
-                    // Si el path no tiene protocolo, le asignamos http:// directamente.
                     urlWeb = $"http://{rutaLimpia}";
                 }
 
-                // 3. Escapamos espacios y caracteres especiales para evitar errores HTTP 400/404 (ej. reemplazar espacios por %20).
                 Uri uriValida = new Uri(urlWeb);
-
-                // 4. Extraemos únicamente el nombre del archivo para la ruta de guardado temporal.
                 string nombreArchivo = Path.GetFileName(uriValida.AbsolutePath);
-
-                // 5. Generamos una ruta local dentro de la carpeta Temp del sistema operativo con un GUID para evitar colisiones.
                 string rutaTemporalLocal = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}_{nombreArchivo}");
-
-                // 6. Instanciamos HttpClient para realizar la petición de descarga al servidor Web.
                 using (HttpClient client = new HttpClient())
                 {
-                    // Realizamos la llamada síncrona para obtener el contenido completo del archivo en bytes.
                     byte[] fileBytes = client.GetByteArrayAsync(uriValida).GetAwaiter().GetResult();
-
-                    // Escribimos los bytes directamente en el disco duro local.
                     File.WriteAllBytes(rutaTemporalLocal, fileBytes);
                 }
-
-                // Retornamos la ruta del archivo local generado para que la vista/proceso lo abra.
                 return rutaTemporalLocal;
             }
             catch (Exception ex)
             {
-                // Capturamos cualquier excepción de red o de E/S y lanzamos una nueva con el detalle correspondiente.
                 throw new Exception($"Error al obtener el archivo desde el servidor Web: {ex.Message}", ex);
             }
         }
 
-        // CORRECCIÓN AQUÍ: Cargar las tablas relacionales de los archivos
         public List<HistorialServicio> ObtenerHistorial()
         {
             return _context.HistorialServicios
@@ -114,6 +94,126 @@ namespace Inventario.Core.Services.Economicos
                 .Include(s => s.ServicioArchivos)
                     .ThenInclude(sa => sa.IdArchivoNavigation)
                 .ToList();
+        }
+
+        public void ModificarServicio(HistorialServicio dto, List<(CatalogoArchivo archivoCatalogado, ServicioArchivo relacionServicio)> nuevosArchivos, List<int> idsArchivosAEliminar)
+        {
+            var servicioExistente = _context.HistorialServicios
+                .Include(s => s.ServicioArchivos)
+                .FirstOrDefault(s => s.IdServicio == dto.IdServicio);
+
+            if (servicioExistente == null)
+            {
+                throw new Exception($"El servicio con ID {dto.IdServicio} no existe.");
+            }
+
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                servicioExistente.NoEconomico = dto.NoEconomico;
+                servicioExistente.FechaMantenimiento = dto.FechaMantenimiento;
+                servicioExistente.TipoMantenimiento = dto.TipoMantenimiento;
+                servicioExistente.Anotaciones = dto.Anotaciones;
+                servicioExistente.Horaskilometrosreales = dto.Horaskilometrosreales;
+
+                if (idsArchivosAEliminar != null && idsArchivosAEliminar.Any())
+                {
+                    var relacionesAEliminar = servicioExistente.ServicioArchivos
+                        .Where(sa => sa.IdArchivo.HasValue && idsArchivosAEliminar.Contains(sa.IdArchivo.Value))
+                        .ToList();
+
+                    foreach (var relacion in relacionesAEliminar)
+                    {
+                        _context.ServicioArchivos.Remove(relacion);
+
+                        if (relacion.IdArchivo.HasValue)
+                        {
+                            var archivoCatalogo = _context.CatalogoArchivos.Find(relacion.IdArchivo.Value);
+                            if (archivoCatalogo != null)
+                            {
+                                _context.CatalogoArchivos.Remove(archivoCatalogo);
+                            }
+                        }
+                    }
+                }
+
+                if (nuevosArchivos != null && nuevosArchivos.Any())
+                {
+                    foreach (var item in nuevosArchivos)
+                    {
+                        _context.CatalogoArchivos.Add(item.archivoCatalogado);
+                        _context.SaveChanges();
+
+                        item.relacionServicio.IdServicio = servicioExistente.IdServicio;
+                        item.relacionServicio.IdArchivo = item.archivoCatalogado.IdArchivo;
+
+                        _context.ServicioArchivos.Add(item.relacionServicio);
+                    }
+                }
+
+                _context.SaveChanges();
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        public void EliminarServicio(int idServicio)
+        {
+            var servicio = _context.HistorialServicios
+                                   .Include(s => s.ServicioArchivos)
+                                   .FirstOrDefault(s => s.IdServicio == idServicio);
+
+            if (servicio != null)
+            {
+                // 1. Elimina las relaciones y registros de archivos asociados en cascada
+                if (servicio.ServicioArchivos != null && servicio.ServicioArchivos.Any())
+                {
+                    foreach (var relacion in servicio.ServicioArchivos.ToList())
+                    {
+                        _context.ServicioArchivos.Remove(relacion);
+
+                        if (relacion.IdArchivo.HasValue)
+                        {
+                            var archivoCatalogo = _context.CatalogoArchivos.Find(relacion.IdArchivo.Value);
+                            if (archivoCatalogo != null)
+                            {
+                                _context.CatalogoArchivos.Remove(archivoCatalogo);
+                            }
+                        }
+                    }
+                }
+
+                // 2. Elimina la entidad principal
+                _context.HistorialServicios.Remove(servicio);
+
+                // 3. Persiste los cambios
+                _context.SaveChanges();
+            }
+        }
+
+        public void ActualizarServicio(HistorialServicio servicioEditado)
+        {
+            // Busca el registro existente en la base de datos
+            var servicioExistente = _context.HistorialServicios
+                                            .FirstOrDefault(s => s.IdServicio == servicioEditado.IdServicio);
+
+            if (servicioExistente == null)
+            {
+                throw new Exception($"No se encontró el registro de servicio con ID {servicioEditado.IdServicio}.");
+            }
+
+            // Actualiza las propiedades editables
+            servicioExistente.FechaMantenimiento = servicioEditado.FechaMantenimiento;
+            servicioExistente.TipoMantenimiento = servicioEditado.TipoMantenimiento;
+            servicioExistente.Anotaciones = servicioEditado.Anotaciones;
+            servicioExistente.Horaskilometrosreales = servicioEditado.Horaskilometrosreales;
+
+            // Guarda los cambios en MySQL / PostgreSQL / SQL Server
+            _context.SaveChanges();
         }
     }
 }

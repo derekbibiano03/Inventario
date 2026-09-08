@@ -23,7 +23,7 @@
         public string? Placas { get; set; }
         public string? PolizaAdj { get; set; }
         public required string THK { get; set; }
-        public int? Horometro { get; set; }
+        public decimal Horometro { get; set; }
         public string? Dimensiones { get; set; }
 
         // 4. Booleano del seguro

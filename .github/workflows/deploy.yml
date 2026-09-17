@@ -24,8 +24,7 @@ jobs:
     - name: Restaurar NuGet
       run: dotnet restore
 
-    # 4. Compila y publica el ejecutable WPF con la versión explícita
-    # 4. Compila y publica respetando la versión definida en el .csproj
+    # 4. Compila y publica el ejecutable WPF respetando la versión definida en el .csproj
     - name: Compilar WPF
       run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
 
@@ -33,10 +32,10 @@ jobs:
     - name: Comprimir ejecutable
       run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
 
-    # 6. Genera un Tag único basado en la fecha y hora
-    - name: Generar Tag dinamico
+    # 6. Definir Tag estricto para AutoUpdater (debe coincidir con el XML)
+    - name: Generar Tag de Version
       id: tag
-      run: echo "tag_name=v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')" >> $env:GITHUB_OUTPUT
+      run: echo "tag_name=v1.4.3" >> $env:GITHUB_OUTPUT
 
     # 7. Crea la Release en GitHub
     - name: Publicar Release en GitHub
@@ -44,5 +43,7 @@ jobs:
       with:
         files: ./InventarioSetup.zip
         tag_name: ${{ steps.tag.outputs.tag_name }}
+        name: "Actualización v1.4.3"
+        body: "Nueva actualización automática del sistema de inventarios y mantenimientos."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,9 +2,9 @@
 
 	<PropertyGroup>
 		<!-- Versión instalada en el equipo del usuario (menor a la del XML para probar el salto) -->
-		<Version>1.4.3</Version>
-		<AssemblyVersion>1.4.3.0</AssemblyVersion>
-		<FileVersion>1.4.3.0</FileVersion>
+		<Version>1.4.1</Version>
+		<AssemblyVersion>1.4.1.0</AssemblyVersion>
+		<FileVersion>1.4.1.0</FileVersion>
 		<DebugType>embedded</DebugType>
 		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
 		<OutputType>WinExe</OutputType>

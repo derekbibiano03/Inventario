@@ -25,7 +25,7 @@ namespace GalloMeda.InventarioMaqunaria
             base.OnStartup(e);
             AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
             AutoUpdater.HttpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)";
-            string updateUrl = $"https://raw.githubusercontent.com/derekbibiano03/Inventario/main/update.xml?t={DateTime.UtcNow.Ticks}";
+            string updateUrl = $"https://raw.githubusercontent.com/derekbibiano03/Inventario/master/update.xml?t={DateTime.UtcNow.Ticks}";
             AutoUpdater.Start(updateUrl);
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {

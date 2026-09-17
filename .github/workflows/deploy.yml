@@ -35,18 +35,18 @@ jobs:
         Copy-Item -Recurse -Force ./publish/* ./temp_zip/InventarioDesktop/
         Compress-Archive -Path ./temp_zip/InventarioDesktop -DestinationPath ./InventarioSetup.zip
 
-    # 6. Extraer automáticamente el Tag de la versión actual
-    - name: Generar Tag de Version
-      id: tag
-      run: echo "tag_name=${{ github.ref_name }}" >> $env:GITHUB_OUTPUT
+    # 6. Generar número de versión automático basado en el contador de ejecuciones de GitHub
+    - name: Generar Versión Automática
+      id: version
+      run: echo "version_tag=v1.0.${{ github.run_number }}" >> $env:GITHUB_OUTPUT
 
-    # 7. Crea la Release en GitHub
+    # 7. Crea la Release en GitHub automáticamente
     - name: Publicar Release en GitHub
       uses: softprops/action-gh-release@v2
       with:
         files: ./InventarioSetup.zip
-        tag_name: ${{ steps.tag.outputs.tag_name }}
-        name: "Actualización ${{ steps.tag.outputs.tag_name }}"
+        tag_name: ${{ steps.version.outputs.version_tag }}
+        name: "Actualización ${{ steps.version.outputs.version_tag }}"
         body: "Nueva actualización automática del sistema de inventarios y mantenimientos."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

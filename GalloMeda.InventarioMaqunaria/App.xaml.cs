@@ -99,25 +99,20 @@ namespace GalloMeda.InventarioMaqunaria
         }
 
         // Método que intercepta el resultado de la revisión del archivo XML en el servidor
+        // Método que intercepta el resultado de la revisión del archivo XML en el servidor
         private void AutoUpdater_CheckForUpdateEvent(UpdateInfoEventArgs args)
         {
             if (args.Error == null)
             {
-                // La conexión fue exitosa y leyó el XML correctamente
                 if (args.IsUpdateAvailable)
                 {
-                    // Si entra aquí, significa que detectó una versión mayor en el servidor con éxito
-                    // (AutoUpdater lanzará su propia ventana automáticamente, esto es solo informativo)
                     System.Diagnostics.Debug.WriteLine($"Actualización encontrada: Versión {args.CurrentVersion}");
                 }
-                else
-                {
-                    MessageBox.Show("AutoUpdater se conectó con éxito, pero tu versión local es igual o superior a la del servidor.", "Verificación de Update", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                // Eliminamos el MessageBox de "tu versión local es igual o superior" 
+                // para que la app abra directamente sin molestar al usuario si está actualizado.
             }
             else
             {
-                // Si hay un error (ej. URL mal escrita, sin internet, error 404, mal formato XML) lo verás aquí
                 MessageBox.Show($"AutoUpdater no pudo leer el archivo XML:\n\n{args.Error.Message}", "Error de AutoUpdater", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }

@@ -14,7 +14,7 @@ jobs:
     - name: Checkout del código
       uses: actions/checkout@v4
 
-    # 2. Configura el entorno de .NET 10
+    # 2. Configura el entorno de .NET
     - name: Configurar .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -24,29 +24,21 @@ jobs:
     - name: Restaurar NuGet
       run: dotnet restore
 
-    # 4. Compila y publica el ejecutable WPF respetando la versión definida en el .csproj
+    # 4. Compila y publica el ejecutable WPF tomando la versión directo del csproj
     - name: Compilar WPF
       run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
 
-    # 5. Comprime la compilación creando una carpeta contenedora limpia
+    # 5. Comprime la compilación directamente (sin subcarpetas conflictivas)
     - name: Comprimir ejecutable
-      run: |
-        New-Item -ItemType Directory -Force -Path ./temp_zip/InventarioDesktop
-        Copy-Item -Recurse -Force ./publish/* ./temp_zip/InventarioDesktop/
-        Compress-Archive -Path ./temp_zip/InventarioDesktop -DestinationPath ./InventarioSetup.zip
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip -Force
 
-    # 6. Generar número de versión automático basado en el contador de ejecuciones de GitHub
-    - name: Generar Versión Automática
-      id: version
-      run: echo "version_tag=v1.0.${{ github.run_number }}" >> $env:GITHUB_OUTPUT
-
-    # 7. Crea la Release en GitHub automáticamente
+    # 6. Crea la Release en GitHub usando un tag automático basado en el contador
     - name: Publicar Release en GitHub
       uses: softprops/action-gh-release@v2
       with:
         files: ./InventarioSetup.zip
-        tag_name: ${{ steps.version.outputs.version_tag }}
-        name: "Actualización ${{ steps.version.outputs.version_tag }}"
-        body: "Nueva actualización automática del sistema de inventarios y mantenimientos."
+        tag_name: "v1.0.${{ github.run_number }}"
+        name: "Actualización v1.0.${{ github.run_number }}"
+        body: "Nueva actualización automática del sistema."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

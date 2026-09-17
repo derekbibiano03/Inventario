@@ -20,13 +20,20 @@ namespace GalloMeda.InventarioMaqunaria
     {
         public static IServiceProvider ServiceProvider { get; private set; } = null!;
         public static ISessionService Session { get; private set; } = new SessionService();
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // Suscribimos los eventos de AutoUpdater para control y depuración
             AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+            AutoUpdater.CheckForUpdateEvent += AutoUpdater_CheckForUpdateEvent;
             AutoUpdater.HttpUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)";
+
+            // URL apuntando correctamente a la rama master
             string updateUrl = $"https://raw.githubusercontent.com/derekbibiano03/Inventario/master/update.xml?t={DateTime.UtcNow.Ticks}";
             AutoUpdater.Start(updateUrl);
+
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 Exception ex = (Exception)args.ExceptionObject;
@@ -37,104 +44,86 @@ namespace GalloMeda.InventarioMaqunaria
             {
                 // Creamos el lector de configuración apuntando a la ruta del ejecutable.
                 var builder = new ConfigurationBuilder()
-                    // Establecemos el directorio base donde se ejecuta el programa.
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                    // Indicamos que lea el archivo appsettings.json de forma obligatoria.
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-                // Construimos la configuración para acceder a las claves e incrustaciones.
                 IConfiguration configuration = builder.Build();
-
-                // Inicializamos la colección de servicios del contenedor IoC.
                 var serviceCollection = new ServiceCollection();
-
-                // Extraemos la cadena de conexión especificada en el archivo appsettings.json.
                 var connectionString = configuration.GetConnectionString("InventarioConnection");
 
-                // Verificamos que la cadena de conexión exista y no esté vacía.
                 if (string.IsNullOrEmpty(connectionString))
                 {
-                    // Disparamos un error informativo en caso de que la clave no esté presente.
                     throw new InvalidOperationException("No se encontró la cadena de conexión 'InventarioConnection' en el archivo appsettings.json.");
                 }
 
-                // Registramos el contexto de datos de EF Core usando una versión fija de MariaDB/MySQL sin autodetección de red.
                 serviceCollection.AddDbContext<InventarioContext>(options =>
                     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)))
                 );
 
-                // Registramos las clases concretas directamente en el contenedor de dependencias sin interfaz.
                 serviceCollection.AddScoped<LogsService>();
                 serviceCollection.AddScoped<AutenticacionService>();
 
-                // Compilamos la fábrica del proveedor de servicios.
                 ServiceProvider = serviceCollection.BuildServiceProvider();
 
-                // Creamos un alcance de ejecución para resolver las instancias necesarias en el Login.
                 using (var scope = ServiceProvider.CreateScope())
                 {
-                    // Resolvemos el DbContext configurado desde el contenedor de dependencias.
                     var context = scope.ServiceProvider.GetRequiredService<InventarioContext>();
-
-                    // Creamos el servicio de logs inyectándole el contexto válido.
                     var logsService = new LogsService(context);
-
-                    // Creamos el servicio de autenticación inyectándole el contexto y el servicio de logs.
                     var authService = new AutenticacionService(context, logsService);
-
-                    // Creamos el ViewModel asociándolo a sus dependencias inicializadas.
                     var loginVM = new LoginViewModel(authService, logsService);
-
-                    // Instanciamos la vista del Login.
                     var loginWindow = new Auth();
-
-                    // Asignamos el DataContext a la vista.
                     loginWindow.DataContext = loginVM;
 
-                    // Configuramos el modo de cierre para impedir la salida prematura al ocultar la ventana.
                     this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-
-                    // Mostramos la ventana de Login en modo modal.
                     bool? result = loginWindow.ShowDialog();
 
-                    // Validamos si la autenticación fue exitosa.
                     if (result == true && loginVM.IsAutenticado)
                     {
-                        // Leemos la propiedad del usuario autenticado en la sesión global.
                         string usuarioConfirmado = App.Session.Username;
-
-                        // Instanciamos la ventana principal enviando el usuario.
                         var mainWindow = new MainWindow(usuarioConfirmado);
-
-                        // Asignamos la ventana principal a la propiedad global de WPF.
                         this.MainWindow = mainWindow;
-
-                        // Establecemos que al cerrar la ventana principal finalice toda la aplicación.
                         this.ShutdownMode = ShutdownMode.OnMainWindowClose;
-
-                        // Desplegamos la ventana principal.
                         mainWindow.Show();
                     }
                     else
                     {
-                        // Finalizamos el proceso si el login falla o es cancelado.
                         this.Shutdown();
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Desplegamos la ventana con la excepción capturada durante la inicialización.
                 MessageBox.Show($"Error al iniciar la aplicación:\n\n{ex.Message}\n\nDetalle: {ex.InnerException?.Message}", "Error de Inicialización", MessageBoxButton.OK, MessageBoxImage.Error);
-                // Cerramos la aplicación tras notificar el error.
                 this.Shutdown();
             }
         }
 
-        // Método que se activa automáticamente cuando el usuario acepta descargar la actualización.
+        // Método que intercepta el resultado de la revisión del archivo XML en el servidor
+        private void AutoUpdater_CheckForUpdateEvent(UpdateInfoEventArgs args)
+        {
+            if (args.Error == null)
+            {
+                // La conexión fue exitosa y leyó el XML correctamente
+                if (args.IsUpdateAvailable)
+                {
+                    // Si entra aquí, significa que detectó una versión mayor en el servidor con éxito
+                    // (AutoUpdater lanzará su propia ventana automáticamente, esto es solo informativo)
+                    System.Diagnostics.Debug.WriteLine($"Actualización encontrada: Versión {args.CurrentVersion}");
+                }
+                else
+                {
+                    MessageBox.Show("AutoUpdater se conectó con éxito, pero tu versión local es igual o superior a la del servidor.", "Verificación de Update", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            else
+            {
+                // Si hay un error (ej. URL mal escrita, sin internet, error 404, mal formato XML) lo verás aquí
+                MessageBox.Show($"AutoUpdater no pudo leer el archivo XML:\n\n{args.Error.Message}", "Error de AutoUpdater", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
         private void AutoUpdater_ApplicationExitEvent()
         {
-            // Cierra inmediatamente los hilos y procesos de la aplicación WPF para desocupar el .exe
             Application.Current.Shutdown();
         }
     }

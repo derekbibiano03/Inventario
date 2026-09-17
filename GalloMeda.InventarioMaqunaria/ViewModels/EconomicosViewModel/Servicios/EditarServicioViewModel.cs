@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Inventario.Desktop.ViewModels.EconomicosViewModel
+namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
 {
     public class EditarServicioViewModel : INotifyPropertyChanged
     {

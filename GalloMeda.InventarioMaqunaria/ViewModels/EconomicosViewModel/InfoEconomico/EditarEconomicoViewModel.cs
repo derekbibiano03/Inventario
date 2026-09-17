@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Inventario.Desktop.ViewModels
+namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
 {
     public class EditarEconomicoViewModel : INotifyPropertyChanged
     {

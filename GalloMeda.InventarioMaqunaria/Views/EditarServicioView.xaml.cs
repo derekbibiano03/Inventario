@@ -1,4 +1,4 @@
-﻿using Inventario.Desktop.ViewModels.EconomicosViewModel;
+﻿using Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios;
 using System.Windows;
 
 

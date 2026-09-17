@@ -6,10 +6,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Inventario.Desktop.ViewModels.EconomicosViewModel
+namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Movimientos
 {
     public class RealizarMovimientoViewModel : INotifyPropertyChanged
     {
@@ -24,7 +25,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         public ICommand RegistrarMovimientoCommand { get; }
         public ICommand SeleccionarArchivoCommand { get; }
         public ICommand SeleccionarArchivo2Command { get; }
-        public ICollectionView VistaHistorialMovimientos { get; set; }
 
         private readonly UbicacionProyeectoService _ubicacionService;
         private readonly CatalogoEconomicosService _economicosService;
@@ -52,6 +52,18 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             }
         }
 
+        private ObservableCollection<CatalogoMovimientosEconomico> _listaMovimientos;
+        private ICollectionView _vistaHistorialMovimientos;
+        public ICollectionView VistaHistorialMovimientos
+        {
+            get => _vistaHistorialMovimientos;
+            set
+            {
+                _vistaHistorialMovimientos = value;
+                OnPropertyChanged(nameof(VistaHistorialMovimientos));
+            }
+        }
+
         private DateTime _fechaSalida = DateTime.UtcNow;
         public DateTime FechaSalida
         {
@@ -59,7 +71,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
             set { _fechaSalida = value; OnPropertyChanged(); }
         }
 
-        private  int _idUbicacionFinSeleccionado ;
+        private int _idUbicacionFinSeleccionado;
         public int IdUbicacionFinSeleccionado
         {
             get => _idUbicacionFinSeleccionado;
@@ -103,6 +115,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         }
 
         public ICommand VerArchivoCommand { get; }
+        public ICommand EliminarMovimientoCommand { get; }
 
         public RealizarMovimientoViewModel(
             UbicacionProyeectoService ubicacionService,
@@ -130,6 +143,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
 
             // 2. Vincular la vista predeterminada a la colección ya instanciada
             VistaHistorialMovimientos = CollectionViewSource.GetDefaultView(MovimientosEconomicos);
+            EliminarMovimientoCommand = new RelayCommand<CatalogoMovimientosEconomico>(EjecutarEliminarMovimiento);
             VerArchivoCommand = new RelayCommand<string>(EjecutarVerArchivo);
 
             // 3. Cargar catalogos iniciales
@@ -137,6 +151,41 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
 
             // 4. Cargar el historial de movimientos desde el servicio a la tabla
             CargarHistorialMovimientos();
+        }
+
+        private void EjecutarEliminarMovimiento(CatalogoMovimientosEconomico movimiento)
+        {
+            if (movimiento == null) return;
+
+            var resultadoConfirmacion = MessageBox.Show(
+                $"¿Estás seguro de que deseas eliminar el movimiento ID {movimiento.IdMovimiento}?",
+                "Confirmar Eliminación",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (resultadoConfirmacion == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    // Revisa si _realizarMovimientosService es null o si el método espera otro ID
+                    bool eliminado = _realizarMovimientosService.EliminarMovimiento(movimiento.IdMovimiento);
+
+                    if (eliminado)
+                    {
+                        CargarHistorialMovimientos();
+
+                        MessageBox.Show("Movimiento eliminado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo eliminar el movimiento en la base de datos.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al intentar eliminar: {ex.Message}", "Error crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         // Método dedicado a obtener y actualizar los registros del historial en la vista

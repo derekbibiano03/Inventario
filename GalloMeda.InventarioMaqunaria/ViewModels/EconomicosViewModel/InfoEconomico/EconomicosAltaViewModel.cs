@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Inventario.Desktop.ViewModels.EconomicosViewModel
+namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
 {
     // Declaración de la clase ViewModel que implementa la interfaz para notificar cambios a la vista de WPF.
     public class EconomicosAltaViewModel : INotifyPropertyChanged

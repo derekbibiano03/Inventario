@@ -82,6 +82,8 @@ namespace Inventario.Core.Services.Economicos
                     ruta2GuardadaServidor = ruta2;
                 }
 
+                var movimientosNuevos = new List<CatalogoMovimientosEconomico>();
+
                 foreach (var idEconomico in listaIdEconomicos)
                 {
                     var modeloDb = new CatalogoMovimientosEconomico
@@ -98,15 +100,22 @@ namespace Inventario.Core.Services.Economicos
                     };
 
                     _context.CatalogoMovimientosEconomicos.Add(modeloDb);
+                    movimientosNuevos.Add(modeloDb);
 
                     var equipo = _context.CatalogoEconomicos.FirstOrDefault(e => e.IdEconomico == idEconomico);
                     if (equipo != null)
                     {
                         equipo.IdUbicacion = idUbicacionLlegada;
                     }
-                    _context.SaveChanges();
-                    int idMovimiento = modeloDb.IdMovimiento;
-                    _logsService.RegistrarMovimientoEquipo(idUsuarioOperativo, idMovimiento);
+                }
+
+                // Se ejecuta una sola vez para guardar todos los movimientos y actualizaciones de golpe
+                _context.SaveChanges();
+
+                // Registrar los logs una vez guardados los IDs generados
+                foreach (var movimiento in movimientosNuevos)
+                {
+                    _logsService.RegistrarMovimientoEquipo(idUsuarioOperativo, movimiento.IdMovimiento);
                 }
 
                 transaction.Commit();
@@ -118,6 +127,148 @@ namespace Inventario.Core.Services.Economicos
                 throw new Exception($"Error al registrar movimientos: {ex.InnerException?.Message ?? ex.Message}", ex);
             }
         }
+
+
+        public bool ModificarMovimiento(
+            int idMovimiento,
+            int idUsuarioOperativo,
+            int idUbicacionLlegada,
+            int idUbicacionSalida,
+            DateTime fechaMovimiento,
+            string? nuevaRutaLocal1,
+            string? nuevaRutaLocal2,
+            bool conservarArchivo1,
+            bool conservarArchivo2)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                var movimientoDb = _context.CatalogoMovimientosEconomicos.FirstOrDefault(m => m.IdMovimiento == idMovimiento);
+                if (movimientoDb == null)
+                {
+                    return false;
+                }
+
+                // --- GESTIÓN ARCHIVO 1 ---
+                if (!conservarArchivo1)
+                {
+                    // Si no se desea conservar, eliminamos el anterior del FTP si existe
+                    if (!string.IsNullOrEmpty(movimientoDb.Archivo))
+                    {
+                        EliminarArchivoFtpNativo(movimientoDb.Archivo);
+                    }
+                    movimientoDb.Archivo = null;
+                    movimientoDb.NombreArchivo = null;
+
+                    // Si hay una nueva ruta local para reemplazarlo
+                    if (!string.IsNullOrEmpty(nuevaRutaLocal1) && File.Exists(nuevaRutaLocal1))
+                    {
+                        string extension1 = Path.GetExtension(nuevaRutaLocal1);
+                        string nombreUnico1 = $"{Guid.NewGuid()}{extension1}";
+                        string rutaRemota1 = $"{_directorioRemoto.TrimEnd('/')}/{nombreUnico1}";
+
+                        SubirUnArchivoFtpNativo(nuevaRutaLocal1, rutaRemota1);
+
+                        movimientoDb.Archivo = rutaRemota1;
+                        movimientoDb.NombreArchivo = Path.GetFileName(nuevaRutaLocal1);
+                    }
+                }
+
+                // --- GESTIÓN ARCHIVO 2 ---
+                if (!conservarArchivo2)
+                {
+                    // Si no se desea conservar, eliminamos el anterior del FTP si existe
+                    if (!string.IsNullOrEmpty(movimientoDb.Archivo2))
+                    {
+                        EliminarArchivoFtpNativo(movimientoDb.Archivo2);
+                    }
+                    movimientoDb.Archivo2 = null;
+                    movimientoDb.NombreArchivo2 = null;
+
+                    // Si hay una nueva ruta local para reemplazarlo
+                    if (!string.IsNullOrEmpty(nuevaRutaLocal2) && File.Exists(nuevaRutaLocal2))
+                    {
+                        string extension2 = Path.GetExtension(nuevaRutaLocal2);
+                        string nombreUnico2 = $"{Guid.NewGuid()}{extension2}";
+                        string rutaRemota2 = $"{_directorioRemoto.TrimEnd('/')}/{nombreUnico2}";
+
+                        SubirUnArchivoFtpNativo(nuevaRutaLocal2, rutaRemota2);
+
+                        movimientoDb.Archivo2 = rutaRemota2;
+                        movimientoDb.NombreArchivo2 = Path.GetFileName(nuevaRutaLocal2);
+                    }
+                }
+
+                // Actualizar propiedades del movimiento
+                movimientoDb.IdUbicacionLlegada = idUbicacionLlegada;
+                movimientoDb.IdUbicacionSalida = idUbicacionSalida;
+                movimientoDb.FechaMovimiento = fechaMovimiento;
+                movimientoDb.IdUsuario = idUsuarioOperativo;
+
+                _context.SaveChanges();
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new Exception($"Error al modificar el movimiento: {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
+        }
+
+        public bool EliminarMovimiento(int idMovimiento)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                var movimientoDb = _context.CatalogoMovimientosEconomicos.FirstOrDefault(m => m.IdMovimiento == idMovimiento);
+                if (movimientoDb == null)
+                {
+                    return false;
+                }
+
+                // Eliminar archivos físicos asociados del servidor FTP
+                if (!string.IsNullOrEmpty(movimientoDb.Archivo))
+                {
+                    EliminarArchivoFtpNativo(movimientoDb.Archivo);
+                }
+
+                if (!string.IsNullOrEmpty(movimientoDb.Archivo2))
+                {
+                    EliminarArchivoFtpNativo(movimientoDb.Archivo2);
+                }
+
+                _context.CatalogoMovimientosEconomicos.Remove(movimientoDb);
+                _context.SaveChanges();
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new Exception($"Error al eliminar el movimiento: {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
+        }
+
+        private void EliminarArchivoFtpNativo(string rutaRemota)
+        {
+            try
+            {
+                string urlFtp = $"ftp://{_hostServidor.Trim('/')}/{rutaRemota.TrimStart('/')}";
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(urlFtp);
+                request.Method = WebRequestMethods.Ftp.DeleteFile;
+                request.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
+
+                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse()) { }
+            }
+            catch (WebException)
+            {
+                // Si el archivo ya no existe en el servidor, ignoramos el error para no bloquear la operación de BD
+            }
+        }
+
 
         public List<CatalogoMovimientosEconomico> ObtenerHistorial()
         {

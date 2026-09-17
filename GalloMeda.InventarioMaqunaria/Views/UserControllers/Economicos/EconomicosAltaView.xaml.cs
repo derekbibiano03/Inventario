@@ -3,7 +3,7 @@ using Inventario.Core.Services.Economicos;
 using Inventario.Core.Services.Logs;
 using Inventario.Core.Services.Personal;
 using Inventario.Core.Services.UbicacionProyecto;
-using Inventario.Desktop.ViewModels.EconomicosViewModel;
+using Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico;
 using System.Windows.Controls;
 namespace Inventario.Desktop.Views.UserControllers.Economicos
 {

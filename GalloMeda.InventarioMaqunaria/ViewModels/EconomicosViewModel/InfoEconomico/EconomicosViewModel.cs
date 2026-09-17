@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel
+namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
 {
     public class OpcionFiltroCheckbox : INotifyPropertyChanged
     {

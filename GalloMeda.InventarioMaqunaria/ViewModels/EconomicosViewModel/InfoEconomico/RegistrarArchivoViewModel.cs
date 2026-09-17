@@ -15,7 +15,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Inventario.Desktop.ViewModels.EconomicosViewModel
+namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
 {
     public class RegistrarArchivoViewModel : INotifyPropertyChanged
     {

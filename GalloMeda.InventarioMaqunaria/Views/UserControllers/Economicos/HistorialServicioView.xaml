@@ -252,6 +252,7 @@
                           HorizontalGridLinesBrush="#F1F5F9"
                           Background="Transparent"
                           BorderThickness="0"
+                          VirtualizingPanel.ScrollUnit="Pixel"
                           AlternatingRowBackground="#F8FAFC">
 
                     <DataGrid.Columns>
@@ -283,7 +284,7 @@
                         <!-- Columna multilínea para observaciones del servicio -->
                         <DataGridTextColumn Header="ANOTACIONES" 
                                             Binding="{Binding Anotaciones}" 
-                                            Width="*" 
+                                            Width="250" 
                                             ElementStyle="{StaticResource WrappedTextBlockStyle}"
                                             IsReadOnly="True"/>
 
@@ -341,7 +342,7 @@
                         </DataGridTemplateColumn>
 
                         <!-- NUEVA COLUMNA DE ACCIONES: BOTÓN PARA ABRIR LA VENTANA DE EDICIÓN -->
-                        <DataGridTemplateColumn Header="ACCIONES" Width="100">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="170">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <!-- Contenedor centrado para el botón de acción -->

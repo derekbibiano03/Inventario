@@ -13,6 +13,9 @@ namespace Inventario.Core.Services.Economicos
     {
         private readonly InventarioContext _context;
         private readonly LogsService _logsService;
+        private readonly string _hostServidor = "170.10.162.13";
+        private readonly string _usuarioFtp = "dbibiano@enlaceferroviario.com";
+        private readonly string _contrasenaFtp = "drbr11122003DRBR.";
 
         public HistorialServicioService(InventarioContext context, LogsService logsService)
         {
@@ -60,30 +63,44 @@ namespace Inventario.Core.Services.Economicos
             try
             {
                 string rutaLimpia = rutaRemotaServidor.Replace("ftp://", "", StringComparison.OrdinalIgnoreCase).TrimStart('/');
-                string urlWeb;
-                if (rutaLimpia.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                    rutaLimpia.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+
+                if (rutaLimpia.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
                 {
-                    urlWeb = rutaLimpia;
+                    rutaLimpia = rutaLimpia.Substring(7);
                 }
-                else
+                else if (rutaLimpia.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                 {
-                    urlWeb = $"http://{rutaLimpia}";
+                    rutaLimpia = rutaLimpia.Substring(8);
                 }
 
-                Uri uriValida = new Uri(urlWeb);
-                string nombreArchivo = Path.GetFileName(uriValida.AbsolutePath);
-                string rutaTemporalLocal = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}_{nombreArchivo}");
-                using (HttpClient client = new HttpClient())
+                string rutaRelativa = rutaLimpia;
+                if (rutaLimpia.StartsWith(_hostServidor, StringComparison.OrdinalIgnoreCase))
                 {
-                    byte[] fileBytes = client.GetByteArrayAsync(uriValida).GetAwaiter().GetResult();
-                    File.WriteAllBytes(rutaTemporalLocal, fileBytes);
+                    rutaRelativa = rutaLimpia.Substring(_hostServidor.Length).TrimStart('/');
                 }
+
+                string urlFtp = $"ftp://{_hostServidor}/{rutaRelativa}";
+                string nombreArchivo = Path.GetFileName(urlFtp);
+                string rutaTemporalLocal = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}_{nombreArchivo}");
+
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(urlFtp);
+                request.Method = WebRequestMethods.Ftp.DownloadFile;
+                request.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
+                request.UseBinary = true;
+                request.UsePassive = true;
+
+                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+                using (Stream responseStream = response.GetResponseStream())
+                using (FileStream fileStream = File.Create(rutaTemporalLocal))
+                {
+                    responseStream.CopyTo(fileStream);
+                }
+
                 return rutaTemporalLocal;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener el archivo desde el servidor Web: {ex.Message}", ex);
+                throw new Exception($"Error al obtener el archivo desde el servidor FTP: {ex.Message}", ex);
             }
         }
 
@@ -169,7 +186,6 @@ namespace Inventario.Core.Services.Economicos
 
             if (servicio != null)
             {
-                // 1. Elimina las relaciones y registros de archivos asociados en cascada
                 if (servicio.ServicioArchivos != null && servicio.ServicioArchivos.Any())
                 {
                     foreach (var relacion in servicio.ServicioArchivos.ToList())
@@ -187,17 +203,13 @@ namespace Inventario.Core.Services.Economicos
                     }
                 }
 
-                // 2. Elimina la entidad principal
                 _context.HistorialServicios.Remove(servicio);
-
-                // 3. Persiste los cambios
                 _context.SaveChanges();
             }
         }
 
         public void ActualizarServicio(HistorialServicio servicioEditado)
         {
-            // Busca el registro existente en la base de datos
             var servicioExistente = _context.HistorialServicios
                                             .FirstOrDefault(s => s.IdServicio == servicioEditado.IdServicio);
 
@@ -206,13 +218,11 @@ namespace Inventario.Core.Services.Economicos
                 throw new Exception($"No se encontró el registro de servicio con ID {servicioEditado.IdServicio}.");
             }
 
-            // Actualiza las propiedades editables
             servicioExistente.FechaMantenimiento = servicioEditado.FechaMantenimiento;
             servicioExistente.TipoMantenimiento = servicioEditado.TipoMantenimiento;
             servicioExistente.Anotaciones = servicioEditado.Anotaciones;
             servicioExistente.Horaskilometrosreales = servicioEditado.Horaskilometrosreales;
 
-            // Guarda los cambios en MySQL / PostgreSQL / SQL Server
             _context.SaveChanges();
         }
     }

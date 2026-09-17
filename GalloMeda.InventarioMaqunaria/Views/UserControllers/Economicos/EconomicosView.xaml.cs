@@ -1,4 +1,4 @@
-﻿using Inventario.Desktop.ViewModels.EconomicosViewModel.EconomicosViewModel;
+﻿using Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico;
 using System.Windows.Controls;
 namespace Inventario.Desktop.Views.UserControllers.Economicos
 {

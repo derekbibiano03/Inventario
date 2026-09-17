@@ -17,7 +17,6 @@ namespace Inventario.Desktop.ViewModels.UbicacionProyectosViewModel
     {
 
         private readonly InventarioContext _contextoBD;
-        private readonly InventarioContext _context;
         // 1. Declaración de dependencias del servicio de archivos y el contexto de base de datos.
         private readonly GestorArchivosService _archivosService;
         private CatalogoEconomico? _detalle;

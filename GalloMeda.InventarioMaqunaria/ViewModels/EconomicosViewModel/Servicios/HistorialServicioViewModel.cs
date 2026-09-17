@@ -1,6 +1,7 @@
 ﻿using GalloMeda.InventarioMaqunaria;
 using Inventario.Core.DTOs;
 using Inventario.Core.Services.Economicos;
+using Inventario.Core.Services.Logs;
 using Inventario.Data.Models;
 using Inventario.Desktop.Views;
 using Microsoft.Win32;
@@ -12,7 +13,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Inventario.Desktop.ViewModels.EconomicosViewModel
+namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
 {
     public class HistorialServicioViewModel : INotifyPropertyChanged
     {
@@ -261,6 +262,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
         {
             try
             {
+                // 1. Validaciones
                 if (!FechaMantenimiento.HasValue)
                 {
                     MessageBox.Show("Debe seleccionar una fecha válida.", "Error de Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -273,6 +275,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                     return;
                 }
 
+                // 2. Construcción del DTO
                 var dto = new HistorialServicio
                 {
                     NoEconomico = this.NoEconomico,
@@ -282,16 +285,31 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel
                     Horaskilometrosreales = this.Horaskilometrosreales
                 };
 
+                // 3. Registro en Base de Datos
                 HistorialServicio servicioCreado = _historialServicio.RegistrarServicio(App.Session.IdUsuario, dto);
 
+                // 4. Procesamiento de Archivos y Bitácora (Logs)
                 if (ArchivosSeleccionados.Count > 0)
                 {
                     List<string> listaRutas = ArchivosSeleccionados.ToList();
-                    _gestorArchivosService.RegistrarArchivosServicios(listaRutas, servicioCreado.IdServicio);
+
+                    // Sube al FTP y genera registros en base de datos
+                    var registrosProcesados = _gestorArchivosService.RegistrarArchivosServicios(listaRutas, servicioCreado.IdServicio);
+
+                    // CORRECCIÓN: Instanciar LogsService para guardar la bitácora de los archivos subidos
+                    using (var contextoBD = new InventarioContext())
+                    {
+                        var logsService = new LogsService(contextoBD);
+                        foreach (var item in registrosProcesados)
+                        {
+                            logsService.RegistrarDocumentoAdjuntoExitoso(App.Session.IdUsuario, item.Archivo.Archivo, servicioCreado.IdServicio.ToString());
+                        }
+                    }
                 }
 
-                MessageBox.Show("Se registró el Servicio y sus archivos de manera exitosa", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Se registró el Servicio y sus archivos de manera exitosa.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
+                // 5. Limpieza de Formulario
                 ArchivosSeleccionados.Clear();
                 Anotaciones = string.Empty;
                 Horaskilometrosreales = string.Empty;

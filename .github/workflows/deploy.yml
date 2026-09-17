@@ -2,7 +2,7 @@ name: Compilar y Publicar Actualizacion
 
 on:
   push:
-    tags:
+    branches:
       - master
 
 jobs:

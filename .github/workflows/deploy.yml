@@ -14,7 +14,7 @@ jobs:
     - name: Checkout del código
       uses: actions/checkout@v4
 
-    # 2. Configura el entorno de .NET
+    # 2. Configura el entorno de .NET 10
     - name: Configurar .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -24,21 +24,24 @@ jobs:
     - name: Restaurar NuGet
       run: dotnet restore
 
-    # 4. Compila y publica el ejecutable WPF tomando la versión directo del csproj
+    # 4. Compila y publica el ejecutable WPF con la versión explícita
     - name: Compilar WPF
-      run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
+      run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false /p:Version=1.0.11 /p:AssemblyVersion=1.0.11.0 /p:FileVersion=1.0.11.0
 
-    # 5. Comprime la compilación directamente (sin subcarpetas conflictivas)
+    # 5. Comprime la compilación en un ZIP
     - name: Comprimir ejecutable
-      run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip -Force
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
 
-    # 6. Crea la Release en GitHub usando un tag automático basado en el contador
+    # 6. Genera un Tag único basado en la fecha y hora
+    - name: Generar Tag dinamico
+      id: tag
+      run: echo "tag_name=v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')" >> $env:GITHUB_OUTPUT
+
+    # 7. Crea la Release en GitHub
     - name: Publicar Release en GitHub
       uses: softprops/action-gh-release@v2
       with:
         files: ./InventarioSetup.zip
-        tag_name: "v1.0.${{ github.run_number }}"
-        name: "Actualización v1.0.${{ github.run_number }}"
-        body: "Nueva actualización automática del sistema."
+        tag_name: ${{ steps.tag.outputs.tag_name }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

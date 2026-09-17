@@ -14,13 +14,6 @@
 		<ApplicationIcon>Resources\icono.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="appsettings.json" Condition="Exists('appsettings.json')">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<Pack>true</Pack>
-			<PackagePath>.</PackagePath>
-		</Content>
-	</ItemGroup>
-	<ItemGroup>
 		<None Remove="Resources\adquisiciones.png" />
 		<None Remove="Resources\AgregarUsuario.png" />
 		<None Remove="Resources\catalogo_icon.png" />
@@ -63,5 +56,10 @@
 		<Resource Include="Resources\icono.ico" />
 		<Resource Include="Resources\socios_icon.png" />
 		<Resource Include="Resources\ubicacion_icon.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 </Project>

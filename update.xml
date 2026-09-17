@@ -6,6 +6,9 @@
 	<!-- Enlace de descarga directa del instalador comprimido -->
 	<url>https://github.com/derekbibiano03/Inventario/releases/latest/download/InventarioSetup.zip</url>
 
+	<!-- IMPORTANTE: Indica el nombre exacto del ejecutable dentro de la subcarpeta del ZIP para que AutoUpdater sepa dónde buscarlo al terminar -->
+	<fileName>InventarioDesktop/Inventario.Desktop.exe</fileName>
+
 	<!-- Enlace exacto del Tag de la release para mostrar las notas en la ventana emergente -->
 	<changelog>https://github.com/derekbibiano03/Inventario/releases/tag/v1.4.3</changelog>
 

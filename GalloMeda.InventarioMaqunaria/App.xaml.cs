@@ -51,8 +51,8 @@ namespace GalloMeda.InventarioMaqunaria
                 var builder = new ConfigurationBuilder()
                     // Establecemos el directorio base donde se ejecuta el programa.
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                    // Indicamos que lea el archivo appsettings.json de forma obligatoria.
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                    // Indicamos que lea el archivo appsettings.json de forma OPCIONAL para evitar cierres si no existe localmente.
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
                 // Construimos la configuración para acceder a las claves e incrustaciones.
                 IConfiguration configuration = builder.Build();
@@ -60,14 +60,14 @@ namespace GalloMeda.InventarioMaqunaria
                 // Inicializamos la colección de servicios del contenedor IoC.
                 var serviceCollection = new ServiceCollection();
 
-                // Extraemos la cadena de conexión especificada en el archivo appsettings.json.
+                // Extraemos la cadena de conexión especificada en el archivo appsettings.json o variables de entorno.
                 var connectionString = configuration.GetConnectionString("InventarioConnection");
 
                 // Verificamos que la cadena de conexión exista y no esté vacía.
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     // Disparamos un error informativo en caso de que la clave no esté presente.
-                    throw new InvalidOperationException("No se encontró la cadena de conexión 'InventarioConnection' en el archivo appsettings.json.");
+                    throw new InvalidOperationException("No se encontró la cadena de conexión 'InventarioConnection'. Asegúrate de configurarla correctamente.");
                 }
 
                 // Registramos el contexto de datos de EF Core usando una versión fija de MariaDB/MySQL sin autodetección de red.

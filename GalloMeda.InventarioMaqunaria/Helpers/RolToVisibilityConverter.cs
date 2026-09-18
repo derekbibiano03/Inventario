@@ -9,18 +9,24 @@ namespace Inventario.Desktop.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // value = ID del rol del usuario (int)
-            // parameter = ID(es) de rol permitido(s) separados por guion (ej. "1-3")
+            // Si el valor es nulo, colapsa de inmediato
+            if (value == null || parameter == null)
+                return Visibility.Collapsed;
 
-            if (value is int idRolUsuario && parameter is string rolesPermitidosStr)
+            // Convertimos el rol del usuario a string para evitar problemas de tipos (int, string, long)
+            string idRolUsuarioStr = value.ToString()?.Trim();
+            string rolesPermitidosStr = parameter.ToString()?.Trim();
+
+            if (string.IsNullOrEmpty(idRolUsuarioStr) || string.IsNullOrEmpty(rolesPermitidosStr))
+                return Visibility.Collapsed;
+
+            // Separamos por guion '-' como acordamos
+            var listaRoles = rolesPermitidosStr.Split('-');
+            foreach (var rolStr in listaRoles)
             {
-                var listaRoles = rolesPermitidosStr.Split('-'); // Cambiado de ',' a '-'
-                foreach (var rolStr in listaRoles)
+                if (rolStr.Trim() == idRolUsuarioStr)
                 {
-                    if (int.TryParse(rolStr.Trim(), out int idPermitido) && idPermitido == idRolUsuario)
-                    {
-                        return Visibility.Visible;
-                    }
+                    return Visibility.Visible;
                 }
             }
 

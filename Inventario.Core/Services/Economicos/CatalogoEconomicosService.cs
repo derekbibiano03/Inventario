@@ -44,6 +44,33 @@ namespace Inventario.Core.Services.Economicos
         public List<EconomicoMinimoDto> ObtenerEconomicosCortos()
         {
             var resultado = _context.CatalogoEconomicos
+                .Where(e => e.IdGrupo != "SUV")
+                .Include(e => e.IdMarcaNavigation)
+                .Include(e => e.IdTipoEquipoNavigation)
+                .Select(e => new EconomicoMinimoDto
+                {
+                    IdEconomico = e.IdEconomico,
+                    Descripcion = e.Descripcion,
+                    IdMarca = e.IdMarca,
+                    NombreMarca = e.IdMarcaNavigation != null ? e.IdMarcaNavigation.NombreMarca : "Sin Marca",
+                    Modelo = e.Modelo,
+                    Serie = e.Serie,
+                    PeriodoFabricacion = e.PeriodoFabricacion,
+                    IdUbicacion = e.IdUbicacion,
+                    IdUbicacionNavigation = e.IdUbicacionNavigation,
+                    IdTipoEquipo = e.IdTipoEquipo,
+                    IdTipoEquipoNavigation = e.IdTipoEquipoNavigation,
+                    IdMarcaNavigation = e.IdMarcaNavigation,
+                    TipoSeguro = e.TipoSeguro
+                })
+                .ToList();
+            return resultado;
+        }
+
+        public List<EconomicoMinimoDto> ObtenerSUVCortos()
+        {
+            var resultado = _context.CatalogoEconomicos
+                .Where(e => e.IdGrupo == "SUV")
                 .Include(e => e.IdMarcaNavigation)
                 .Include(e => e.IdTipoEquipoNavigation)
                 .Select(e => new EconomicoMinimoDto
@@ -89,7 +116,6 @@ namespace Inventario.Core.Services.Economicos
 
         public bool RegistrarEconomico(int idUsuarioOperativo, EconomicoAltaDto dto)
         {
-            // 1. Validaciones preventivas antes de insertar
             if (ValidarSerieDuplicada(dto.Serie))
             {
                 throw new Exception($"El número de serie '{dto.Serie}' ya se encuentra registrado.");
@@ -101,7 +127,6 @@ namespace Inventario.Core.Services.Economicos
                 throw new Exception("El grupo seleccionado no es válido o no existe en la base de datos.");
             }
 
-            // 2. Mapeo de la entidad
             var modeloDb = new CatalogoEconomico
             {
                 IdEconomico = string.Empty,
@@ -132,7 +157,7 @@ namespace Inventario.Core.Services.Economicos
             };
 
             _context.CatalogoEconomicos.Add(modeloDb);
-            _context.SaveChanges(); // Aquí la base de datos genera el ID real
+            _context.SaveChanges(); 
 
 
             string? idGenerado = _context.CatalogoEconomicos
@@ -141,14 +166,11 @@ namespace Inventario.Core.Services.Economicos
                 .Select(e => e.IdEconomico)
                 .FirstOrDefault();
 
-            // Evalúa si la consulta nativa falló o devolvió un valor nulo para evitar registrar variables vacías en el sistema de auditoría.
             if (string.IsNullOrEmpty(idGenerado))
             {
-                // Intenta recuperar el ID directamente desde el objeto local en memoria como último recurso en caso de fallo de red o lectura.
                 idGenerado = modeloDb.IdEconomico;
             }
 
-            // Invoca al servicio de bitácoras enviando el identificador del usuario activo y el ID real generado por PostgreSQL.
             _logsService.RegistrarAltaEquipoExitoso(idUsuarioOperativo, idGenerado);
 
             return true;
@@ -203,13 +225,10 @@ namespace Inventario.Core.Services.Economicos
                 .ToList();
         }
 
-        // Recupera dinámicamente un conjunto de económicos completos aplicando filtros de Tipo de Equipo y Estatus.
         public List<CatalogoEconomico> ObtenerEconomicosCompletosFiltrados(string idTipoEquipo, int? idEstatus)
         {
-            // Prepara una consulta diferida IQueryable sobre el set de datos origen sin ejecutarla inmediatamente.
             IQueryable<CatalogoEconomico> query = _context.CatalogoEconomicos;
 
-            // Concatena de forma secuencial las cargas de las tablas asociadas necesarias para evitar datos nulos en exportaciones.
             query = query
                 .Include(e => e.IdMarcaNavigation)
                 .Include(e => e.IdTipoEquipoNavigation)
@@ -222,21 +241,14 @@ namespace Inventario.Core.Services.Economicos
                 .Include(e => e.IdOperadorNavigation)
                 .Include(e => e.IdResponsableNavigation);
 
-            // Verifica si el parámetro del identificador de tipo de equipo contiene un valor válido y no vacío.
             if (!string.IsNullOrEmpty(idTipoEquipo))
             {
-                // Anexa una cláusula WHERE de filtrado por tipo de equipo a la expresión de la consulta.
                 query = query.Where(e => e.IdTipoEquipo == idTipoEquipo);
             }
-
-            // Evalúa si el parámetro opcional de estatus posee un valor numérico asignado.
             if (idEstatus.HasValue)
             {
-                // Anexa una cláusula WHERE para filtrar estrictamente por el valor numérico interno del estatus.
                 query = query.Where(e => e.IdEstatus == idEstatus.Value);
             }
-
-            // Resuelve la consulta final traduciéndola a comandos SQL nativos, sin trackearla en memoria y convirtiendo el resultado a List.
             return query.AsNoTracking().ToList();
         }
     }

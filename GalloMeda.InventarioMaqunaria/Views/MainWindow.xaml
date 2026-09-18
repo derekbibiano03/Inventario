@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inventario.Desktop.Views"
         mc:Ignorable="d"
+        x:Name="VentanaPrincipal"
         xmlns:converters="clr-namespace:Inventario.Desktop.Helpers"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
@@ -50,6 +51,11 @@
                                         </MenuItem.Header>
                                     </MenuItem>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="INFORMACION DE ECONOMICOS" Tag="VerInventario" Click="MenuItem_Click"/>
+                                    <MenuItem Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}" 
+          Style="{StaticResource TextoResaltadoBarra}" 
+          Header="INFORMACION DE SUV" 
+          Tag="VerSuv" 
+          Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="ALTAS ECONOMICOS" Tag="AgregarEconomico" Click="MenuItem_Click"/>
 
                                     <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">

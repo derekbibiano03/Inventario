@@ -4,6 +4,7 @@ using Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisici
 using Inventario.Desktop.Views.UserControllers.Auth;
 using Inventario.Desktop.Views.UserControllers.Catalogos;
 using Inventario.Desktop.Views.UserControllers.Economicos;
+using Inventario.Desktop.Views.UserControllers.Economicos.InfoEconomicos;
 using Inventario.Desktop.Views.UserControllers.Personal;
 using Inventario.Desktop.Views.UserControllers.Proveedores;
 using Inventario.Desktop.Views.UserControllers.UbicacionProyectos;
@@ -87,6 +88,10 @@ namespace Inventario.Desktop.Views
                     case "VerInventario":
                         ContenedorPrincipal.Content = new EconomicosView();
                         textoPanel = "INVENTARIO DE MAQUINARIA";
+                        break;
+                    case "VerSuv":
+                        ContenedorPrincipal.Content = new EconomicosSuvView();
+                        textoPanel = "CAMIONETAS SUV";
                         break;
                     case "MoverEconomico":
                         ContenedorPrincipal.Content = new RealizarMovimientoView();

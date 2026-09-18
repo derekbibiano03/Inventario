@@ -10,11 +10,11 @@ namespace Inventario.Desktop.Helpers
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // value = ID del rol del usuario (int)
-            // parameter = ID(es) de rol permitido(s) separados por coma (ej. "1,2")
+            // parameter = ID(es) de rol permitido(s) separados por guion (ej. "1-3")
 
             if (value is int idRolUsuario && parameter is string rolesPermitidosStr)
             {
-                var listaRoles = rolesPermitidosStr.Split(',');
+                var listaRoles = rolesPermitidosStr.Split('-'); // Cambiado de ',' a '-'
                 foreach (var rolStr in listaRoles)
                 {
                     if (int.TryParse(rolStr.Trim(), out int idPermitido) && idPermitido == idRolUsuario)

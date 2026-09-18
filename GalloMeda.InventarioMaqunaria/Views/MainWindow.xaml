@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Inventario.Desktop.Views"
         mc:Ignorable="d"
+        xmlns:converters="clr-namespace:Inventario.Desktop.Helpers"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/icono.ico"
         Title="Inventario Maquinaria" Height="450" Width="800">
+    <Window.Resources>
+        <converters:RolToVisibilityConverter x:Key="RolToVisibilityConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ColumnaMenu" Width="300"/>
@@ -204,7 +208,7 @@
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter='1,3'}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/adquisiciones.png" Width="30" Height="30" Margin="0,0,8,0"/>
                                 <TextBlock Style="{StaticResource TextoResaltado}" Text="ADQUISICIONES Y SERVICIOS ▾" VerticalAlignment="Center"/>

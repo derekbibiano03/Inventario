@@ -17,6 +17,7 @@ namespace Inventario.Desktop.Views
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private string _usuarioLogueado = string.Empty;
+        private int _idRolUsuario; // Cambiado a entero
 
         public string UsuarioLogueado
         {
@@ -28,7 +29,13 @@ namespace Inventario.Desktop.Views
             }
         }
 
-        public MainWindow(string username)
+        public int IdRolUsuario
+        {
+            get => _idRolUsuario;
+            set { _idRolUsuario = value; OnPropertyChanged(); }
+        }
+
+        public MainWindow(string username, int idRolUsuario)
         {
             InitializeComponent();
             ContenedorPrincipal.Content = new EconomicosView();
@@ -36,6 +43,7 @@ namespace Inventario.Desktop.Views
 
             this.DataContext = this;
             this.UsuarioLogueado = username;
+            this.IdRolUsuario = idRolUsuario;
             txtPanel.Text = textoPanel;
         }
 

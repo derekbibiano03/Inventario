@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace Inventario.Desktop.Views
 {
-    /// <summary>
-    /// Lógica de interacción para Auth.xaml
-    /// </summary>
     public partial class Auth : Window
     {
         public Auth()

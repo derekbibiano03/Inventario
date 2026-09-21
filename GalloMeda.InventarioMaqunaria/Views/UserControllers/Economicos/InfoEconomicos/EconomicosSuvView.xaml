@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:Inventario.Desktop.Helpers"
              xmlns:local="clr-namespace:Inventario.Desktop.Views.UserControllers.Economicos.InfoEconomicos"
              mc:Ignorable="d" 
              xmlns:helpers="clr-namespace:Inventario.Desktop.Helpers"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+        <converters:RolToVisibilityConverter x:Key="RolToVisibilityConverter"/>
         <helpers:UpperCaseConverter x:Key="UpperCaseConverter"/>
 
         <!-- Palette / Variables de Estilo -->
@@ -261,7 +263,8 @@
                                         Command="{Binding DataContext.EditarCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                         CommandParameter="{Binding IdEconomico}"
                                         Style="{StaticResource BtnPrimary}"
-                                        Padding="8,3" FontSize="11" Margin="2,0"/>
+                                        Padding="8,3" FontSize="11" Margin="2,0"
+                                        Visibility="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=IdRolUsuario, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

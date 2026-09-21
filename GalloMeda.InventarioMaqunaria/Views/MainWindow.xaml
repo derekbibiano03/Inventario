@@ -56,7 +56,7 @@
           Header="INFORMACION DE SUV" 
           Tag="VerSuv" 
           Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="ALTAS ECONOMICOS" Tag="AgregarEconomico" Click="MenuItem_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="ALTAS ECONOMICOS" Tag="AgregarEconomico" Click="MenuItem_Click" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}"/>
 
                                     <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
                                         <MenuItem.Header>
@@ -68,7 +68,7 @@
                                         </MenuItem.Header>
                                     </MenuItem>
 
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="NUEVO MOVIMIENTO DE ECONOMICO" Tag="MoverEconomico" Click="MenuItem_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}" />
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="NUEVO MOVIMIENTO DE ECONOMICO" Tag="MoverEconomico" Click="MenuItem_Click" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}" />
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="HISTORIAL DE MOVIMIENTOS DE ECONOMICOS" Tag="HisMoverEconomico" Click="MenuItem_Click"/>
 
                                     <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
@@ -77,11 +77,11 @@
                                                Foreground="#8A92A6" 
                                                FontWeight="Bold" 
                                                FontSize="11" 
-                                               Margin="0,2"/>
+                                               Margin="0,2" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
                                         </MenuItem.Header>
                                     </MenuItem>
 
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="SUBIR ARCHIVOS" Tag="AgregarArchivo" Click="MenuItem_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="SUBIR ARCHIVOS" Tag="AgregarArchivo" Click="MenuItem_Click" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
 
                                     <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
                                         <MenuItem.Header>
@@ -95,13 +95,14 @@
 
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="VER SERVICIOS REALIZADOS" Tag="VerServicios" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="REGISTRAR 
-                                              NUEVO SERVICIO" Tag="HistServ" Click="MenuItem_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
+                                              NUEVO SERVICIO" Tag="HistServ" Click="MenuItem_Click" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
 
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click"
+                                Visibility="{Binding IdRolUsuario, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/empleado_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
                                 <TextBlock Style="{StaticResource TextoResaltado}" Text="PERSONAL ▾" VerticalAlignment="Center"/>
@@ -146,7 +147,7 @@
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE EQUIPOS" Tag="CatTipEq" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE GRUPOS" Tag="CatGrp" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE ESTATUS" Tag="CatTiEs" Click="MenuItem_Click"/>
-                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE MARCAS" Tag="CatMarc" Click="MenuItem_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE MARCAS" Tag="CatMarc" Click="MenuItem_Click" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE ADQUISICIONES" Tag="CatAdqs" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CATALOGO DE TIPOS DE MATERIALES" Tag="CatMater" Click="MenuItem_Click"/>
 
@@ -155,7 +156,8 @@
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" 
+                                Visibility="{Binding IdRolUsuario, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/ubicacion_icon.png" Width="30" Height="30" Margin="0,0,8,0"/>
                                 <TextBlock Style="{StaticResource TextoResaltado}" Text="UBICACIONES ▾" VerticalAlignment="Center"/>
@@ -180,7 +182,8 @@
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" 
+                                Visibility="{Binding IdRolUsuario, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/AgregarUsuario.png" Width="30" Height="30" Margin="0,0,8,0"/>
                                 <TextBlock Style="{StaticResource TextoResaltado}" Text="CUENTAS ▾" VerticalAlignment="Center"/>
@@ -201,7 +204,8 @@
                             </Button.ContextMenu>
                         </Button>
 
-                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" Visibility="{Binding IdRolUsuario, ElementName=VentanaPrincipal, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}">
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="BtnProductosMenu_Click" 
+                                Visibility="{Binding IdRolUsuario, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Resources/adquisiciones.png" Width="30" Height="30" Margin="0,0,8,0"/>
                                 <TextBlock Style="{StaticResource TextoResaltado}" Text="ADQUISICIONES Y SERVICIOS ▾" VerticalAlignment="Center"/>

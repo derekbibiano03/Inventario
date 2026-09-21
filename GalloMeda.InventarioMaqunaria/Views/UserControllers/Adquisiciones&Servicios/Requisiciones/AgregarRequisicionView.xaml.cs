@@ -1,5 +1,6 @@
 ﻿using Inventario.Core.Services.Adq_Serv.AdquisicionService;
 using Inventario.Core.Services.Logs;
+using Inventario.Desktop.ViewModels.AdqServ; // CORRECTO
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Inventario.Desktop.ViewModels.AdqServ; // CORRECTO
 
 namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisiciones
 {
@@ -21,6 +21,10 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
         public AgregarRequisicionView()
         {
             InitializeComponent();
+            var context = new Data.Models.InventarioContext();
+            var viewModel = new AgregarRequisicionViewModel(context);
+
+            this.DataContext = viewModel;
         }
     }
 }

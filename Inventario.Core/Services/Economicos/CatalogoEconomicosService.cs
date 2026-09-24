@@ -67,6 +67,31 @@ namespace Inventario.Core.Services.Economicos
             return resultado;
         }
 
+        public List<EconomicoMinimoDto> ObtenerEconomicosCortosCompletos()
+        {
+            var resultado = _context.CatalogoEconomicos
+                .Include(e => e.IdMarcaNavigation)
+                .Include(e => e.IdTipoEquipoNavigation)
+                .Select(e => new EconomicoMinimoDto
+                {
+                    IdEconomico = e.IdEconomico,
+                    Descripcion = e.Descripcion,
+                    IdMarca = e.IdMarca,
+                    NombreMarca = e.IdMarcaNavigation != null ? e.IdMarcaNavigation.NombreMarca : "Sin Marca",
+                    Modelo = e.Modelo,
+                    Serie = e.Serie,
+                    PeriodoFabricacion = e.PeriodoFabricacion,
+                    IdUbicacion = e.IdUbicacion,
+                    IdUbicacionNavigation = e.IdUbicacionNavigation,
+                    IdTipoEquipo = e.IdTipoEquipo,
+                    IdTipoEquipoNavigation = e.IdTipoEquipoNavigation,
+                    IdMarcaNavigation = e.IdMarcaNavigation,
+                    TipoSeguro = e.TipoSeguro
+                })
+                .ToList();
+            return resultado;
+        }
+
         public List<EconomicoMinimoDto> ObtenerSUVCortos()
         {
             var resultado = _context.CatalogoEconomicos

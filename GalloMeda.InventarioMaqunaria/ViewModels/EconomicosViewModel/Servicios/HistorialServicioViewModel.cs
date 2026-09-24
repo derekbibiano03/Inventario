@@ -222,7 +222,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
 
         public void CargarTipos()
         {
-            var datoseconomicos = _economicosService.ObtenerEconomicosCortos();
+            var datoseconomicos = _economicosService.ObtenerEconomicosCortosCompletos();
             Economicos.Clear();
             foreach (var economico in datoseconomicos)
             {

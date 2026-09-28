@@ -61,8 +61,6 @@
                     <TextBlock Text="Descripcion de Grupo:" FontWeight="Bold" Margin="0,0,0,10"/>
                     <TextBox Text="{Binding DescripcionCompleta, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="250" Height="30" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="* Campos obligatorios. La contraseña será encriptada automáticamente usando un algoritmo irreversible de Hash (BCrypt) antes de ser guardada en PostgreSQL." FontSize="11" Foreground="#718096" TextWrapping="Wrap"/>
-
                     <Button 
                         Content="Registrar Grupo" 
                         Command="{Binding RegistrarGrupoCommand}" 

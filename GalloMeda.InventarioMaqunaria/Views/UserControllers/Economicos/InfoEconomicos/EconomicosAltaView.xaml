@@ -208,10 +208,7 @@
                     <ComboBoxItem Content="PROPIO" />
                     <ComboBoxItem Content="RENTADO" />
                 </ComboBox>
-
-                <TextBlock Text="Poliza Adjunta:" FontWeight="Bold" Margin="0,0,0,10"/>
-                <TextBox Text="{Binding PolizaAdj, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="250" Height="30" Margin="0,0,0,10"/>
-
+                
                 <TextBlock Text="Dimesiones:" FontWeight="Bold" Margin="0,0,0,10"/>
                 <TextBox Text="{Binding Dimensiones, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                       HorizontalAlignment="Left" 

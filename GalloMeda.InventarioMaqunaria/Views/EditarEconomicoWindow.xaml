@@ -71,6 +71,16 @@
                               SelectedValuePath="IdCombustible"
                               SelectedValue="{Binding EconomicoEdicion.IdCombustible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                               Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Grado de Propiedad:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ComboBox SelectedValue="{Binding EconomicoEdicion.GradoPropiedad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValuePath="Content"
+                          Width="250" Height="30" HorizontalAlignment="Left" Margin="0,0,0,15">
+                        <ComboBoxItem Content="PROPIO" />
+                        <ComboBoxItem Content="RENTADO" />
+                    </ComboBox>
+
+
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Vertical" Margin="20,10,10,10">

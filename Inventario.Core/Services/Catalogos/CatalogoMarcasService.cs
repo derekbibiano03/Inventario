@@ -19,7 +19,7 @@ namespace Inventario.Core.Services.Catalogos
         public List<CatalogoMarca> ObtenerMarcas()
         {
         
-            var resultado = _context.CatalogoMarcas.ToList();
+            var resultado = _context.CatalogoMarcas.OrderBy(x => x.NombreMarca).ToList();
             return resultado;
 
         }

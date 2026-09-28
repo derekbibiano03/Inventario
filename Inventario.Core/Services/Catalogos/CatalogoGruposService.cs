@@ -21,7 +21,7 @@ namespace Inventario.Core.Services.Catalogos
         public List<CatalogoGrupo> ObtenerGrupos()
         {
 
-            var resultado = _context.CatalogoGrupos.ToList();
+            var resultado = _context.CatalogoGrupos.OrderBy(x => x.DescripcionGrupo).ToList();
             return resultado;
 
         }

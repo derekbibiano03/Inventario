@@ -11,9 +11,21 @@ public partial class Requisicione
 
     public int? Consecutivo { get; set; }
 
-    public string? RazonSocial { get; set; }
-
     public DateOnly? FechaRequisicion { get; set; }
 
     public string? TipoRequisicion { get; set; }
+
+    public string? Empresa { get; set; }
+
+    public string? Estatus { get; set; }
+
+    public string? ArchivoReq { get; set; }
+
+    public int? IdSolicitante { get; set; }
+
+    public int? IdAutorizante { get; set; }
+
+    public virtual Usuario? IdAutorizanteNavigation { get; set; }
+
+    public virtual Usuario? IdSolicitanteNavigation { get; set; }
 }

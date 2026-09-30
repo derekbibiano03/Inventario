@@ -92,7 +92,8 @@ namespace GalloMeda.InventarioMaqunaria
                     {
                         string usuarioConfirmado = App.Session.Username;
                         int idRolUsuario = App.Session.IdRol;
-                        var mainWindow = new MainWindow(usuarioConfirmado, idRolUsuario);
+                        string NombreCompleto = App.Session.NombreCompleto;
+                        var mainWindow = new MainWindow(usuarioConfirmado, idRolUsuario, NombreCompleto);
                         this.MainWindow = mainWindow;
                         this.ShutdownMode = ShutdownMode.OnMainWindowClose;
                         mainWindow.Show();

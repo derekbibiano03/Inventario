@@ -1,4 +1,5 @@
 ﻿using Inventario.Core.Services.Adq_Serv.AdquisicionService;
+using Inventario.Core.Services.Auth;
 using Inventario.Core.Services.Logs;
 using Inventario.Desktop.ViewModels.AdqServ; // CORRECTO
 using System;
@@ -22,7 +23,8 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
         {
             InitializeComponent();
             var context = new Data.Models.InventarioContext();
-            var viewModel = new AgregarRequisicionViewModel(context);
+            var usuarios = new UsuariosService(context);
+            var viewModel = new AgregarRequisicionViewModel(context, usuarios);
 
             this.DataContext = viewModel;
         }

@@ -52,6 +52,8 @@ public partial class InventarioContext : DbContext
 
     public virtual DbSet<HistorialLog> HistorialLogs { get; set; }
 
+    public virtual DbSet<HistorialReporte> HistorialReportes { get; set; }
+
     public virtual DbSet<HistorialServicio> HistorialServicios { get; set; }
 
     public virtual DbSet<Requisicione> Requisiciones { get; set; }
@@ -59,6 +61,8 @@ public partial class InventarioContext : DbContext
     public virtual DbSet<RolEmpleado> RolEmpleados { get; set; }
 
     public virtual DbSet<ServicioArchivo> ServicioArchivos { get; set; }
+
+    public virtual DbSet<TiposReporte> TiposReportes { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
@@ -100,7 +104,7 @@ public partial class InventarioContext : DbContext
 
             entity
                 .ToTable("catalogo_economicos")
-                .UseCollation("utf8mb4_general_ci");
+                .UseCollation("utf8mb4_unicode_ci");
 
             entity.HasIndex(e => e.IdAdministrador, "fk_administrador_economico");
 
@@ -154,6 +158,9 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.IdOperador).HasColumnName("id_operador");
             entity.Property(e => e.IdPropietario).HasColumnName("id_propietario");
             entity.Property(e => e.IdResponsable).HasColumnName("id_responsable");
+            entity.Property(e => e.IdSamsara)
+                .HasColumnType("text")
+                .HasColumnName("id_samsara");
             entity.Property(e => e.IdTipoEquipo)
                 .HasMaxLength(45)
                 .HasColumnName("id_tipo_equipo");
@@ -209,7 +216,6 @@ public partial class InventarioContext : DbContext
 
             entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.CatalogoEconomicos)
                 .HasForeignKey(d => d.IdGrupo)
-                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_eco_grupo");
 
             entity.HasOne(d => d.IdMarcaNavigation).WithMany(p => p.CatalogoEconomicoIdMarcaNavigations)
@@ -234,7 +240,6 @@ public partial class InventarioContext : DbContext
 
             entity.HasOne(d => d.IdTipoEquipoNavigation).WithMany(p => p.CatalogoEconomicos)
                 .HasForeignKey(d => d.IdTipoEquipo)
-                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_eco_tipo_equipo");
 
             entity.HasOne(d => d.IdUbicacionNavigation).WithMany(p => p.CatalogoEconomicos)
@@ -290,7 +295,7 @@ public partial class InventarioContext : DbContext
 
             entity
                 .ToTable("catalogo_grupos")
-                .UseCollation("utf8mb4_general_ci");
+                .UseCollation("utf8mb4_unicode_ci");
 
             entity.Property(e => e.IdGrupo)
                 .HasMaxLength(10)
@@ -318,7 +323,9 @@ public partial class InventarioContext : DbContext
         {
             entity.HasKey(e => e.IdMovimiento).HasName("PRIMARY");
 
-            entity.ToTable("catalogo_movimientos_economicos");
+            entity
+                .ToTable("catalogo_movimientos_economicos")
+                .UseCollation("utf8mb4_unicode_ci");
 
             entity.HasIndex(e => e.IdEconomico, "fk_economico_movimiento");
 
@@ -340,8 +347,7 @@ public partial class InventarioContext : DbContext
                 .HasColumnName("fecha_movimiento");
             entity.Property(e => e.IdEconomico)
                 .HasMaxLength(20)
-                .HasColumnName("id_economico")
-                .UseCollation("utf8mb4_general_ci");
+                .HasColumnName("id_economico");
             entity.Property(e => e.IdUbicacionLlegada).HasColumnName("id_ubicacion_llegada");
             entity.Property(e => e.IdUbicacionSalida).HasColumnName("id_ubicacion_salida");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
@@ -357,7 +363,6 @@ public partial class InventarioContext : DbContext
 
             entity.HasOne(d => d.IdEconomicoNavigation).WithMany(p => p.CatalogoMovimientosEconomicos)
                 .HasForeignKey(d => d.IdEconomico)
-                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_economico_movimiento");
 
             entity.HasOne(d => d.IdUbicacionLlegadaNavigation).WithMany(p => p.CatalogoMovimientosEconomicoIdUbicacionLlegadaNavigations)
@@ -384,16 +389,23 @@ public partial class InventarioContext : DbContext
                 .ToTable("catalogo_proveedores")
                 .UseCollation("utf8mb4_general_ci");
 
+            entity.HasIndex(e => e.IdUbicacion, "fk_proveedor_ubicacion");
+
             entity.Property(e => e.IdProveedor).HasColumnName("id_proveedor");
             entity.Property(e => e.CorreoElectronico)
                 .HasColumnType("text")
                 .HasColumnName("correo_electronico");
-            entity.Property(e => e.NombreProveedor)
+            entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
+            entity.Property(e => e.NumeroTelefonico)
                 .HasColumnType("text")
-                .HasColumnName("nombre_proveedor");
-            entity.Property(e => e.NumeroContacto)
+                .HasColumnName("numero_telefonico");
+            entity.Property(e => e.RazonSocial)
                 .HasColumnType("text")
-                .HasColumnName("numero_contacto");
+                .HasColumnName("razon_social");
+
+            entity.HasOne(d => d.IdUbicacionNavigation).WithMany(p => p.CatalogoProveedores)
+                .HasForeignKey(d => d.IdUbicacion)
+                .HasConstraintName("fk_proveedor_ubicacion");
         });
 
         modelBuilder.Entity<CatalogoPya>(entity =>
@@ -452,7 +464,7 @@ public partial class InventarioContext : DbContext
 
             entity
                 .ToTable("catalogo_tipos_equipos")
-                .UseCollation("utf8mb4_general_ci");
+                .UseCollation("utf8mb4_unicode_ci");
 
             entity.Property(e => e.IdTipoEquipo)
                 .HasMaxLength(45)
@@ -519,8 +531,9 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.IdEconomicoArchivo).HasColumnName("id_economico_archivo");
             entity.Property(e => e.IdArchivo).HasColumnName("id_archivo");
             entity.Property(e => e.IdEconomico)
-                .HasMaxLength(50)
-                .HasColumnName("id_economico");
+                .HasMaxLength(20)
+                .HasColumnName("id_economico")
+                .UseCollation("utf8mb4_unicode_ci");
 
             entity.HasOne(d => d.IdArchivoNavigation).WithMany(p => p.EconomicosArchivos)
                 .HasForeignKey(d => d.IdArchivo)
@@ -529,8 +542,7 @@ public partial class InventarioContext : DbContext
 
             entity.HasOne(d => d.IdEconomicoNavigation).WithMany(p => p.EconomicosArchivos)
                 .HasForeignKey(d => d.IdEconomico)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("fk_economico_archivoeconomico");
+                .HasConstraintName("fk_archivo_economico");
         });
 
         modelBuilder.Entity<EfmigrationsHistory>(entity =>
@@ -551,6 +563,8 @@ public partial class InventarioContext : DbContext
                 .ToTable("empleados")
                 .UseCollation("utf8mb4_general_ci");
 
+            entity.HasIndex(e => e.IdUbicacion, "empleado_ubicacion_fk");
+
             entity.HasIndex(e => e.IdRolEmpleado, "fk_rolempleado_empleado");
 
             entity.Property(e => e.NoEmpleado)
@@ -558,6 +572,7 @@ public partial class InventarioContext : DbContext
                 .HasColumnName("no_empleado");
             entity.Property(e => e.Ds3).HasColumnName("ds3");
             entity.Property(e => e.IdRolEmpleado).HasColumnName("id_rol_empleado");
+            entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
             entity.Property(e => e.NombreEmpleado)
                 .HasMaxLength(255)
                 .HasColumnName("nombre_empleado");
@@ -566,6 +581,10 @@ public partial class InventarioContext : DbContext
                 .HasForeignKey(d => d.IdRolEmpleado)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_rolempleado_empleado");
+
+            entity.HasOne(d => d.IdUbicacionNavigation).WithMany(p => p.Empleados)
+                .HasForeignKey(d => d.IdUbicacion)
+                .HasConstraintName("empleado_ubicacion_fk");
         });
 
         modelBuilder.Entity<HistorialLog>(entity =>
@@ -603,13 +622,76 @@ public partial class InventarioContext : DbContext
                 .HasConstraintName("fk_log_usuario");
         });
 
+        modelBuilder.Entity<HistorialReporte>(entity =>
+        {
+            entity.HasKey(e => e.IdReporte).HasName("PRIMARY");
+
+            entity
+                .ToTable("historial_reportes")
+                .UseCollation("utf8mb4_unicode_ci");
+
+            entity.HasIndex(e => e.IdEconomico, "fk_reporte_economico");
+
+            entity.HasIndex(e => e.IdNuevoEstatus, "fk_reporte_nuevo_estatus");
+
+            entity.HasIndex(e => e.IdTipoReporte, "fk_reporte_tipo_reporte");
+
+            entity.HasIndex(e => e.IdUbicacion, "fk_reporte_ubicacion");
+
+            entity.HasIndex(e => e.IdUsuario, "fk_reporte_usuario");
+
+            entity.Property(e => e.IdReporte)
+                .HasMaxLength(15)
+                .HasColumnName("id_reporte");
+            entity.Property(e => e.DescripcionReporte)
+                .HasColumnType("text")
+                .HasColumnName("descripcion_reporte");
+            entity.Property(e => e.Horometro).HasColumnName("horometro");
+            entity.Property(e => e.IdEconomico)
+                .HasMaxLength(20)
+                .HasColumnName("id_economico");
+            entity.Property(e => e.IdNuevoEstatus).HasColumnName("id_nuevo_estatus");
+            entity.Property(e => e.IdTipoReporte).HasColumnName("id_tipo_reporte");
+            entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
+            entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+            entity.Property(e => e.PrioridadAtencion)
+                .HasColumnType("text")
+                .HasColumnName("prioridad_atencion");
+            entity.Property(e => e.UbicacionDetalle)
+                .HasColumnType("text")
+                .HasColumnName("ubicacion_detalle");
+
+            entity.HasOne(d => d.IdEconomicoNavigation).WithMany(p => p.HistorialReportes)
+                .HasForeignKey(d => d.IdEconomico)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_reporte_economico");
+
+            entity.HasOne(d => d.IdNuevoEstatusNavigation).WithMany(p => p.HistorialReportes)
+                .HasForeignKey(d => d.IdNuevoEstatus)
+                .HasConstraintName("fk_reporte_nuevo_estatus");
+
+            entity.HasOne(d => d.IdTipoReporteNavigation).WithMany(p => p.HistorialReportes)
+                .HasForeignKey(d => d.IdTipoReporte)
+                .HasConstraintName("fk_reporte_tipo_reporte");
+
+            entity.HasOne(d => d.IdUbicacionNavigation).WithMany(p => p.HistorialReportes)
+                .HasForeignKey(d => d.IdUbicacion)
+                .HasConstraintName("fk_reporte_ubicacion");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.HistorialReportes)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("fk_reporte_usuario");
+        });
+
         modelBuilder.Entity<HistorialServicio>(entity =>
         {
             entity.HasKey(e => e.IdServicio).HasName("PRIMARY");
 
-            entity.ToTable("historial_servicio");
+            entity
+                .ToTable("historial_servicio")
+                .UseCollation("utf8mb4_unicode_ci");
 
-            entity.HasIndex(e => e.NoEconomico, "fk_economico_servicio");
+            entity.HasIndex(e => e.NoEconomico, "fk_servicio_economico");
 
             entity.Property(e => e.IdServicio).HasColumnName("id_servicio");
             entity.Property(e => e.Anotaciones)
@@ -621,15 +703,15 @@ public partial class InventarioContext : DbContext
                 .HasColumnName("horaskilometrosreales");
             entity.Property(e => e.NoEconomico)
                 .HasMaxLength(20)
-                .HasColumnName("no_economico")
-                .UseCollation("utf8mb4_general_ci");
+                .HasColumnName("no_economico");
             entity.Property(e => e.TipoMantenimiento)
                 .HasMaxLength(50)
                 .HasColumnName("tipo_mantenimiento");
 
             entity.HasOne(d => d.NoEconomicoNavigation).WithMany(p => p.HistorialServicios)
                 .HasForeignKey(d => d.NoEconomico)
-                .HasConstraintName("fk_economico_servicio");
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_servicio_economico");
         });
 
         modelBuilder.Entity<Requisicione>(entity =>
@@ -640,18 +722,38 @@ public partial class InventarioContext : DbContext
                 .ToTable("requisiciones")
                 .UseCollation("utf8mb4_general_ci");
 
+            entity.HasIndex(e => e.IdAutorizante, "fk_usuario_autorizasnte_req");
+
+            entity.HasIndex(e => e.IdSolicitante, "fk_usuario_colicitante_req");
+
             entity.Property(e => e.IdRequisicion)
                 .HasMaxLength(100)
                 .HasColumnName("id_requisicion");
+            entity.Property(e => e.ArchivoReq)
+                .HasColumnType("text")
+                .HasColumnName("archivo_req");
             entity.Property(e => e.Consecutivo).HasColumnName("consecutivo");
+            entity.Property(e => e.Empresa)
+                .HasMaxLength(5)
+                .HasColumnName("empresa");
+            entity.Property(e => e.Estatus)
+                .HasMaxLength(50)
+                .HasColumnName("estatus");
             entity.Property(e => e.FechaRequisicion).HasColumnName("fecha_requisicion");
+            entity.Property(e => e.IdAutorizante).HasColumnName("id_autorizante");
+            entity.Property(e => e.IdSolicitante).HasColumnName("id_solicitante");
             entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
-            entity.Property(e => e.RazonSocial)
-                .HasMaxLength(100)
-                .HasColumnName("razon_social");
             entity.Property(e => e.TipoRequisicion)
                 .HasMaxLength(50)
                 .HasColumnName("tipo_requisicion");
+
+            entity.HasOne(d => d.IdAutorizanteNavigation).WithMany(p => p.RequisicioneIdAutorizanteNavigations)
+                .HasForeignKey(d => d.IdAutorizante)
+                .HasConstraintName("fk_usuario_autorizasnte_req");
+
+            entity.HasOne(d => d.IdSolicitanteNavigation).WithMany(p => p.RequisicioneIdSolicitanteNavigations)
+                .HasForeignKey(d => d.IdSolicitante)
+                .HasConstraintName("fk_usuario_colicitante_req");
         });
 
         modelBuilder.Entity<RolEmpleado>(entity =>
@@ -691,6 +793,21 @@ public partial class InventarioContext : DbContext
                 .HasConstraintName("fk_servicio_archivo");
         });
 
+        modelBuilder.Entity<TiposReporte>(entity =>
+        {
+            entity.HasKey(e => e.IdTipoReporte).HasName("PRIMARY");
+
+            entity.ToTable("tipos_reportes");
+
+            entity.Property(e => e.IdTipoReporte).HasColumnName("id_tipo_reporte");
+            entity.Property(e => e.DescripcionTipoReporte)
+                .HasColumnType("text")
+                .HasColumnName("descripcion_tipo_reporte");
+            entity.Property(e => e.Siglas)
+                .HasColumnType("text")
+                .HasColumnName("siglas");
+        });
+
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.IdUsuario).HasName("PRIMARY");
@@ -701,8 +818,20 @@ public partial class InventarioContext : DbContext
 
             entity.HasIndex(e => e.IdRol, "fk_usuarios_roles");
 
+            entity.HasIndex(e => e.NoEmpleado, "usuario_empleado_fk");
+
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+            entity.Property(e => e.Area)
+                .HasColumnType("text")
+                .HasColumnName("area");
+            entity.Property(e => e.Correoe)
+                .HasColumnType("text")
+                .HasColumnName("correoe");
             entity.Property(e => e.IdRol).HasColumnName("id_rol");
+            entity.Property(e => e.NoEmpleado).HasColumnName("no_empleado");
+            entity.Property(e => e.NombreCompleto)
+                .HasColumnType("text")
+                .HasColumnName("nombre_completo");
             entity.Property(e => e.NombreUsuario)
                 .HasColumnType("text")
                 .HasColumnName("nombre_usuario");
@@ -714,6 +843,10 @@ public partial class InventarioContext : DbContext
                 .HasForeignKey(d => d.IdRol)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_usuarios_roles");
+
+            entity.HasOne(d => d.NoEmpleadoNavigation).WithMany(p => p.Usuarios)
+                .HasForeignKey(d => d.NoEmpleado)
+                .HasConstraintName("usuario_empleado_fk");
         });
 
         modelBuilder.Entity<UsuariosRole>(entity =>

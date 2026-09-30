@@ -74,6 +74,8 @@ namespace Inventario.Desktop.ViewModels.Auth
                     App.Session.Username = usuarioValidado.NombreUsuario ?? this.Usuario.Trim();
                     App.Session.IdRol = usuarioValidado.IdRol ?? 0;
                     App.Session.IdUsuario = usuarioValidado.IdUsuario;
+                    App.Session.NombreCompleto = usuarioValidado.NombreCompleto ?? this.Usuario.Trim();
+                    App.Session.Area = usuarioValidado.Area;
 
                     // LLAMADA AL SERVICIO: Registra el log del inicio de sesión exitoso
                     _logsService.RegistrarLoginExitoso(usuarioValidado.IdUsuario);

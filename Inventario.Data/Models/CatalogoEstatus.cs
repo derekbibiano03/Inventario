@@ -10,4 +10,6 @@ public partial class CatalogoEstatus
     public string DescripcionEstatus { get; set; } = null!;
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicos { get; set; } = new List<CatalogoEconomico>();
+
+    public virtual ICollection<HistorialReporte> HistorialReportes { get; set; } = new List<HistorialReporte>();
 }

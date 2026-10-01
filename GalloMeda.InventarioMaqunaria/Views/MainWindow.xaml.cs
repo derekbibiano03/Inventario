@@ -188,11 +188,15 @@ namespace Inventario.Desktop.Views
                     case "HistServ":
                         ContenedorPrincipal.Content = new AgregarServicioView();
                         textoPanel = "NUEVO SERVICIOS REALIZADOS";
-                        break;
+                        break; 
 
                     case "VerServicios":
                         ContenedorPrincipal.Content = new HistorialServicioView();
                         textoPanel = "HISTORIAL DE SERVICIOS REALIZADOS";
+                        break;
+                    case "AutReq":
+                        ContenedorPrincipal.Content = new RequisicionesPendientesView();
+                        textoPanel = "AUTORIZACION DE REQUISICIONES";
                         break;
                 }
                 txtPanel.Text = textoPanel;

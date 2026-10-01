@@ -1,5 +1,7 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using GalloMeda.InventarioMaqunaria;
+using Inventario.Core.Services.Adq_Serv.AdquisicionService;
 using Inventario.Core.Services.Auth;
 using Inventario.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +9,10 @@ using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -25,11 +29,10 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         }
 
         public ObservableCollection<DetalleRequisicion> Detalles { get; } = new();
-        public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; }
-        public ObservableCollection<CatalogoEconomico> Economicos { get; }
-
-        // CORREGIDO: Se inicializa la colección para evitar excepciones de referencia nula
-        public ObservableCollection<Usuario> Usuarios { get; } = new();
+        public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; } = new();
+        public ObservableCollection<CatalogoEconomico> Economicos { get; } = new();
+        public ObservableCollection<Usuario> UsuariosCompras { get; } = new();
+        public ObservableCollection<Usuario> UsuariosAutorizantes { get; } = new();
 
         private readonly InventarioContext _contexto;
         private readonly UsuariosService _usuariosService;
@@ -38,17 +41,19 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         public ICommand EliminarConceptoCommand { get; }
         public ICommand GenerarExcelCommand { get; }
 
-        // --- Propiedades Automatizadas de Usuarios ---
         private Usuario? _usuarioAtencionSeleccionado;
         public Usuario? UsuarioAtencionSeleccionado
         {
             get => _usuarioAtencionSeleccionado;
             set
             {
-                _usuarioAtencionSeleccionado = value;
-                OnPropertyChanged();
-                AtencionNombre = value?.NombreCompleto;
-                AtencionDepto = value?.Area;
+                if (_usuarioAtencionSeleccionado != value)
+                {
+                    _usuarioAtencionSeleccionado = value;
+                    OnPropertyChanged();
+                    AtencionNombre = value?.NombreCompleto;
+                    AtencionDepto = value?.Area;
+                }
             }
         }
 
@@ -58,32 +63,59 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             get => _usuarioAutorizanteSeleccionado;
             set
             {
-                _usuarioAutorizanteSeleccionado = value;
-                OnPropertyChanged();
-                FirmaAutorizante = value?.NombreCompleto;
+                if (_usuarioAutorizanteSeleccionado != value)
+                {
+                    _usuarioAutorizanteSeleccionado = value;
+                    OnPropertyChanged();
+                    FirmaAutorizante = value?.NombreCompleto;
+                    CorreoE = value?.Correoe; // <-- CORREGIDO AQUÍ (Correoe en minúscula)
+                }
             }
         }
-        // ---------------------------------------------
 
         private string? _ubicacionSeleccionada;
         public string? UbicacionSeleccionada
         {
             get => _ubicacionSeleccionada;
-            set { _ubicacionSeleccionada = value; OnPropertyChanged(); }
+            set
+            {
+                if (_ubicacionSeleccionada != value)
+                {
+                    _ubicacionSeleccionada = value;
+                    OnPropertyChanged();
+                    ActualizarConsecutivo();
+                }
+            }
         }
 
         private string? _empresaSeleccionada;
         public string? EmpresaSeleccionada
         {
             get => _empresaSeleccionada;
-            set { _empresaSeleccionada = value; OnPropertyChanged(); }
+            set
+            {
+                if (_empresaSeleccionada != value)
+                {
+                    _empresaSeleccionada = value;
+                    OnPropertyChanged();
+                    ActualizarConsecutivo();
+                }
+            }
         }
 
         private DateTime _fechaActual = DateTime.Now;
         public DateTime FechaActual
         {
             get => _fechaActual;
-            set { _fechaActual = value; OnPropertyChanged(); }
+            set
+            {
+                if (_fechaActual != value)
+                {
+                    _fechaActual = value;
+                    OnPropertyChanged();
+                    ActualizarConsecutivo();
+                }
+            }
         }
 
         private string? _atencionNombre;
@@ -100,18 +132,11 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             set { _atencionDepto = value; OnPropertyChanged(); }
         }
 
-        private string? _solicitanteNombre;
-        public string? SolicitanteNombre
+        private string? _consecutivoGenerado;
+        public string? ConsecutivoGenerado
         {
-            get => _solicitanteNombre;
-            set { _solicitanteNombre = value; OnPropertyChanged(); }
-        }
-
-        private string? _solicitanteDepto;
-        public string? SolicitanteDepto
-        {
-            get => _solicitanteDepto;
-            set { _solicitanteDepto = value; OnPropertyChanged(); }
+            get => _consecutivoGenerado;
+            set { _consecutivoGenerado = value; OnPropertyChanged(); }
         }
 
         private string? _observaciones;
@@ -121,18 +146,18 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             set { _observaciones = value; OnPropertyChanged(); }
         }
 
-        private string? _firmaSolicitante;
-        public string? FirmaSolicitante
-        {
-            get => _firmaSolicitante;
-            set { _firmaSolicitante = value; OnPropertyChanged(); }
-        }
-
         private string? _firmaAutorizante;
         public string? FirmaAutorizante
         {
             get => _firmaAutorizante;
             set { _firmaAutorizante = value; OnPropertyChanged(); }
+        }
+
+        private string? _correoE;
+        public string? CorreoE
+        {
+            get => _correoE;
+            set { _correoE = value; OnPropertyChanged(); }
         }
 
         private string? _descripcionUnidad;
@@ -141,42 +166,49 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             get => _descripcionUnidad;
             set { _descripcionUnidad = value; OnPropertyChanged(); }
         }
+
         private string? _modeloUnidad;
         public string? ModeloUnidad
         {
             get => _modeloUnidad;
             set { _modeloUnidad = value; OnPropertyChanged(); }
         }
+
         private string? _motorUnidad;
         public string? MotorUnidad
         {
             get => _motorUnidad;
             set { _motorUnidad = value; OnPropertyChanged(); }
         }
+
         private string? _motorModelo;
         public string? MotorModelo
         {
             get => _motorModelo;
             set { _motorModelo = value; OnPropertyChanged(); }
         }
+
         private string? _motorMarca;
         public string? MotorMarca
         {
             get => _motorMarca;
             set { _motorMarca = value; OnPropertyChanged(); }
         }
+
         private string? _motorSerie;
         public string? MotorSerie
         {
             get => _motorSerie;
             set { _motorSerie = value; OnPropertyChanged(); }
         }
+
         private string? _marcaUnidad;
         public string? MarcaUnidad
         {
             get => _marcaUnidad;
             set { _marcaUnidad = value; OnPropertyChanged(); }
         }
+
         private string? _serieUnidad;
         public string? SerieUnidad
         {
@@ -193,10 +225,18 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             get => _economicoSeleccionado;
             set
             {
-                _economicoSeleccionado = value;
-                OnPropertyChanged();
-                ActualizarDatosEconomico();
+                if (_economicoSeleccionado != value)
+                {
+                    _economicoSeleccionado = value;
+                    OnPropertyChanged();
+                    ActualizarDatosEconomico();
+                }
             }
+        }
+
+        private void ActualizarConsecutivo()
+        {
+            ConsecutivoGenerado = $"{EmpresaSeleccionada} - RC - 000 - {UbicacionSeleccionada} - {FechaActual:yyyy}";
         }
 
         private void ActualizarDatosEconomico()
@@ -206,14 +246,15 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                 var marcaEncontrada = ListaMarcas?.FirstOrDefault(m => m.IdMarca == _economicoSeleccionado.IdMarca);
                 var motorMarcaEncontrado = ListaMarcas?.FirstOrDefault(m => m.IdMarca == _economicoSeleccionado.MarcaMotor);
                 var tipoMotor = ListaMotores?.FirstOrDefault(m => m.IdCombustible == _economicoSeleccionado.IdCombustible);
-                DescripcionUnidad = _economicoSeleccionado.Descripcion;
-                ModeloUnidad = _economicoSeleccionado.Modelo;
+
+                DescripcionUnidad = _economicoSeleccionado.Descripcion ?? string.Empty;
+                ModeloUnidad = _economicoSeleccionado.Modelo ?? string.Empty;
                 MotorUnidad = tipoMotor?.DescripcionCombustible ?? string.Empty;
                 MotorMarca = motorMarcaEncontrado?.NombreMarca ?? string.Empty;
                 MarcaUnidad = marcaEncontrada?.NombreMarca ?? string.Empty;
-                SerieUnidad = _economicoSeleccionado.Serie;
-                MotorModelo = _economicoSeleccionado.ModeloMotor;
-                MotorSerie = _economicoSeleccionado.SerieMotor;
+                SerieUnidad = _economicoSeleccionado.Serie ?? string.Empty;
+                MotorModelo = _economicoSeleccionado.ModeloMotor ?? string.Empty;
+                MotorSerie = _economicoSeleccionado.SerieMotor ?? string.Empty;
             }
             else
             {
@@ -228,14 +269,13 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             }
         }
 
-        public AgregarRequisicionViewModel(InventarioContext contexto, UsuariosService usuariosService)
+        private readonly AdquisicionService _adquisicionService;
+
+        public AgregarRequisicionViewModel(InventarioContext contexto, UsuariosService usuariosService, AdquisicionService adquisicionService)
         {
-            _usuariosService = usuariosService;
-            _contexto = contexto;
-            Ubicaciones = new ObservableCollection<CatalogoUbicacionesProyecto>();
-            Economicos = new ObservableCollection<CatalogoEconomico>();
-            ListaMarcas = new ObservableCollection<CatalogoMarca>();
-            ListaMotores = new ObservableCollection<CatalogoTiposCombustible>();
+            _usuariosService = usuariosService ?? throw new ArgumentNullException(nameof(usuariosService));
+            _contexto = contexto ?? throw new ArgumentNullException(nameof(contexto));
+            _adquisicionService = adquisicionService ?? throw new ArgumentNullException(nameof(adquisicionService));
 
             AñadirConceptoCommand = new RelayCommand(EjecutarAñadirConcepto);
             EliminarConceptoCommand = new RelayCommand(EjecutarEliminarConcepto);
@@ -247,11 +287,24 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
         public void CargarUsuarios()
         {
-            Usuarios.Clear();
-            var datosusuarios = _usuariosService.ObtenerUsuarios();
-            foreach (var usuario in datosusuarios)
+            UsuariosCompras.Clear();
+            var datosusuarioscompras = _usuariosService.ObtenerUsuariosCompras();
+            if (datosusuarioscompras != null)
             {
-                Usuarios.Add(usuario);
+                foreach (var usuario in datosusuarioscompras)
+                {
+                    UsuariosCompras.Add(usuario);
+                }
+            }
+
+            UsuariosAutorizantes.Clear();
+            var datosusuariosautorizantes = _usuariosService.ObtenerUsuariosAutorizantes();
+            if (datosusuarioscompras != null)
+            {
+                foreach (var usuario in datosusuariosautorizantes)
+                {
+                    UsuariosAutorizantes.Add(usuario);
+                }
             }
         }
 
@@ -283,6 +336,17 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         {
             try
             {
+                int idUbicacionReal = Ubicaciones.FirstOrDefault(u => u.Siglas == UbicacionSeleccionada)?.IdUbicacion ?? 0;
+
+                // 1. Calculamos el consecutivo primero para que exista en el contexto actual
+                int ultimoConsecutivoTemp = _contexto.Requisiciones
+                    .Where(r => r.Empresa == EmpresaSeleccionada && r.IdUbicacion == idUbicacionReal)
+                    .Select(r => (int?)r.Consecutivo)
+                    .Max() ?? 0;
+
+                string nombreArchivoRemoto = $"{EmpresaSeleccionada} - RC - {(ultimoConsecutivoTemp + 1):D3} - {UbicacionSeleccionada} - {FechaActual:yyyy}.xlsx";
+                string rutaTemporal = Path.Combine(Path.GetTempPath(), nombreArchivoRemoto);
+
                 using (var workbook = new XLWorkbook())
                 {
                     var ws = workbook.Worksheets.Add("Requisición");
@@ -299,20 +363,29 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                     var rangoIcono = ws.Range("A1:C1");
                     rangoIcono.Merge();
+
+                    string imagePath = string.Empty;
+                    string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
                     if (EmpresaSeleccionada == "CGM")
                     {
-                        var icono = "../../../Resources/gallo_meda_icon.png";
-                        ws.AddPicture(icono)
-                      .MoveTo(ws.Cell("A1"))
-                      .WithSize(150, 50);
-                    } else if (EmpresaSeleccionada == "OX")
-                    {
-                        var icono = "../../../Resources/grupo_ox.jpeg";
-                        ws.AddPicture(icono)
-                      .MoveTo(ws.Cell("A1"))
-                      .WithSize(150, 50);
+                        imagePath = Path.Combine(basePath, "Resources", "gallo_meda_icon.png");
                     }
-                        
+                    else if (EmpresaSeleccionada == "OX")
+                    {
+                        imagePath = Path.Combine(basePath, "Resources", "grupo_ox.jpeg");
+                    }
+
+                    if (!string.IsNullOrEmpty(imagePath) && File.Exists(imagePath))
+                    {
+                        ws.AddPicture(imagePath).MoveTo(ws.Cell("A1")).WithSize(150, 50);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"No se encontró la imagen en la ruta: {imagePath}", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+
+                    string folioDinamico = $"{EmpresaSeleccionada} - RC - {(ultimoConsecutivoTemp + 1):D3} - {UbicacionSeleccionada} - {FechaActual:yyyy}";
 
                     var rangoTitulo = ws.Range("E1:G1");
                     rangoTitulo.Merge();
@@ -323,12 +396,13 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                     var rangoSub = ws.Range("E2:H2");
                     rangoSub.Merge();
-                    rangoSub.FirstCell().Value = $"{EmpresaSeleccionada} - RC - 000 - {UbicacionSeleccionada} - {FechaActual:yyyy} ";
+                    rangoSub.FirstCell().Value = folioDinamico;
                     rangoSub.FirstCell().Style.Font.Italic = true;
 
                     var rangoUbi = ws.Range("E3:H3");
                     rangoUbi.Merge();
-                    rangoUbi.FirstCell().Value = $"{UbicacionSeleccionada} - {FechaActual:yyyy} ";
+                    rangoUbi.FirstCell().Value = FechaActual;
+                    rangoUbi.FirstCell().Style.DateFormat.Format = "dd/MM/yyyy";
                     rangoUbi.FirstCell().Style.Font.Italic = true;
 
                     var rangoInfo = ws.Range("A4:C4");
@@ -338,16 +412,16 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     rangoInfo.FirstCell().Style.Font.FontColor = XLColor.FromHtml("#1F4E78");
 
                     var r5_ab = ws.Range("A5:B5"); r5_ab.Merge(); r5_ab.FirstCell().Value = "Atención A:";
-                    var r5_cd = ws.Range("C5:D5"); r5_cd.Merge(); r5_cd.FirstCell().Value = AtencionNombre;
+                    var r5_cd = ws.Range("C5:D5"); r5_cd.Merge(); r5_cd.FirstCell().Value = AtencionNombre ?? string.Empty;
 
                     ws.Cell("E5").Value = "Depto. Atención:";
-                    var r5_fgh = ws.Range("F5:H5"); r5_fgh.Merge(); r5_fgh.FirstCell().Value = AtencionDepto;
+                    var r5_fgh = ws.Range("F5:H5"); r5_fgh.Merge(); r5_fgh.FirstCell().Value = AtencionDepto ?? string.Empty;
 
                     var r6_ab = ws.Range("A6:B6"); r6_ab.Merge(); r6_ab.FirstCell().Value = "Solicitante:";
-                    var r6_cd = ws.Range("C6:D6"); r6_cd.Merge(); r6_cd.FirstCell().Value = App.Session.NombreCompleto;
+                    var r6_cd = ws.Range("C6:D6"); r6_cd.Merge(); r6_cd.FirstCell().Value = App.Session?.NombreCompleto ?? string.Empty;
 
                     ws.Cell("E6").Value = "Depto. Solicitante:";
-                    var r6_fgh = ws.Range("F6:H6"); r6_fgh.Merge(); r6_fgh.FirstCell().Value = App.Session.Area;
+                    var r6_fgh = ws.Range("F6:H6"); r6_fgh.Merge(); r6_fgh.FirstCell().Value = App.Session?.Area ?? string.Empty;
 
                     var rangoEquipo = ws.Range("A9:C9");
                     rangoEquipo.Merge();
@@ -356,7 +430,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     rangoEquipo.FirstCell().Style.Font.FontColor = XLColor.FromHtml("#1F4E78");
 
                     var r10_ab = ws.Range("A10:B10"); r10_ab.Merge(); r10_ab.FirstCell().Value = "No. Económico:";
-                    var r10_cd = ws.Range("C10:D10"); r10_cd.Merge(); r10_cd.FirstCell().Value = EconomicoSeleccionado?.IdEconomico;
+                    var r10_cd = ws.Range("C10:D10"); r10_cd.Merge(); r10_cd.FirstCell().Value = EconomicoSeleccionado?.IdEconomico ?? string.Empty;
 
                     var r11_ab = ws.Range("A11:B11"); r11_ab.Merge(); r11_ab.FirstCell().Value = "Descripcion:";
                     var r11_cd = ws.Range("C11:D11"); r11_cd.Merge(); r11_cd.FirstCell().Value = DescripcionUnidad;
@@ -406,12 +480,12 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     {
                         ws.Cell(rowIdx, 1).Value = det.Partida;
                         ws.Cell(rowIdx, 2).Value = det.Cantidad;
-                        ws.Cell(rowIdx, 3).Value = det.Unidad;
-                        ws.Cell(rowIdx, 4).Value = det.Descripcion;
-                        ws.Cell(rowIdx, 5).Value = det.NoPartida;
-                        ws.Cell(rowIdx, 6).Value = det.NoEquivalente;
-                        ws.Cell(rowIdx, 7).Value = det.Catalogo;
-                        ws.Cell(rowIdx, 8).Value = det.Pagina;
+                        ws.Cell(rowIdx, 3).Value = det.Unidad ?? string.Empty;
+                        ws.Cell(rowIdx, 4).Value = det.Descripcion ?? string.Empty;
+                        ws.Cell(rowIdx, 5).Value = det.NoPartida ?? string.Empty;
+                        ws.Cell(rowIdx, 6).Value = det.NoEquivalente ?? string.Empty;
+                        ws.Cell(rowIdx, 7).Value = det.Catalogo ?? string.Empty;
+                        ws.Cell(rowIdx, 8).Value = det.Pagina ?? string.Empty;
 
                         for (int c = 1; c <= headers.Length; c++)
                         {
@@ -428,64 +502,117 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                     var rangoObservaciones = ws.Range(filaObservacionesBaja, 1, filaObservacionesBaja + 2, 8);
                     rangoObservaciones.Merge();
-                    rangoObservaciones.FirstCell().Value = Observaciones;
+                    rangoObservaciones.FirstCell().Value = Observaciones ?? string.Empty;
                     rangoObservaciones.Style.Alignment.WrapText = true;
                     rangoObservaciones.Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
 
-                    int filaFirmas = filaObservaciones + 5;
+                    int filaFirmas = filaObservaciones + 8;
                     ws.Cell(filaFirmas, 2).Value = "___________________________________";
                     ws.Cell(filaFirmas, 5).Value = "___________________________________";
 
                     filaFirmas++;
-                    ws.Cell(filaFirmas, 2).Value = $"Firma Solicitante: {App.Session.NombreCompleto}";
+                    ws.Cell(filaFirmas, 2).Value = $"Firma Solicitante: {App.Session?.NombreCompleto}";
                     ws.Cell(filaFirmas, 5).Value = $"Firma Autorizador: {FirmaAutorizante}";
                     ws.Cell(filaFirmas, 2).Style.Font.Bold = true;
                     ws.Cell(filaFirmas, 5).Style.Font.Bold = true;
+
+                    if (!string.IsNullOrWhiteSpace(App.Session?.FirmaPath))
+                    {
+                        try
+                        {
+                            string urlFirmaWeb = $"http://enlaceferroviario.com{App.Session.FirmaPath}";
+
+                            using (var webClient = new WebClient())
+                            {
+                                webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+
+                                byte[] imageBytes = webClient.DownloadData(urlFirmaWeb);
+
+                                if (imageBytes != null && imageBytes.Length > 0)
+                                {
+                                    using (var ms = new MemoryStream(imageBytes))
+                                    {
+                                        var image = ws.AddPicture(ms);
+                                        image.Name = "FirmaSolicitante";
+                                        image.MoveTo(ws.Cell(filaFirmas - 3, 2));
+                                        image.WithSize(140, 50);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error al descargar la firma: " + ex.Message);
+                        }
+                    }
 
                     ws.PageSetup.PrintAreas.Add("A1:H80");
                     ws.PageSetup.FitToPages(1, 0);
                     ws.PageSetup.Footer.Center.AddText("Constructora Gallo Meda S.A. de C.V. Detroit 16. Col. Ferrocarril. Guadalajara. Jalisco. Mexico. C.P. 44440 Tel. (3339423080)");
 
+                    workbook.SaveAs(rutaTemporal);
+                }
+
+                bool exito = _adquisicionService.NuevaRequisicion(
+                    idSolicitante: App.Session?.IdUsuario ?? 0,
+                    idAutorizante: UsuarioAutorizanteSeleccionado?.IdUsuario ?? 0,
+                    idUbicacion: idUbicacionReal,
+                    fechaRequisicion: DateOnly.FromDateTime(FechaActual),
+                    tipoRequisicion: "COMPRA",
+                    empresa: EmpresaSeleccionada ?? "CGM",
+                    estatus: "EN ESPERA",
+                    rutaArchivoLocal: rutaTemporal,
+                    nombreArchivoRemoto: nombreArchivoRemoto
+                );
+
+                if (exito)
+                {
                     var saveFileDialog = new SaveFileDialog
                     {
                         Filter = "Excel Files|*.xlsx",
-                        FileName = $"Requisicion_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                        FileName = nombreArchivoRemoto
                     };
 
-                    if (saveFileDialog.ShowDialog() == true)
-                    {
-                        workbook.SaveAs(saveFileDialog.FileName);
-                        MessageBox.Show("Archivo Excel generado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
+                    MessageBox.Show("Requisición guardada en el servidor FTP y en la base de datos exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ocurrió un error al generar el Excel: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                string mensajeReal = ex.InnerException?.Message ?? ex.Message;
+                MessageBox.Show($"Ocurrió un error al procesar la requisición: {mensajeReal}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+
+
         private void CargarCatalogos()
         {
-            var ubicacionesDb = _contexto.CatalogoUbicacionesProyectos
-                .Where(e => e.Siglas != "")
-                .AsNoTracking()
-                .ToList();
+            try
+            {
+                var ubicacionesDb = _contexto.CatalogoUbicacionesProyectos
+                    .Where(e => e.Siglas != "")
+                    .AsNoTracking()
+                    .ToList();
 
-            Ubicaciones.Clear();
-            foreach (var item in ubicacionesDb) { Ubicaciones.Add(item); }
+                Ubicaciones.Clear();
+                foreach (var item in ubicacionesDb) { Ubicaciones.Add(item); }
 
-            var economicosDb = _contexto.CatalogoEconomicos.AsNoTracking().ToList();
-            Economicos.Clear();
-            foreach (var item in economicosDb) { Economicos.Add(item); }
+                var economicosDb = _contexto.CatalogoEconomicos.AsNoTracking().ToList();
+                Economicos.Clear();
+                foreach (var item in economicosDb) { Economicos.Add(item); }
 
-            var marcasDb = _contexto.Set<CatalogoMarca>().AsNoTracking().ToList();
-            ListaMarcas.Clear();
-            foreach (var marca in marcasDb) { ListaMarcas.Add(marca); }
+                var marcasDb = _contexto.Set<CatalogoMarca>().AsNoTracking().ToList();
+                ListaMarcas.Clear();
+                foreach (var marca in marcasDb) { ListaMarcas.Add(marca); }
 
-            var combustiblesDb = _contexto.Set<CatalogoTiposCombustible>().AsNoTracking().ToList();
-            ListaMotores.Clear();
-            foreach (var combustible in combustiblesDb) { ListaMotores.Add(combustible); }
+                var combustiblesDb = _contexto.Set<CatalogoTiposCombustible>().AsNoTracking().ToList();
+                ListaMotores.Clear();
+                foreach (var combustible in combustiblesDb) { ListaMotores.Add(combustible); }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar catálogos: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -493,11 +620,17 @@ namespace Inventario.Desktop.ViewModels.AdqServ
     {
         private readonly Action<object?> _ejecutar;
         private readonly Func<object?, bool>? _puedeEjecutar;
+        private Action abrirArchivoExcel;
+
+        public RelayCommand(Action abrirArchivoExcel)
+        {
+            this.abrirArchivoExcel = abrirArchivoExcel;
+        }
 
         public RelayCommand(Action<object?> ejecutar, Func<object?, bool>? puedeEjecutar = null)
         {
-            _ejecutar = ejecutar;
-            _puedeEjecutar = _puedeEjecutar;
+            _ejecutar = ejecutar ?? throw new ArgumentNullException(nameof(ejecutar));
+            _puedeEjecutar = puedeEjecutar;
         }
 
         public event EventHandler? CanExecuteChanged

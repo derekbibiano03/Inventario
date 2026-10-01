@@ -25,7 +25,11 @@ public partial class Requisicione
 
     public int? IdAutorizante { get; set; }
 
+    public int? IdReviso { get; set; }
+
     public virtual Usuario? IdAutorizanteNavigation { get; set; }
+
+    public virtual Usuario? IdRevisoNavigation { get; set; }
 
     public virtual Usuario? IdSolicitanteNavigation { get; set; }
 }

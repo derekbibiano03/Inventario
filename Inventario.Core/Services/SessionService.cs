@@ -10,6 +10,7 @@ namespace InventarioMaquinaria.Services
         public int IdUsuario { get; set; }
         public string NombreCompleto { get; set; }
         public string Area { get; set; }
+        public string FirmaPath { get; set; }
 
 
         public void CerrarSesion()

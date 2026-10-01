@@ -21,6 +21,8 @@ public partial class Usuario
 
     public string? Area { get; set; }
 
+    public string? FirmaPath { get; set; }
+
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicos { get; set; } = new List<CatalogoMovimientosEconomico>();
 
     public virtual ICollection<HistorialLog> HistorialLogs { get; set; } = new List<HistorialLog>();
@@ -32,6 +34,8 @@ public partial class Usuario
     public virtual Empleado? NoEmpleadoNavigation { get; set; }
 
     public virtual ICollection<Requisicione> RequisicioneIdAutorizanteNavigations { get; set; } = new List<Requisicione>();
+
+    public virtual ICollection<Requisicione> RequisicioneIdRevisoNavigations { get; set; } = new List<Requisicione>();
 
     public virtual ICollection<Requisicione> RequisicioneIdSolicitanteNavigations { get; set; } = new List<Requisicione>();
 }

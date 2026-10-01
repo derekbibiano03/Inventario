@@ -13,23 +13,25 @@
 
                 <!-- ENCABEZADO -->
                 <TextBlock Text="REQUISICIÓN DE COMPRA" FontSize="18" FontWeight="Bold" Padding="0,0,30,4" HorizontalAlignment="Right"/>
+                <!-- Corregido: Se enlaza el Consecutivo generado -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,4">
-                    <ComboBox SelectedValuePath="Content"
-                    Width="70" Height="20" HorizontalAlignment="Left" Margin="0,20,0,20"
-                    SelectedValue="{Binding EmpresaSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                    <TextBlock Text="{Binding ConsecutivoGenerado}" VerticalAlignment="Center" FontWeight="Bold" FontSize="14" Padding="0,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,4">
+                    <!-- Corregido: Se usa Text en lugar de SelectedValue con Content para evitar inconsistencias de enlace -->
+                    <ComboBox Width="70" Height="20" HorizontalAlignment="Left" Margin="0,20,0,20"
+                              Text="{Binding EmpresaSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                         <ComboBoxItem Content="CGM" />
                         <ComboBoxItem Content="OX" />
                     </ComboBox>
-                    <TextBlock Text=" - RC" VerticalAlignment="Center" Margin="0,0,0,0"/>
-                    <TextBlock Text=" - CONSECUTIVO - " VerticalAlignment="Center" Padding="0,0,0,0"/>
 
                     <ComboBox ItemsSource="{Binding Ubicaciones}"
-                  DisplayMemberPath="Siglas"
-                  SelectedValuePath="Siglas"
-                  SelectedValue="{Binding UbicacionSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                  Width="70" Height="20" HorizontalAlignment="Left" Padding="0,0,0,0"/>
+                              DisplayMemberPath="Siglas"
+                              SelectedValuePath="Siglas"
+                              SelectedValue="{Binding UbicacionSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              Width="70" Height="20" HorizontalAlignment="Left" Padding="0,0,0,0"/>
 
-                    <TextBlock Text="{Binding FechaActual, StringFormat=' - {0:yyyy} '}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    
                 </StackPanel>
                 <TextBlock Text="{Binding FechaActual, StringFormat={}{0:dd/MM/yyyy}}" 
                            FontSize="13" FontWeight="Bold" Margin="0,0,110,4" HorizontalAlignment="Right"/>
@@ -49,10 +51,10 @@
                         <!-- Atención A -->
                         <TextBlock Text="Atención A:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="0" Grid.Column="1"
-                            ItemsSource="{Binding Usuarios}"
-                            DisplayMemberPath="NombreCompleto"
-                            SelectedItem="{Binding UsuarioAtencionSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                            Width="250" Height="30" HorizontalAlignment="Left" Margin="0,2"/>
+                                  ItemsSource="{Binding UsuariosCompras}"
+                                  DisplayMemberPath="NombreCompleto"
+                                  SelectedItem="{Binding UsuarioAtencionSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                  Width="250" Height="30" HorizontalAlignment="Left" Margin="0,2"/>
                     </Grid>
                 </GroupBox>
 
@@ -75,9 +77,9 @@
                             <TextBlock Text="No. Económico:" Margin="0,0,0,3"/>
                             <Border BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="4" Background="White" Height="30" Padding="2">
                                 <ComboBox ItemsSource="{Binding Economicos}"
-                          DisplayMemberPath="IdEconomico"
-                          SelectedItem="{Binding EconomicoSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0"/>
+                                          DisplayMemberPath="IdEconomico"
+                                          SelectedItem="{Binding EconomicoSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0"/>
                             </Border>
                         </StackPanel>
 
@@ -183,17 +185,16 @@
                             <TextBox Text="{Binding Observaciones, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="60" TextWrapping="Wrap" Padding="5"/>
                         </StackPanel>
 
-                        <!-- Fila 1: Solicitante y Autorizante con ComboBox automatizados -->
+                        <!-- Fila 1: Autorizante -->
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Autorizante -->
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Nombre del Autorizante:" Margin="0,0,0,3"/>
-                                <ComboBox ItemsSource="{Binding Usuarios}"
+                                <ComboBox ItemsSource="{Binding UsuariosAutorizantes}"
                                           DisplayMemberPath="NombreCompleto"
                                           SelectedItem="{Binding UsuarioAutorizanteSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                           Height="30"/>

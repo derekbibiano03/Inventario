@@ -19,5 +19,22 @@ namespace Inventario.Core.Services.Auth
             var resultado = _context.Usuarios.ToList();
             return resultado;
         }
+
+        public List<Usuario> ObtenerUsuariosCompras()
+        {
+            var resultado = _context.Usuarios.Where(r => r.Area == "COMPRAS").ToList();
+            return resultado;
+        }
+
+        public List<Usuario> ObtenerUsuariosAutorizantes()
+        {
+            var resultado = _context.Usuarios
+                .Where(r => r.IdUsuario == 3 || r.IdUsuario == 4)
+                .ToList();
+
+            return resultado;
+        }
+
+
     }
 }

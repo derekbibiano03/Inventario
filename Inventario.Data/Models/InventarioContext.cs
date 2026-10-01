@@ -722,6 +722,8 @@ public partial class InventarioContext : DbContext
                 .ToTable("requisiciones")
                 .UseCollation("utf8mb4_general_ci");
 
+            entity.HasIndex(e => e.IdReviso, "fk_requisicion_revision");
+
             entity.HasIndex(e => e.IdAutorizante, "fk_usuario_autorizasnte_req");
 
             entity.HasIndex(e => e.IdSolicitante, "fk_usuario_colicitante_req");
@@ -741,6 +743,7 @@ public partial class InventarioContext : DbContext
                 .HasColumnName("estatus");
             entity.Property(e => e.FechaRequisicion).HasColumnName("fecha_requisicion");
             entity.Property(e => e.IdAutorizante).HasColumnName("id_autorizante");
+            entity.Property(e => e.IdReviso).HasColumnName("id_reviso");
             entity.Property(e => e.IdSolicitante).HasColumnName("id_solicitante");
             entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
             entity.Property(e => e.TipoRequisicion)
@@ -750,6 +753,10 @@ public partial class InventarioContext : DbContext
             entity.HasOne(d => d.IdAutorizanteNavigation).WithMany(p => p.RequisicioneIdAutorizanteNavigations)
                 .HasForeignKey(d => d.IdAutorizante)
                 .HasConstraintName("fk_usuario_autorizasnte_req");
+
+            entity.HasOne(d => d.IdRevisoNavigation).WithMany(p => p.RequisicioneIdRevisoNavigations)
+                .HasForeignKey(d => d.IdReviso)
+                .HasConstraintName("fk_requisicion_revision");
 
             entity.HasOne(d => d.IdSolicitanteNavigation).WithMany(p => p.RequisicioneIdSolicitanteNavigations)
                 .HasForeignKey(d => d.IdSolicitante)
@@ -827,6 +834,9 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.Correoe)
                 .HasColumnType("text")
                 .HasColumnName("correoe");
+            entity.Property(e => e.FirmaPath)
+                .HasMaxLength(255)
+                .HasColumnName("firma_path");
             entity.Property(e => e.IdRol).HasColumnName("id_rol");
             entity.Property(e => e.NoEmpleado).HasColumnName("no_empleado");
             entity.Property(e => e.NombreCompleto)

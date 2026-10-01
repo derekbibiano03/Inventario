@@ -24,9 +24,11 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
             InitializeComponent();
             var context = new Data.Models.InventarioContext();
             var usuarios = new UsuariosService(context);
-            var viewModel = new AgregarRequisicionViewModel(context, usuarios);
+            var adquisicionService = new AdquisicionService(context); // <-- Crear e instanciar el servicio
+            var viewModel = new AgregarRequisicionViewModel(context, usuarios, adquisicionService);
 
             this.DataContext = viewModel;
         }
+        
     }
 }

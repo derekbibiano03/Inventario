@@ -10,33 +10,38 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
+    # 1. Obtiene el código fuente
+    - name: Checkout del código
+      uses: actions/checkout@v4
 
-      - name: Configurar .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
+    # 2. Configura el entorno de .NET 10
+    - name: Configurar .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
 
-      - name: Restaurar NuGet
-        run: dotnet restore
+    # 3. Restaura las dependencias del proyecto
+    - name: Restaurar NuGet
+      run: dotnet restore
 
-      - name: Compilar WPF Tradicional
-        run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish
+    # 4. Compila y publica el ejecutable WPF tomando la versión del .csproj con archivo único
+    - name: Compilar WPF
+      run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
 
-      - name: Comprimir carpeta de publicación
-        run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
+    # 5. Comprime la compilación en un ZIP
+    - name: Comprimir ejecutable
+      run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
 
-      - name: Generar Tag dinamico
-        id: tag
-        run: |
-          $tagName = "v1.0." + (Get-Date -Format 'yyyyMMddHHmmss')
-          echo "tag_name=$tagName" >> $env:GITHUB_OUTPUT
+    # 6. Genera un Tag único basado en la fecha y hora
+    - name: Generar Tag dinamico
+      id: tag
+      run: echo "tag_name=v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')" >> $env:GITHUB_OUTPUT
 
-      - name: Publicar Release en GitHub
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./InventarioSetup.zip
-          tag_name: ${{ steps.tag.outputs.tag_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # 7. Crea la Release en GitHub
+    - name: Publicar Release en GitHub
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./InventarioSetup.zip
+        tag_name: ${{ steps.tag.outputs.tag_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

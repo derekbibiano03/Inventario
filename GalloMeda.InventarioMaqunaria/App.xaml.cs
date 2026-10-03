@@ -9,6 +9,8 @@ using InventarioMaquinaria.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Windows;
@@ -39,6 +41,7 @@ namespace GalloMeda.InventarioMaqunaria
                 string configPath = Path.Combine(basePath, "appsettings.json");
                 string templatePath = Path.Combine(basePath, "appsettings.template.json");
 
+                // 1. Verificar si existe el archivo de configuración, si no, crearlo con ambas estructuras (BD y AzureAd)
                 if (!File.Exists(configPath))
                 {
                     if (File.Exists(templatePath))
@@ -47,7 +50,26 @@ namespace GalloMeda.InventarioMaqunaria
                     }
                     else
                     {
-                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"Server=localhost;Database=tu_base;Uid=tu_usuario;Pwd=tu_contrasena;\"\n  }\n}");
+                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"Server=localhost;Database=tu_base;Uid=tu_usuario;Pwd=tu_contrasena;\"\n  },\n  \"AzureAd\": {\n    \"TenantId\": \"\",\n    \"ClientId\": \"\",\n    \"ClientSecret\": \"\",\n    \"Remitente\": \"\"\n  }\n}");
+                    }
+                }
+                else
+                {
+                    // 2. Si ya existe, asegurarnos de que contenga el nodo AzureAd (útil al actualizar la app)
+                    string jsonContent = File.ReadAllText(configPath);
+                    if (!jsonContent.Contains("AzureAd"))
+                    {
+                        var jsonObject = JObject.Parse(jsonContent);
+                        if (jsonObject["AzureAd"] == null)
+                        {
+                            jsonObject["AzureAd"] = new JObject(
+                                new JProperty("TenantId", ""),
+                                new JProperty("ClientId", ""),
+                                new JProperty("ClientSecret", ""),
+                                new JProperty("Remitente", "")
+                            );
+                            File.WriteAllText(configPath, jsonObject.ToString(Newtonsoft.Json.Formatting.Indented));
+                        }
                     }
                 }
 

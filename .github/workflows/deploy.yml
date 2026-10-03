@@ -10,64 +10,63 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1. Obtiene el código fuente
-    - name: Checkout del código
-      uses: actions/checkout@v4
+      # 1. Obtiene el código fuente
+      - name: Checkout del código
+        uses: actions/checkout@v4
 
-    # 2. Configura el entorno de .NET 10
-    - name: Configurar .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
+      # 2. Configura el entorno de .NET 10
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
 
-    # 3. Generar appsettings.json antes de compilar (¡ESTO FALTABA!)
-    # 3. Generar appsettings.json usando Secrets de GitHub
-    name: Crear appsettings.json de Producción
-    run: |
-      $config = @{
-        Logging = @{
-          LogLevel = @{
-            Default = "Information"
-            "Microsoft.AspNetCore" = "Warning"
-          }
-        }
-        AllowedHosts = "*"
-        ConnectionStrings = @{
-          InventarioConnection = "Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=${{ secrets.DB_PASSWORD }};"
-        }
-        AzureAd = @{
-          TenantId = "0a25cbf8-bee5-4218-bf52-746cdeb323ef"
-          ClientId = "9256cb22-b052-4d42-aa38-ddd92031b61e"
-          ClientSecret = "${{ secrets.AZURE_SECRET }}"
-          Remitente = "dbibiano@enlaceferroviario.com"
-        }
-      } | ConvertTo-Json -Depth 5
-      
-      Set-Content -Path "GalloMeda.InventarioMaqunaria/appsettings.json" -Value $config -Encoding utf8
-    shell: pwsh
+      # 3. Generar appsettings.json usando Secrets de GitHub
+      - name: Crear appsettings.json de Producción
+        run: |
+          $config = @{
+            Logging = @{
+              LogLevel = @{
+                Default = "Information"
+                "Microsoft.AspNetCore" = "Warning"
+              }
+            }
+            AllowedHosts = "*"
+            ConnectionStrings = @{
+              InventarioConnection = "Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=${{ secrets.DB_PASSWORD }};"
+            }
+            AzureAd = @{
+              TenantId = "0a25cbf8-bee5-4218-bf52-746cdeb323ef"
+              ClientId = "9256cb22-b052-4d42-aa38-ddd92031b61e"
+              ClientSecret = "${{ secrets.AZURE_SECRET }}"
+              Remitente = "dbibiano@enlaceferroviario.com"
+            }
+          } | ConvertTo-Json -Depth 5
+          
+          Set-Content -Path "GalloMeda.InventarioMaqunaria/appsettings.json" -Value $config -Encoding utf8
+        shell: pwsh
 
-    # 4. Restaura las dependencias del proyecto
-    - name: Restaurar NuGet
-      run: dotnet restore
+      # 4. Restaura las dependencias del proyecto
+      - name: Restaurar NuGet
+        run: dotnet restore
 
-    # 5. Compila y publica el ejecutable WPF tomando la versión del .csproj
-    - name: Compilar WPF
-      run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
+      # 5. Compila y publica el ejecutable WPF tomando la versión del .csproj
+      - name: Compilar WPF
+        run: dotnet publish GalloMeda.InventarioMaqunaria/Inventario.Desktop.csproj --configuration Release -o ./publish /p:PublishSingleFile=true /p:SelfContained=false
 
-    # 6. Comprime la compilación en un ZIP
-    - name: Comprimir ejecutable
-      run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
+      # 6. Comprime la compilación en un ZIP
+      - name: Comprimir ejecutable
+        run: Compress-Archive -Path ./publish/* -DestinationPath ./InventarioSetup.zip
 
-    # 7. Genera un Tag único basado en la fecha y hora
-    - name: Generar Tag dinamico
-      id: tag
-      run: echo "tag_name=v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')" >> $env:GITHUB_OUTPUT
+      # 7. Genera un Tag único basado en la fecha y hora
+      - name: Generar Tag dinamico
+        id: tag
+        run: echo "tag_name=v1.0.$(Get-Date -Format 'yyyyMMddHHmmss')" >> $env:GITHUB_OUTPUT
 
-    # 8. Crea la Release en GitHub
-    - name: Publicar Release en GitHub
-      uses: softprops/action-gh-release@v2
-      with:
-        files: ./InventarioSetup.zip
-        tag_name: ${{ steps.tag.outputs.tag_name }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 8. Crea la Release en GitHub
+      - name: Publicar Release en GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./InventarioSetup.zip
+          tag_name: ${{ steps.tag.outputs.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

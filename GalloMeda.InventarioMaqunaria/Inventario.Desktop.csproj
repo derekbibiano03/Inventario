@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Version>1.7.1</Version>
-		<AssemblyVersion>1.7.1.0</AssemblyVersion>
-		<FileVersion>1.7.1.0</FileVersion>
+		<Version>1.7.2</Version>
+		<AssemblyVersion>1.7.2.0</AssemblyVersion>
+		<FileVersion>1.7.2.0</FileVersion>
 		<DebugType>embedded</DebugType>
 		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
 		<OutputType>WinExe</OutputType>
@@ -27,7 +27,6 @@
 		<None Remove="Resources\ubicacion_icon.png" />
 	</ItemGroup>
 
-	
 	<ItemGroup>
 		<PackageReference Include="AutoUpdater.NET.Official" Version="1.9.3" />
 		<PackageReference Include="Azure.Identity" Version="1.21.0" />
@@ -42,7 +41,6 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.11" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
 		<PackageReference Include="Microsoft.Graph" Version="6.7.0" />
-		<PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
 		<PackageReference Include="QuestPDF" Version="2026.9.1" />

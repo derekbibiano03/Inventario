@@ -58,6 +58,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             Usuarios = new ObservableCollection<Usuario>();
             VerExcelCommand = new RelayCommand(_ => AbrirArchivoExcel());
             AutorizarCommand = new RelayCommand(_ => AutorizarArchivo());
+            _ = CargarRequisicionesAsync();
         }
 
         public async Task EnviarCorreoNotificacionConArchivoAsync(List<string> correosDestino, List<string> correosCc, string asunto, string cuerpoHtml, string rutaArchivo)

@@ -59,15 +59,13 @@
 		<Folder Include="Converters\" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="appsettings.json" Condition="Exists('appsettings.json')">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		</Content>
-		<Content Include="appsettings.template.json" Condition="Exists('appsettings.template.json')">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		</Content>
-	</ItemGroup>
+    <Content Include="appsettings.json" Condition="Exists('appsettings.json')">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.template.json" Condition="Exists('appsettings.template.json')">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Resources\adquisiciones.png" />
 		<Resource Include="Resources\AgregarUsuario.png" />

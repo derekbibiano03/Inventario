@@ -81,8 +81,8 @@ public partial class InventarioContext : DbContext
 
             string connectionString = configuration.GetConnectionString("InventarioConnection");
 
-            // Usar ServerVersion directamente gracias al using de Microsoft.EntityFrameworkCore
-            optionsBuilder.UseMySql(connectionString, ServerVersion.Parse("8.0.46-mysql"));
+            // CAMBIO: Usar AutoDetect para que se adapte automáticamente a la versión real de tu servidor MySQL
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
     }
 

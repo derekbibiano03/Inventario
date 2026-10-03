@@ -11,12 +11,27 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 
 namespace GalloMeda.InventarioMaqunaria
 {
     public partial class App : Application
     {
+        // Constructor estático con guarda anti-recursión para evitar StackOverflow
+        static App()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                // Si piden la versión vieja y NO es la que estamos intentando cargar, la redirigimos de forma segura
+                if (args.Name.Contains("Microsoft.Extensions.Configuration.Abstractions") && !args.Name.Contains("10.0.11.0"))
+                {
+                    return Assembly.Load("Microsoft.Extensions.Configuration.Abstractions, Version=10.0.11.0, Culture=neutral, PublicKeyToken=adb9793829ddae60");
+                }
+                return null;
+            };
+        }
+
         public static IServiceProvider ServiceProvider { get; private set; } = null!;
         public static ISessionService Session { get; private set; } = new SessionService();
 

@@ -1,5 +1,6 @@
 ﻿using GalloMeda.InventarioMaqunaria;
 using Inventario.Core.DTOs.Requisicion;
+using Inventario.Core.Services;
 using Inventario.Core.Services.Adq_Serv.AdquisicionService;
 using Inventario.Data.Models;
 using System;
@@ -8,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -40,19 +42,16 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
         public ICommand VerExcelCommand { get; }
 
-        private readonly InventarioContext _contexto;
         private readonly AdquisicionService _reqService;
 
-
-        public BuscarRequisicionesViewModel() 
+        // Inyectamos AdquisicionService directamente en el constructor
+        public BuscarRequisicionesViewModel(AdquisicionService reqService)
         {
-
-            var contexto = new InventarioContext();
-            _reqService = new AdquisicionService(contexto);
+            _reqService = reqService ?? throw new ArgumentNullException(nameof(reqService));
             Usuarios = new ObservableCollection<Usuario>();
             VerExcelCommand = new RelayCommand(_ => AbrirArchivoExcel());
-
         }
+
         public async Task CargarRequisicionesSinRevisionAsync()
         {
             try

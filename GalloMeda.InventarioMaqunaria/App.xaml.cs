@@ -72,6 +72,8 @@ namespace GalloMeda.InventarioMaqunaria
 
                 serviceCollection.AddScoped<LogsService>();
                 serviceCollection.AddScoped<AutenticacionService>();
+                serviceCollection.AddSingleton(configuration);
+                serviceCollection.AddScoped<EmailService>();
 
                 ServiceProvider = serviceCollection.BuildServiceProvider();
 

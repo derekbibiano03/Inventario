@@ -1,19 +1,14 @@
-﻿using Inventario.Core.Services.Adq_Serv.AdquisicionService;
+﻿using GalloMeda.InventarioMaqunaria; // Asegúrate de tener este using para acceder a App.ServiceProvider si gustas, o leer la configuración directo
+using Inventario.Core.Services;
+using Inventario.Core.Services.Adq_Serv.AdquisicionService;
 using Inventario.Core.Services.Auth;
 using Inventario.Core.Services.Logs;
-using Inventario.Desktop.ViewModels.AdqServ; // CORRECTO
+using Inventario.Desktop.ViewModels.AdqServ;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisiciones
 {
@@ -22,13 +17,21 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
         public AgregarRequisicionView()
         {
             InitializeComponent();
+
+            // Opción recomendada: Obtener el IConfiguration desde el contenedor global de la aplicación (App.ServiceProvider)
+            // Si no usas App.ServiceProvider aquí, puedes construirlo de forma local como abajo:
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
             var context = new Data.Models.InventarioContext();
             var usuarios = new UsuariosService(context);
-            var adquisicionService = new AdquisicionService(context); // <-- Crear e instanciar el servicio
+            var email = new EmailService(configuration); // <-- Aquí le pasamos la configuración requerida
+            var adquisicionService = new AdquisicionService(context, email);
             var viewModel = new AgregarRequisicionViewModel(context, usuarios, adquisicionService);
 
             this.DataContext = viewModel;
         }
-        
     }
 }

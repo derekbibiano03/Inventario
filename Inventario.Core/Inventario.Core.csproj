@@ -6,6 +6,7 @@
 		<SignAssembly>false</SignAssembly>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Azure.Identity" Version="1.21.0" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
 		<PackageReference Include="ClosedXML" Version="0.105.1" />
 		<PackageReference Include="DocX" Version="5.2.0" />
@@ -22,6 +23,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.11" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.11" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.11" />
+		<PackageReference Include="Microsoft.Graph" Version="6.7.0" />
 		<PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />

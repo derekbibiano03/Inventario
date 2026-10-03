@@ -1,17 +1,9 @@
-﻿using Inventario.Desktop.ViewModels.AdqServ;
-using Inventario.Desktop.ViewModels.CatalogosViewModel;
+﻿using Inventario.Core.Services;
+using Inventario.Core.Services.Adq_Serv.AdquisicionService;
+using Inventario.Desktop.ViewModels.AdqServ;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisiciones
 {
@@ -23,8 +15,22 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
         public RequisicionesPendientesView()
         {
             InitializeComponent();
-            this.DataContext = new ListaRequisicionesViewModel();
+
+            // Construir la configuración local para el servicio de correo
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            // Instanciar las dependencias necesarias para el ViewModel
+            var context = new Data.Models.InventarioContext();
+            var emailService = new EmailService(configuration);
+            var adquisicionService = new AdquisicionService(context, emailService);
+
+            // Asignar el ViewModel pasándole el servicio requerido
+            this.DataContext = new ListaRequisicionesViewModel(adquisicionService);
         }
+
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Lógica opcional del evento o déjalo vacío si solo quieres que compile

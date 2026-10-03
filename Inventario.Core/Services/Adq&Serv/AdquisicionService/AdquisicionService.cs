@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Inventario.Core.DTOs.Requisicion;
+using Inventario.Core.Services; // Asegúrate de incluir el espacio de nombres de tu EmailService
 using Inventario.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -11,11 +12,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
     public class AdquisicionService
     {
         private readonly InventarioContext _context;
-
-        public AdquisicionService(InventarioContext context)
-        {
-            _context = context;
-        }
+        private readonly EmailService _emailService;
         private DateTime _fechaActual = DateTime.Now;
 
         private readonly string _hostFtp = "ftp://170.10.162.13/";
@@ -23,8 +20,13 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
         private readonly string _contrasenaFtp = "drbr11122003DRBR.";
         private readonly string _directorioRemoto = "servidor/ArchivosEconomicos/Requisiciones";
 
+        public AdquisicionService(InventarioContext context, EmailService emailService)
+        {
+            _context = context;
+            _emailService = emailService;
+        }
 
-        public string AutorizarYDescargarArchivo(string idRequisicion, string nombreArchivoRemoto, string firmaPath)
+        public async Task<string> AutorizarYDescargarArchivoAsync(string idRequisicion, string nombreArchivoRemoto, string firmaPath)
         {
             try
             {
@@ -67,7 +69,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                                 {
                                     var image = ws.AddPicture(ms);
                                     image.Name = "FirmaAutorizante";
-                                    image.MoveTo(ws.Cell(66, 5)); // Ajusta aquí la celda de la firma si lo necesitas
+                                    image.MoveTo(ws.Cell(66, 5));
                                     image.WithSize(140, 50);
                                 }
                             }
@@ -75,8 +77,6 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     }
 
                     // --- PROTECCIÓN CORRECTA CONTRA EDICIÓN ---
-                    // Al proteger la hoja, Excel por defecto bloquea la modificación de celdas 
-                    // pero permite la navegación, selección e impresión del documento sin restricciones.
                     ws.Protect("");
                     // ------------------------------------------
 
@@ -86,12 +86,25 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 // 3. Volver a subir el archivo actualizado al servidor FTP
                 SubirArchivoPorFtp(rutaLocalTemporal, nombreArchivoRemoto);
 
-                // 4. Actualizar el estatus en la Base de Datos a "AUTORIZADA"
-                var requisicionDb = _context.Requisiciones.FirstOrDefault(r => r.IdRequisicion == idRequisicion);
+                // 4. Actualizar el estatus en la Base de Datos a "AUTORIZADA" y obtener el correo de atención
+                var requisicionDb = _context.Requisiciones
+                    .Include(r => r.IdAtencionNavigation)
+                    .FirstOrDefault(r => r.IdRequisicion == idRequisicion);
+
                 if (requisicionDb != null)
                 {
                     requisicionDb.Estatus = "AUTORIZADA";
                     _context.SaveChanges();
+
+                    // 5. Enviar notificación por correo electrónico mediante Microsoft Graph
+                    string correoAtencion = requisicionDb.IdAtencionNavigation?.Correoe;
+                    if (!string.IsNullOrEmpty(correoAtencion))
+                    {
+                        string asunto = $"Requisición Autorizada: {idRequisicion}";
+                        string cuerpoHtml = $"<p>La requisición <b>{idRequisicion}</b> ha sido autorizada exitosamente.</p>";
+
+                        await _emailService.EnviarCorreoNotificacionAsync(correoAtencion, asunto, cuerpoHtml);
+                    }
                 }
 
                 return rutaLocalTemporal;
@@ -101,7 +114,6 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 throw new Exception($"Error al autorizar el archivo: {ex.Message}", ex);
             }
         }
-
 
         private void SubirArchivoPorFtp(string rutaLocal, string nombreRemoto)
         {
@@ -195,8 +207,6 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 })
                 .ToListAsync();
         }
-
-        
 
         public async Task<List<RequisicionListDto>> ObtenerTodasRequisicionesAsync()
         {

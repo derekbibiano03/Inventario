@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -47,25 +46,22 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         }
 
         public ICommand VerExcelCommand { get; }
+        public ICommand AutorizarCommand { get; }
 
         private readonly InventarioContext _contexto;
         private readonly AdquisicionService _reqService;
-        public ICommand AutorizarCommand { get; }
 
-        public ListaRequisicionesViewModel()
+        public ListaRequisicionesViewModel(AdquisicionService reqService)
         {
-            var contexto = new InventarioContext();
-            _reqService = new AdquisicionService(contexto);
+            _reqService = reqService ?? throw new ArgumentNullException(nameof(reqService));
+
             Usuarios = new ObservableCollection<Usuario>();
             VerExcelCommand = new RelayCommand(_ => AbrirArchivoExcel());
             AutorizarCommand = new RelayCommand(_ => AutorizarArchivo());
-
-            _ = CargarRequisicionesAsync();
         }
 
         public async Task EnviarCorreoNotificacionConArchivoAsync(List<string> correosDestino, List<string> correosCc, string asunto, string cuerpoHtml, string rutaArchivo)
         {
-            // Construir el lector para appsettings.json de manera local en el método
             var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -179,8 +175,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     return;
                 }
 
-                // Invocación correcta del método actualizado del servicio
-                string rutaTemporalExcelFirmado = _reqService.AutorizarYDescargarArchivo(
+                string rutaTemporalExcelFirmado = await _reqService.AutorizarYDescargarArchivoAsync(
                     RequisicionSeleccionada.IdRequisicion,
                     RequisicionSeleccionada.ArchivoReq,
                     firmaPathUsuario
@@ -202,7 +197,6 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     var destinatarios = new List<string> { RequisicionSeleccionada.CorreoAtencion };
                     var copias = new List<string> { "rrodriguez@enlaceferroviario.com", "egarcia@enlaceferroviario.com" };
 
-                    // Envío del archivo firmado por correo
                     await EnviarCorreoNotificacionConArchivoAsync(
                         correosDestino: destinatarios,
                         correosCc: copias,
@@ -244,7 +238,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             catch (Exception ex)
             {
                 MessageBox.Show($"DETALLE DEL ERROR:\n\nMensaje: {ex.Message}\n\nStackTrace:\n{ex.StackTrace}",
-                                    "Error en AbrirArchivoExcel", MessageBoxButton.OK, MessageBoxImage.Error);
+                                "Error en AbrirArchivoExcel", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

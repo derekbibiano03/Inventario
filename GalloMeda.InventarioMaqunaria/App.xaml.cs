@@ -62,7 +62,7 @@ namespace GalloMeda.InventarioMaqunaria
                     }
                     else
                     {
-                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"Server=localhost;Database=tu_base;Uid=tu_usuario;Pwd=tu_contrasena;\"\n  }\n}");
+                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=7542gTFn45_ADM;\"\n  }\n}");
                     }
                 }
 

@@ -76,7 +76,7 @@ public partial class InventarioContext : DbContext
         {
             optionsBuilder.UseMySql(
                 "Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=7542gTFn45_ADM;",
-                ServerVersion.AutoDetect("Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=7542gTFn45_ADM;")
+                new MySqlServerVersion(new Version(8, 0, 30))
             );
         }
     }

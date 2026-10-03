@@ -11,27 +11,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Windows;
 
 namespace GalloMeda.InventarioMaqunaria
 {
     public partial class App : Application
     {
-        // Constructor estático con guarda anti-recursión para evitar StackOverflow
-        static App()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
-            {
-                // Si piden la versión vieja y NO es la que estamos intentando cargar, la redirigimos de forma segura
-                if (args.Name.Contains("Microsoft.Extensions.Configuration.Abstractions") && !args.Name.Contains("10.0.11.0"))
-                {
-                    return Assembly.Load("Microsoft.Extensions.Configuration.Abstractions, Version=10.0.11.0, Culture=neutral, PublicKeyToken=adb9793829ddae60");
-                }
-                return null;
-            };
-        }
-
         public static IServiceProvider ServiceProvider { get; private set; } = null!;
         public static ISessionService Session { get; private set; } = new SessionService();
 
@@ -62,7 +47,7 @@ namespace GalloMeda.InventarioMaqunaria
                     }
                     else
                     {
-                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=7542gTFn45_ADM;\"\n  }\n}");
+                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"Server=localhost;Database=tu_base;Uid=tu_usuario;Pwd=tu_contrasena;\"\n  }\n}");
                     }
                 }
 
@@ -82,7 +67,7 @@ namespace GalloMeda.InventarioMaqunaria
                 }
 
                 serviceCollection.AddDbContext<InventarioContext>(options =>
-                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+                    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)))
                 );
 
                 serviceCollection.AddScoped<LogsService>();
@@ -108,7 +93,6 @@ namespace GalloMeda.InventarioMaqunaria
                         string usuarioConfirmado = App.Session.Username;
                         int idRolUsuario = App.Session.IdRol;
                         string NombreCompleto = App.Session.NombreCompleto;
-                        string FirmaPath = App.Session.FirmaPath;
                         var mainWindow = new MainWindow(usuarioConfirmado, idRolUsuario, NombreCompleto);
                         this.MainWindow = mainWindow;
                         this.ShutdownMode = ShutdownMode.OnMainWindowClose;

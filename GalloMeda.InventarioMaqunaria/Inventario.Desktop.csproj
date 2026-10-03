@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Version>1.7.6</Version>
-		<AssemblyVersion>1.7.6.0</AssemblyVersion>
-		<FileVersion>1.7.6.0</FileVersion>
+		<Version>1.7.7</Version>
+		<AssemblyVersion>1.7.7.0</AssemblyVersion>
+		<FileVersion>1.7.7.0</FileVersion>
 		<UseWPF>true</UseWPF>
 		<DebugType>embedded</DebugType>
 		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
@@ -60,7 +60,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="appsettings.json" Condition="Exists('appsettings.json')">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
+		<Content Include="appsettings.template.json" Condition="Exists('appsettings.template.json')">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</Content>
 	</ItemGroup>

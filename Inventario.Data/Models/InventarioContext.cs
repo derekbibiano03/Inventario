@@ -74,15 +74,7 @@ public partial class InventarioContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            string connectionString = configuration.GetConnectionString("InventarioConnection");
-
-            // CAMBIO: Usar AutoDetect para que se adapte automáticamente a la versión real de tu servidor MySQL
-            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            optionsBuilder.UseMySql("server=enlaceferroviario.com;port=3306;database=irvinglunap_inventario;user=irvinglunap_admin_maestro;password=7542gTFn45_ADM", ServerVersion.Parse("8.0.46-mysql"));
         }
     }
 

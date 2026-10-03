@@ -82,7 +82,7 @@ namespace GalloMeda.InventarioMaqunaria
                 }
 
                 serviceCollection.AddDbContext<InventarioContext>(options =>
-                    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)))
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                 );
 
                 serviceCollection.AddScoped<LogsService>();

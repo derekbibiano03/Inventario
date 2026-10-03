@@ -224,6 +224,7 @@
                                     </MenuItem>
                                     
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="CREACION DE NUEVA REQUISICION" Tag="AddReq" Click="MenuItem_Click"/>
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="AUTORIZAR REQUISICIONES" Tag="AutReq" Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="BUSCAR REQUISICIONES" Tag="" Click="MenuItem_Click"/>
 
                                     <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">

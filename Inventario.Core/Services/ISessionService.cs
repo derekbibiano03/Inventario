@@ -9,6 +9,10 @@ namespace Inventario.Core.Services
         string Username { get; set; }
         int IdRol{ get; set; }
         int IdUsuario { get; set; } 
+        string NombreCompleto { get; set; }
+        string Area { get; set; }
+        string FirmaPath { get; set; }
+
         void CerrarSesion();
     }
 }

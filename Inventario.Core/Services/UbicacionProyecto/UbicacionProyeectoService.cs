@@ -17,7 +17,7 @@ namespace Inventario.Core.Services.UbicacionProyecto
 
         public List<CatalogoUbicacionesProyecto> ObtenerUbicaciones()
         {
-            var resultado = _context.CatalogoUbicacionesProyectos.ToList();
+            var resultado = _context.CatalogoUbicacionesProyectos.OrderBy(x => x.Ubicacion).ToList();
             return resultado;
         }
     }

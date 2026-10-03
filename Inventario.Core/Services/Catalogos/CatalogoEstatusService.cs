@@ -18,7 +18,7 @@ namespace Inventario.Core.Services.Catalogos
 
         public List<CatalogoEstatus> ObtenerEstatus()
         {
-            var resultado = _context.CatalogoEstatuses.ToList();
+            var resultado = _context.CatalogoEstatuses.OrderBy(x => x.DescripcionEstatus).ToList();
             return resultado;
         }
 

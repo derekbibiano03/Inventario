@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Version>1.6.2</Version>
-		<AssemblyVersion>1.6.2.0</AssemblyVersion>
-		<FileVersion>1.6.2.0</FileVersion>
+		<Version>1.7.1</Version>
+		<AssemblyVersion>1.7.1.0</AssemblyVersion>
+		<FileVersion>1.7.1.0</FileVersion>
 		<DebugType>embedded</DebugType>
 		<UseBlazorWebAssemblyHotReload>false</UseBlazorWebAssemblyHotReload>
 		<OutputType>WinExe</OutputType>
@@ -13,6 +13,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Resources\icono.ico</ApplicationIcon>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<None Remove="Resources\adquisiciones.png" />
 		<None Remove="Resources\AgregarUsuario.png" />
@@ -20,13 +21,29 @@
 		<None Remove="Resources\economicos_icon.png" />
 		<None Remove="Resources\empleado_icon.png" />
 		<None Remove="Resources\gallo_meda_icon.png" />
+		<None Remove="Resources\grupo_ox.jpeg" />
 		<None Remove="Resources\icono.ico" />
 		<None Remove="Resources\socios_icon.png" />
 		<None Remove="Resources\ubicacion_icon.png" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <COMReference Include="Microsoft.Office.Core">
+	    <WrapperTool>tlbimp</WrapperTool>
+	    <VersionMinor>8</VersionMinor>
+	    <VersionMajor>2</VersionMajor>
+	    <Guid>2df8d04c-5bfa-101b-bde5-00aa0044de52</Guid>
+	    <Lcid>0</Lcid>
+	    <Isolated>false</Isolated>
+	    <EmbedInteropTypes>true</EmbedInteropTypes>
+	  </COMReference>
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="AutoUpdater.NET.Official" Version="1.9.3" />
+		<PackageReference Include="Azure.Identity" Version="1.21.0" />
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+		<PackageReference Include="ClosedXML" Version="0.105.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.16" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.16" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.16">
@@ -35,28 +52,40 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.11" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+		<PackageReference Include="Microsoft.Graph" Version="6.7.0" />
+		<PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+		<PackageReference Include="QuestPDF" Version="2026.9.1" />
 		<PackageReference Include="SSH.NET" Version="2026.0.0" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
 		<ProjectReference Include="..\Inventario.Data\Inventario.Data.csproj" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<Folder Include="Converters\" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<Resource Include="Resources\adquisiciones.png" />
 		<Resource Include="Resources\AgregarUsuario.png" />
 		<Resource Include="Resources\catalogo_icon.png" />
 		<Resource Include="Resources\economicos_icon.png" />
 		<Resource Include="Resources\empleado_icon.png" />
-		<Resource Include="Resources\gallo_meda_icon.png" />
+		<Content Include="Resources\gallo_meda_icon.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\grupo_ox.jpeg">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Resource Include="Resources\icono.ico" />
 		<Resource Include="Resources\socios_icon.png" />
 		<Resource Include="Resources\ubicacion_icon.png" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

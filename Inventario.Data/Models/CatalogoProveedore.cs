@@ -7,9 +7,13 @@ public partial class CatalogoProveedore
 {
     public int IdProveedor { get; set; }
 
-    public string? NombreProveedor { get; set; }
+    public string? RazonSocial { get; set; }
 
-    public string? NumeroContacto { get; set; }
+    public string? NumeroTelefonico { get; set; }
 
     public string? CorreoElectronico { get; set; }
+
+    public int? IdUbicacion { get; set; }
+
+    public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
 }

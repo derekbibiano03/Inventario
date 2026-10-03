@@ -23,7 +23,7 @@ namespace Inventario.Core.Services.Personal
                     NoEmpleado = e.NoEmpleado,
                     NombreEmpleado = e.NombreEmpleado
                 })
-                .ToList();
+                .OrderBy(x => x.NombreEmpleado).ToList();
 
             return resultado;
         }
@@ -36,6 +36,7 @@ namespace Inventario.Core.Services.Personal
                     NoEmpleado = e.NoEmpleado,
                     NombreEmpleado = e.NombreEmpleado
                 })
+                .OrderBy(x => x.NombreEmpleado)
                 .ToList();
 
             return resultado;
@@ -50,6 +51,7 @@ namespace Inventario.Core.Services.Personal
                     NombreEmpleado = e.NombreEmpleado,
                     Ds3 = e.Ds3
                 })
+                .OrderBy (x => x.NombreEmpleado)
                 .ToList();
 
             return resultado;

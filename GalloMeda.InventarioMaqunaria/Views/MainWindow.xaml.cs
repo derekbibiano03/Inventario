@@ -18,6 +18,7 @@ namespace Inventario.Desktop.Views
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private string _usuarioLogueado = string.Empty;
+        private string _nombreUsuarioCompleto = string.Empty;
         private int _idRolUsuario; // Cambiado a entero
 
         public string UsuarioLogueado
@@ -30,13 +31,23 @@ namespace Inventario.Desktop.Views
             }
         }
 
+        public string NombreUsuarioCompleto
+        {
+            get => _nombreUsuarioCompleto;
+            set
+            {
+                _nombreUsuarioCompleto = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int IdRolUsuario
         {
             get => _idRolUsuario;
             set { _idRolUsuario = value; OnPropertyChanged(); }
         }
 
-        public MainWindow(string username, int idRolUsuario)
+        public MainWindow(string username, int idRolUsuario, string nombreCompleto)
         {
             InitializeComponent();
             ContenedorPrincipal.Content = new EconomicosView();
@@ -45,6 +56,7 @@ namespace Inventario.Desktop.Views
             this.DataContext = this;
             this.UsuarioLogueado = username;
             this.IdRolUsuario = idRolUsuario;
+            this.NombreUsuarioCompleto = nombreCompleto;
             txtPanel.Text = textoPanel;
         }
 
@@ -176,11 +188,15 @@ namespace Inventario.Desktop.Views
                     case "HistServ":
                         ContenedorPrincipal.Content = new AgregarServicioView();
                         textoPanel = "NUEVO SERVICIOS REALIZADOS";
-                        break;
+                        break; 
 
                     case "VerServicios":
                         ContenedorPrincipal.Content = new HistorialServicioView();
                         textoPanel = "HISTORIAL DE SERVICIOS REALIZADOS";
+                        break;
+                    case "AutReq":
+                        ContenedorPrincipal.Content = new RequisicionesPendientesView();
+                        textoPanel = "AUTORIZACION DE REQUISICIONES";
                         break;
                 }
                 txtPanel.Text = textoPanel;

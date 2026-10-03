@@ -90,6 +90,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             CargarCatalogos();
         }
 
+
         // Carga los catálogos en memoria
         private void CargarCatalogos()
         {
@@ -107,10 +108,10 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
                 Grupos.Add(item);
             }
 
-            var marcasDb = _contexto.CatalogoMarcas.AsNoTracking().ToList();
+            var marcasDb = _contexto.CatalogoMarcas.AsNoTracking().OrderBy(x => x.NombreMarca).ToList();
             foreach (var item in marcasDb) Marcas.Add(item);
 
-            var estatusDb = _contexto.CatalogoEstatuses.AsNoTracking().ToList();
+            var estatusDb = _contexto.CatalogoEstatuses.AsNoTracking().OrderBy(x => x.DescripcionEstatus).ToList();
             foreach (var item in estatusDb) Estatus.Add(item);
 
             var combustiblesDb = _contexto.CatalogoTiposCombustibles.AsNoTracking().ToList();
@@ -119,7 +120,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             var pyaDb = _contexto.CatalogoPyas.AsNoTracking().ToList();
             foreach (var item in pyaDb) PYA.Add(item);
 
-            var ubicacionesDb = _contexto.CatalogoUbicacionesProyectos.AsNoTracking().ToList();
+            var ubicacionesDb = _contexto.CatalogoUbicacionesProyectos.AsNoTracking().OrderBy(x => x.Ubicacion).ToList();
             foreach (var item in ubicacionesDb) Ubicaciones.Add(item);
 
             var operaPermitidos = new List<int> { 2, 3, 4, 5, 6, 7 };

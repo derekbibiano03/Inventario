@@ -13,33 +13,33 @@
 
                 <!-- ENCABEZADO -->
                 <TextBlock Text="REQUISICIÓN DE COMPRA" FontSize="18" FontWeight="Bold" Padding="0,0,30,4" HorizontalAlignment="Right"/>
+                <!-- Corregido: Se enlaza el Consecutivo generado -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,4">
-                    <ComboBox SelectedValuePath="Content"
-                    Width="70" Height="20" HorizontalAlignment="Left" Margin="0,20,0,20">
+                    <TextBlock Text="{Binding ConsecutivoGenerado}" VerticalAlignment="Center" FontWeight="Bold" FontSize="14" Padding="0,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,4">
+                    <!-- Corregido: Se usa Text en lugar de SelectedValue con Content para evitar inconsistencias de enlace -->
+                    <ComboBox Width="70" Height="20" HorizontalAlignment="Left" Margin="0,20,0,20"
+                              Text="{Binding EmpresaSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                         <ComboBoxItem Content="CGM" />
                         <ComboBoxItem Content="OX" />
                     </ComboBox>
-                    <TextBlock Text=" - RC" VerticalAlignment="Center" Margin="0,0,0,0"/>
-                    <TextBlock Text=" - CONSECUTIVO - " VerticalAlignment="Center" Padding="0,0,0,0"/>
 
                     <ComboBox ItemsSource="{Binding Ubicaciones}"
-              DisplayMemberPath="Siglas"
-              SelectedValuePath="Siglas"
-              SelectedValue="{Binding UbicacionSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-              Width="70" Height="20" HorizontalAlignment="Left" Padding="0,0,0,0"/>
+                              DisplayMemberPath="NombreProyecto"
+                              SelectedValuePath="Siglas"
+                              SelectedValue="{Binding UbicacionSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              Width="70" Height="20" HorizontalAlignment="Left" Padding="0,0,0,0"/>
 
-                    <TextBlock Text="{Binding FechaActual, StringFormat=' - {0:yyyy} '}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    
                 </StackPanel>
                 <TextBlock Text="{Binding FechaActual, StringFormat={}{0:dd/MM/yyyy}}" 
                            FontSize="13" FontWeight="Bold" Margin="0,0,110,4" HorizontalAlignment="Right"/>
-                
+
                 <!-- DATOS GENERALES -->
                 <GroupBox Header="Información General" FontWeight="Bold" Margin="0,0,0,15">
                     <Grid Margin="10">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
@@ -50,93 +50,11 @@
 
                         <!-- Atención A -->
                         <TextBlock Text="Atención A:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Grid Grid.Row="0" Grid.Column="1" Margin="0,2">
-                            <TextBox x:Name="txtAtencionNombre" Height="25" Padding="3"/>
-                            <TextBlock Text="Nombre de persona..." Foreground="Gray" Margin="6,4,0,0" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=txtAtencionNombre}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-
-                        <!-- Depto Atención -->
-                        <Grid Grid.Row="1" Grid.Column="1" Margin="0,2">
-                            <TextBox x:Name="txtAtencionDepto" Height="25" Padding="3"/>
-                            <TextBlock Text="Departamento de persona..." Foreground="Gray" Margin="6,4,0,0" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=txtAtencionDepto}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-
-                        <!-- Solicitante -->
-                        <TextBlock Text="Solicitante:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Grid Grid.Row="2" Grid.Column="1" Margin="0,2">
-                            <TextBox x:Name="txtSolicitanteNombre" Height="25" Padding="3"/>
-                            <TextBox x:Name="txtSolicitante" Height="25" Padding="3" Visibility="Collapsed"/>
-                            <!-- Referencia interna -->
-                            <TextBlock Text="Nombre de solicitante..." Foreground="Gray" Margin="6,4,0,0" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=txtSolicitanteNombre}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-
-                        <!-- Depto Solicitante 1 -->
-                        <Grid Grid.Row="3" Grid.Column="1" Margin="0,2">
-                            <TextBox x:Name="txtSolicitanteDepto" Height="25" Padding="3"/>
-                            <TextBlock Text="Departamento de solicitante..." Foreground="Gray" Margin="6,4,0,0" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=txtSolicitanteDepto}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
-
-                        <!-- Área de Solicitud -->
-                        <TextBlock Text="Área de Solicitud:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
-                        <Grid Grid.Row="4" Grid.Column="1" Margin="0,2">
-                            <TextBox x:Name="txtAreaSolicitud" Height="25" Padding="3"/>
-                            <TextBlock Text="Area que Solicita..." Foreground="Gray" Margin="6,4,0,0" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=txtAreaSolicitud}" Value="">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
+                        <ComboBox Grid.Row="0" Grid.Column="1"
+                                  ItemsSource="{Binding UsuariosCompras}"
+                                  DisplayMemberPath="NombreCompleto"
+                                  SelectedItem="{Binding UsuarioAtencionSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                  Width="250" Height="30" HorizontalAlignment="Left" Margin="0,2"/>
                     </Grid>
                 </GroupBox>
 
@@ -159,17 +77,15 @@
                             <TextBlock Text="No. Económico:" Margin="0,0,0,3"/>
                             <Border BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="4" Background="White" Height="30" Padding="2">
                                 <ComboBox ItemsSource="{Binding Economicos}"
-                          DisplayMemberPath="IdEconomico"
-                          SelectedItem="{Binding EconomicoSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          VerticalContentAlignment="Center"
-                          Background="Transparent"
-                          BorderThickness="0"/>
+                                          DisplayMemberPath="IdEconomico"
+                                          SelectedItem="{Binding EconomicoSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0"/>
                             </Border>
                         </StackPanel>
-                        
+
                         <StackPanel Grid.Row="0" Grid.Column="1" Margin="5">
                             <TextBlock Text="Descripción:" Margin="0,0,0,3"/>
-                            <TextBox Text="{Binding DescripcionUnidad, UpdateSourceTrigger=PropertyChanged}"  Padding="3" VerticalContentAlignment="Center"/>
+                            <TextBox Text="{Binding DescripcionUnidad, UpdateSourceTrigger=PropertyChanged}" Padding="3" VerticalContentAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="2" Margin="5">
@@ -179,7 +95,7 @@
 
                         <StackPanel Grid.Row="0" Grid.Column="3" Margin="5">
                             <TextBlock Text="Marca:" Margin="0,0,0,3"/>
-                            <TextBox Text="{Binding MarcaUnidad, UpdateSourceTrigger=PropertyChanged}"  Padding="3" VerticalContentAlignment="Center"/>
+                            <TextBox Text="{Binding MarcaUnidad, UpdateSourceTrigger=PropertyChanged}" Padding="3" VerticalContentAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="0" Grid.Column="4" Margin="5">
@@ -189,22 +105,22 @@
 
                         <StackPanel Grid.Row="1" Grid.Column="0" Margin="5">
                             <TextBlock Text="Tipo de Motor:" Margin="0,0,0,3"/>
-                            <TextBox Text="{Binding MotorUnidad, UpdateSourceTrigger=PropertyChanged}"  Padding="3" VerticalContentAlignment="Center"/>
+                            <TextBox Text="{Binding MotorUnidad, UpdateSourceTrigger=PropertyChanged}" Padding="3" VerticalContentAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="1" Margin="5">
                             <TextBlock Text="Modelo de Motor:" Margin="0,0,0,3"/>
-                            <TextBox Text="{Binding MotorModelo, UpdateSourceTrigger=PropertyChanged}"  Padding="3" VerticalContentAlignment="Center"/>
+                            <TextBox Text="{Binding MotorModelo, UpdateSourceTrigger=PropertyChanged}" Padding="3" VerticalContentAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="2" Margin="5">
                             <TextBlock Text="Marca de Motor:" Margin="0,0,0,3"/>
-                            <TextBox Text="{Binding MotorMarca, UpdateSourceTrigger=PropertyChanged}"  Padding="3" VerticalContentAlignment="Center"/>
+                            <TextBox Text="{Binding MotorMarca, UpdateSourceTrigger=PropertyChanged}" Padding="3" VerticalContentAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="1" Grid.Column="3" Margin="5">
                             <TextBlock Text="Serie de Motor:" Margin="0,0,0,3"/>
-                            <TextBox Text="{Binding MotorSerie, UpdateSourceTrigger=PropertyChanged}"  Padding="3" VerticalContentAlignment="Center"/>
+                            <TextBox Text="{Binding MotorSerie, UpdateSourceTrigger=PropertyChanged}" Padding="3" VerticalContentAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </GroupBox>
@@ -212,20 +128,12 @@
                 <!-- TABLA DE CONCEPTOS -->
                 <GroupBox Header="Conceptos de Orden de Compra" FontWeight="Bold" Margin="0,0,0,15">
                     <StackPanel Margin="10">
-                        <DataGrid ItemsSource="{Binding Detalles}" 
-                  AutoGenerateColumns="False" 
-                  CanUserAddRows="True" 
-                  Height="200" 
-                  Margin="0,0,0,10">
+                        <DataGrid ItemsSource="{Binding Detalles}" AutoGenerateColumns="False" CanUserAddRows="True" Height="200" Margin="0,0,0,10">
                             <DataGrid.Columns>
-                                <!-- Columna para eliminar cada fila individualmente -->
                                 <DataGridTemplateColumn Header="ACCIONES" Width="70">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="X" 
-                                    Command="{Binding DataContext.EliminarConceptoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                    CommandParameter="{Binding}"
-                                    Width="30" Height="20" Background="#FFF2F2" Foreground="Red" FontWeight="Bold"/>
+                                            <Button Content="X" Command="{Binding DataContext.EliminarConceptoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Width="30" Height="20" Background="#FFF2F2" Foreground="Red" FontWeight="Bold"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -255,16 +163,11 @@
                                 <DataGridTextColumn Header="DESCRIPCIÓN" Binding="{Binding Descripcion, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                                 <DataGridTextColumn Header="NO. DE PART." Binding="{Binding NoPartida, UpdateSourceTrigger=PropertyChanged}" Width="90"/>
                                 <DataGridTextColumn Header="NO. EQUIVALENTE" Binding="{Binding NoEquivalente, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
-                                <DataGridTextColumn Header="CATALOGO" Binding="{Binding Catalogo, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-                                <DataGridTextColumn Header="PAGINA" Binding="{Binding Pagina, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-                                <DataGridTextColumn Header="CONJ." Binding="{Binding Conjunto, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
-                                <DataGridTextColumn Header="SUBC." Binding="{Binding Subconjunto, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
-                                <DataGridTextColumn Header="LINEA" Binding="{Binding Linea, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                <DataGridTextColumn Header="CONJUNTO" Binding="{Binding Catalogo, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                                <DataGridTextColumn Header="SUB. CONJUNTO" Binding="{Binding Pagina, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <Button Content="Añadir Concepto" 
-                Command="{Binding AñadirConceptoCommand}" 
-                Width="120" Height="30" HorizontalAlignment="Left"/>
+                        <Button Content="Añadir Concepto" Command="{Binding AñadirConceptoCommand}" Width="120" Height="30" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </GroupBox>
 
@@ -279,76 +182,30 @@
                         <!-- Fila 0: Comentarios / Observaciones -->
                         <StackPanel Grid.Row="0" Margin="0,0,0,15">
                             <TextBlock Text="Comentarios / Observaciones:" Margin="0,0,0,3"/>
-                            <Grid>
-                                <TextBox x:Name="txtObservaciones" AcceptsReturn="True" Height="60" TextWrapping="Wrap" Padding="5"/>
-                                <TextBlock Text="Escribe tus observaciones..." Foreground="Gray" Margin="8,6,0,0" IsHitTestVisible="False">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text, ElementName=txtObservaciones}" Value="">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Grid>
+                            <TextBox Text="{Binding Observaciones, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="60" TextWrapping="Wrap" Padding="5"/>
                         </StackPanel>
 
-                        <!-- Fila 1: Solicitante y Autorizante -->
+                        <!-- Fila 1: Autorizante -->
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Solicitante Firma -->
-                            <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                                <TextBlock Text="Nombre del Solicitante:" Margin="0,0,0,3"/>
-                                <Grid>
-                                    <TextBox x:Name="txtFirmaSolicitante" Height="25" Padding="3"/>
-                                    <TextBlock Text="Nombre del solicitante..." Foreground="Gray" Margin="6,4,0,0" IsHitTestVisible="False">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Text, ElementName=txtFirmaSolicitante}" Value="">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
-                            </StackPanel>
-
-                            <!-- Autorizante Firma -->
                             <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                 <TextBlock Text="Nombre del Autorizante:" Margin="0,0,0,3"/>
-                                <Grid>
-                                    <TextBox x:Name="txtFirmaAutorizante" Height="25" Padding="3"/>
-                                    <TextBlock Text="Nombre del autorizante..." Foreground="Gray" Margin="6,4,0,0" IsHitTestVisible="False">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Text, ElementName=txtFirmaAutorizante}" Value="">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
+                                <ComboBox ItemsSource="{Binding UsuariosAutorizantes}"
+                                          DisplayMemberPath="NombreCompleto"
+                                          SelectedItem="{Binding UsuarioAutorizanteSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Height="30"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
                 </GroupBox>
 
-                <!-- BOTÓN GENERAR WORD -->
-                <Button Content="Generar Documento Word" 
-                        Height="40" Background="#007ACC" Foreground="White" FontWeight="Bold" FontSize="14"/>
+                <!-- BOTÓN GENERAR -->
+                <Button Content="Generar Documento" Command="{Binding GenerarExcelCommand}"
+                        Height="40" Background="#098F08" Foreground="White" FontWeight="Bold" FontSize="14"/>
 
             </StackPanel>
         </Border>

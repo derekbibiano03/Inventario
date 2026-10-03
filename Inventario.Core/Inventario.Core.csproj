@@ -1,15 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<SignAssembly>True</SignAssembly>
 		<SignAssembly>false</SignAssembly>
 	</PropertyGroup>
+	<ItemGroup>
+	  <COMReference Include="Microsoft.Office.Core">
+	    <WrapperTool>tlbimp</WrapperTool>
+	    <VersionMinor>8</VersionMinor>
+	    <VersionMajor>2</VersionMajor>
+	    <Guid>2df8d04c-5bfa-101b-bde5-00aa0044de52</Guid>
+	    <Lcid>0</Lcid>
+	    <Isolated>false</Isolated>
+	    <EmbedInteropTypes>true</EmbedInteropTypes>
+	  </COMReference>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+		<PackageReference Include="ClosedXML" Version="0.105.1" />
 		<PackageReference Include="DocX" Version="5.2.0" />
 		<PackageReference Include="EPPlus" Version="8.6.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
@@ -20,13 +30,14 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+		<PackageReference Include="QuestPDF" Version="2026.9.1" />
 		<PackageReference Include="SSH.NET" Version="2026.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Inventario.Data\Inventario.Data.csproj" />
+		<ProjectReference Include="..\Inventario.Data\Inventario.Data.csproj" />
 	</ItemGroup>
-
 </Project>

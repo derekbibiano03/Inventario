@@ -18,12 +18,6 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      # NUEVO PASO: Inyectar el appsettings.json de producción de forma segura
-      - name: Crear appsettings.json de producción
-        shell: pwsh
-        run: |
-          Set-Content -Path "GalloMeda.InventarioMaqunaria/appsettings.json" -Value '${{ secrets.APPSETTINGS_PRODUCTION }}'
-
       - name: Restaurar NuGet
         run: dotnet restore
 

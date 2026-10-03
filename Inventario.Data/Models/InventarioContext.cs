@@ -74,7 +74,10 @@ public partial class InventarioContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseMySql("server=enlaceferroviario.com;port=3306;database=irvinglunap_inventario;user=irvinglunap_admin_maestro;password=7542gTFn45_ADM", ServerVersion.Parse("8.0.46-mysql"));
+            optionsBuilder.UseMySql(
+                "Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=7542gTFn45_ADM;",
+                ServerVersion.AutoDetect("Server=enlaceferroviario.com;Port=3306;Database=irvinglunap_inventario;Uid=irvinglunap_admin_maestro;Pwd=7542gTFn45_ADM;")
+            );
         }
     }
 

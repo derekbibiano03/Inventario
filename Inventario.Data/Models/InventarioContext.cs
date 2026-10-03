@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace Inventario.Data.Models;
 
@@ -69,8 +71,20 @@ public partial class InventarioContext : DbContext
     public virtual DbSet<UsuariosRole> UsuariosRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySql("server=enlaceferroviario.com;port=3306;database=irvinglunap_inventario;user=irvinglunap_admin_maestro;password=7542gTFn45_ADM", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.46-mysql"));
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            string connectionString = configuration.GetConnectionString("InventarioConnection");
+
+            // Usar ServerVersion directamente gracias al using de Microsoft.EntityFrameworkCore
+            optionsBuilder.UseMySql(connectionString, ServerVersion.Parse("8.0.46-mysql"));
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -21,14 +21,29 @@ public partial class InventarioContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            // Esto lee el appsettings.json si por alguna razón el contexto se inicializa sin pasar por AddDbContext
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
             var connectionString = configuration.GetConnectionString("InventarioConnection");
-            optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)));
+
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                if (connectionString.StartsWith("DPAPI_"))
+                {
+                    byte[] encryptedBytes = Convert.FromBase64String(connectionString.Substring(6));
+                    byte[] plainBytes = System.Security.Cryptography.ProtectedData.Unprotect(encryptedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
+                    connectionString = System.Text.Encoding.UTF8.GetString(plainBytes);
+                }
+
+                connectionString = connectionString.Trim().Trim('"', '\'').TrimStart('\uFEFF', '\u200B');
+
+                optionsBuilder.UseMySql(
+                    connectionString,
+                    ServerVersion.AutoDetect(connectionString)
+                );
+            }
         }
     }
 

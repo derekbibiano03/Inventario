@@ -6,7 +6,6 @@ using Inventario.Data.Models;
 using Inventario.Desktop.ViewModels.Auth;
 using Inventario.Desktop.Views;
 using InventarioMaquinaria.Services;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +13,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows;
 
 namespace GalloMeda.InventarioMaqunaria
@@ -22,6 +23,7 @@ namespace GalloMeda.InventarioMaqunaria
     {
         public static IServiceProvider ServiceProvider { get; private set; } = null!;
         public static ISessionService Session { get; private set; } = new SessionService();
+        public static string ConnectionString { get; set; } = string.Empty;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -40,30 +42,28 @@ namespace GalloMeda.InventarioMaqunaria
             {
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 string configPath = Path.Combine(basePath, "appsettings.json");
-                string templatePath = Path.Combine(basePath, "appsettings.template.json");
 
-                // 1. Verificar si existe el archivo de configuración para cifrar la cadena de conexión o asegurar AzureAd
+                // 1. Verificar si existe el archivo de configuración para cifrar la cadena o asegurar AzureAd
                 if (File.Exists(configPath))
                 {
-                    // Inicializar el protector de datos vinculado a Windows (máquina/usuario actual)
-                    var protector = DataProtectionProvider.Create("GalloMeda.InventarioMaqunaria")
-                        .CreateProtector("Inventario.ConnectionProtection");
-
                     string jsonContent = File.ReadAllText(configPath);
                     var jsonObject = JObject.Parse(jsonContent);
 
                     var connSection = jsonObject["ConnectionStrings"];
                     string connString = connSection?["InventarioConnection"]?.ToString();
 
-                    // Si la cadena está en texto plano, la ciframos automáticamente en el archivo
-                    if (!string.IsNullOrEmpty(connString) && !connString.StartsWith("CfR_"))
+                    // Si la cadena está en texto plano, la ciframos usando Windows DPAPI
+                    if (!string.IsNullOrEmpty(connString) && !connString.StartsWith("DPAPI_"))
                     {
-                        string encryptedConn = protector.Protect(connString);
-                        connSection["InventarioConnection"] = "CfR_" + encryptedConn;
+                        byte[] plainBytes = Encoding.UTF8.GetBytes(connString);
+                        byte[] encryptedBytes = ProtectedData.Protect(plainBytes, null, DataProtectionScope.CurrentUser);
+                        string encryptedConn = Convert.ToBase64String(encryptedBytes);
+
+                        connSection["InventarioConnection"] = "DPAPI_" + encryptedConn;
                         File.WriteAllText(configPath, jsonObject.ToString(Newtonsoft.Json.Formatting.Indented));
                     }
 
-                    // Asegurarnos de que contenga el nodo AzureAd (útil al actualizar la app)
+                    // Asegurarnos de que contenga el nodo AzureAd
                     if (jsonObject["AzureAd"] == null)
                     {
                         jsonObject["AzureAd"] = new JObject(
@@ -91,17 +91,20 @@ namespace GalloMeda.InventarioMaqunaria
                     throw new InvalidOperationException("No se encontró la cadena de conexión 'InventarioConnection' en el archivo appsettings.json.");
                 }
 
-                // Descifrar la cadena en memoria si fue protegida con Data Protection
-                if (connectionString.StartsWith("CfR_"))
+                if (connectionString.StartsWith("DPAPI_"))
                 {
-                    var protector = DataProtectionProvider.Create("GalloMeda.InventarioMaqunaria")
-                        .CreateProtector("Inventario.ConnectionProtection");
-
-                    connectionString = protector.Unprotect(connectionString.Substring(4));
+                    byte[] encryptedBytes = Convert.FromBase64String(connectionString.Substring(6));
+                    byte[] plainBytes = ProtectedData.Unprotect(encryptedBytes, null, DataProtectionScope.CurrentUser);
+                    connectionString = Encoding.UTF8.GetString(plainBytes);
                 }
 
+                connectionString = connectionString.Trim().Trim('"', '\'').TrimStart('\uFEFF', '\u200B');
+
+                // ➕ Guarda la cadena limpia en la variable global
+                App.ConnectionString = connectionString;
+
                 serviceCollection.AddDbContext<InventarioContext>(options =>
-                    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 46)))
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                 );
 
                 serviceCollection.AddScoped<LogsService>();

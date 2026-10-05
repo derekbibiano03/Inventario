@@ -6,6 +6,7 @@ using Inventario.Data.Models;
 using Inventario.Desktop.ViewModels.Auth;
 using Inventario.Desktop.Views;
 using InventarioMaquinaria.Services;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,36 +42,37 @@ namespace GalloMeda.InventarioMaqunaria
                 string configPath = Path.Combine(basePath, "appsettings.json");
                 string templatePath = Path.Combine(basePath, "appsettings.template.json");
 
-                // 1. Verificar si existe el archivo de configuración, si no, crearlo con ambas estructuras (BD y AzureAd)
-                if (!File.Exists(configPath))
+                // 1. Verificar si existe el archivo de configuración para cifrar la cadena de conexión o asegurar AzureAd
+                if (File.Exists(configPath))
                 {
-                    if (File.Exists(templatePath))
-                    {
-                        File.Copy(templatePath, configPath);
-                    }
-                    else
-                    {
-                        // CREA EL ARCHIVO VACÍO (Seguro para GitHub / Primer arranque)
-                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"\"\n  },\n  \"AzureAd\": {\n    \"TenantId\": \"\",\n    \"ClientId\": \"\",\n    \"ClientSecret\": \"\",\n    \"Remitente\": \"\"\n  }\n}");
-                    }
-                }
-                else
-                {
-                    // 2. Si ya existe, asegurarnos de que contenga el nodo AzureAd (útil al actualizar la app)
+                    // Inicializar el protector de datos vinculado a Windows (máquina/usuario actual)
+                    var protector = DataProtectionProvider.Create("GalloMeda.InventarioMaqunaria")
+                        .CreateProtector("Inventario.ConnectionProtection");
+
                     string jsonContent = File.ReadAllText(configPath);
-                    if (!jsonContent.Contains("AzureAd"))
+                    var jsonObject = JObject.Parse(jsonContent);
+
+                    var connSection = jsonObject["ConnectionStrings"];
+                    string connString = connSection?["InventarioConnection"]?.ToString();
+
+                    // Si la cadena está en texto plano, la ciframos automáticamente en el archivo
+                    if (!string.IsNullOrEmpty(connString) && !connString.StartsWith("CfR_"))
                     {
-                        var jsonObject = JObject.Parse(jsonContent);
-                        if (jsonObject["AzureAd"] == null)
-                        {
-                            jsonObject["AzureAd"] = new JObject(
-                                new JProperty("TenantId", ""),
-                                new JProperty("ClientId", ""),
-                                new JProperty("ClientSecret", ""),
-                                new JProperty("Remitente", "")
-                            );
-                            File.WriteAllText(configPath, jsonObject.ToString(Newtonsoft.Json.Formatting.Indented));
-                        }
+                        string encryptedConn = protector.Protect(connString);
+                        connSection["InventarioConnection"] = "CfR_" + encryptedConn;
+                        File.WriteAllText(configPath, jsonObject.ToString(Newtonsoft.Json.Formatting.Indented));
+                    }
+
+                    // Asegurarnos de que contenga el nodo AzureAd (útil al actualizar la app)
+                    if (jsonObject["AzureAd"] == null)
+                    {
+                        jsonObject["AzureAd"] = new JObject(
+                            new JProperty("TenantId", ""),
+                            new JProperty("ClientId", ""),
+                            new JProperty("ClientSecret", ""),
+                            new JProperty("Remitente", "")
+                        );
+                        File.WriteAllText(configPath, jsonObject.ToString(Newtonsoft.Json.Formatting.Indented));
                     }
                 }
 
@@ -87,6 +89,15 @@ namespace GalloMeda.InventarioMaqunaria
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new InvalidOperationException("No se encontró la cadena de conexión 'InventarioConnection' en el archivo appsettings.json.");
+                }
+
+                // Descifrar la cadena en memoria si fue protegida con Data Protection
+                if (connectionString.StartsWith("CfR_"))
+                {
+                    var protector = DataProtectionProvider.Create("GalloMeda.InventarioMaqunaria")
+                        .CreateProtector("Inventario.ConnectionProtection");
+
+                    connectionString = protector.Unprotect(connectionString.Substring(4));
                 }
 
                 serviceCollection.AddDbContext<InventarioContext>(options =>

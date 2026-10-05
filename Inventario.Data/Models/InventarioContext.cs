@@ -17,32 +17,21 @@ public partial class InventarioContext : DbContext
         : base(options)
     {
     }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
+            // Esto sirve como respaldo por si se instancia el contexto con 'new InventarioContext()'
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
             var connectionString = configuration.GetConnectionString("InventarioConnection");
-
             if (!string.IsNullOrEmpty(connectionString))
             {
-                if (connectionString.StartsWith("DPAPI_"))
-                {
-                    byte[] encryptedBytes = Convert.FromBase64String(connectionString.Substring(6));
-                    byte[] plainBytes = System.Security.Cryptography.ProtectedData.Unprotect(encryptedBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
-                    connectionString = System.Text.Encoding.UTF8.GetString(plainBytes);
-                }
-
-                connectionString = connectionString.Trim().Trim('"', '\'').TrimStart('\uFEFF', '\u200B');
-
-                optionsBuilder.UseMySql(
-                    connectionString,
-                    ServerVersion.AutoDetect(connectionString)
-                );
+                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             }
         }
     }

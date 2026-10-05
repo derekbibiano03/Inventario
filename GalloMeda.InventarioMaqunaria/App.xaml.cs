@@ -9,11 +9,9 @@ using InventarioMaquinaria.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 
@@ -43,27 +41,12 @@ namespace GalloMeda.InventarioMaqunaria
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 string configPath = Path.Combine(basePath, "appsettings.json");
 
-                // 1. Verificar si existe el archivo de configuración para cifrar la cadena o asegurar AzureAd
+                // Verificar si existe el archivo de configuración para asegurar la estructura de AzureAd
                 if (File.Exists(configPath))
                 {
                     string jsonContent = File.ReadAllText(configPath);
                     var jsonObject = JObject.Parse(jsonContent);
 
-                    var connSection = jsonObject["ConnectionStrings"];
-                    string connString = connSection?["InventarioConnection"]?.ToString();
-
-                    // Si la cadena está en texto plano, la ciframos usando Windows DPAPI
-                    if (!string.IsNullOrEmpty(connString) && !connString.StartsWith("DPAPI_"))
-                    {
-                        byte[] plainBytes = Encoding.UTF8.GetBytes(connString);
-                        byte[] encryptedBytes = ProtectedData.Protect(plainBytes, null, DataProtectionScope.CurrentUser);
-                        string encryptedConn = Convert.ToBase64String(encryptedBytes);
-
-                        connSection["InventarioConnection"] = "DPAPI_" + encryptedConn;
-                        File.WriteAllText(configPath, jsonObject.ToString(Newtonsoft.Json.Formatting.Indented));
-                    }
-
-                    // Asegurarnos de que contenga el nodo AzureAd
                     if (jsonObject["AzureAd"] == null)
                     {
                         jsonObject["AzureAd"] = new JObject(
@@ -86,22 +69,11 @@ namespace GalloMeda.InventarioMaqunaria
 
                 var connectionString = configuration.GetConnectionString("InventarioConnection");
 
-                if (string.IsNullOrEmpty(connectionString))
+                // Validación explícita para evitar el error de índice 0
+                if (string.IsNullOrWhiteSpace(connectionString))
                 {
-                    throw new InvalidOperationException("No se encontró la cadena de conexión 'InventarioConnection' en el archivo appsettings.json.");
+                    throw new InvalidOperationException("La cadena de conexión 'InventarioConnection' está vacía o no se pudo leer del archivo appsettings.json.");
                 }
-
-                if (connectionString.StartsWith("DPAPI_"))
-                {
-                    byte[] encryptedBytes = Convert.FromBase64String(connectionString.Substring(6));
-                    byte[] plainBytes = ProtectedData.Unprotect(encryptedBytes, null, DataProtectionScope.CurrentUser);
-                    connectionString = Encoding.UTF8.GetString(plainBytes);
-                }
-
-                connectionString = connectionString.Trim().Trim('"', '\'').TrimStart('\uFEFF', '\u200B');
-
-                // ➕ Guarda la cadena limpia en la variable global
-                App.ConnectionString = connectionString;
 
                 serviceCollection.AddDbContext<InventarioContext>(options =>
                     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))

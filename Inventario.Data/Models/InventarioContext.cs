@@ -17,6 +17,20 @@ public partial class InventarioContext : DbContext
         : base(options)
     {
     }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Esto lee el appsettings.json si por alguna razón el contexto se inicializa sin pasar por AddDbContext
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            var connectionString = configuration.GetConnectionString("InventarioConnection");
+            optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)));
+        }
+    }
 
     public virtual DbSet<CatalogoArchivo> CatalogoArchivos { get; set; }
 
@@ -69,11 +83,6 @@ public partial class InventarioContext : DbContext
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     public virtual DbSet<UsuariosRole> UsuariosRoles { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-       => optionsBuilder.UseMySql("server=enlaceferroviario.com;port=3306;database=irvinglunap_inventario;user=irvinglunap_admin_maestro;password=7542gTFn45_ADM", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.46-mysql"));
-
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

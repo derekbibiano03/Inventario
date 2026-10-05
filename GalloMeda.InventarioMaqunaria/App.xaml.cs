@@ -50,7 +50,8 @@ namespace GalloMeda.InventarioMaqunaria
                     }
                     else
                     {
-                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"Server=localhost;Database=tu_base;Uid=tu_usuario;Pwd=tu_contrasena;\"\n  },\n  \"AzureAd\": {\n    \"TenantId\": \"\",\n    \"ClientId\": \"\",\n    \"ClientSecret\": \"\",\n    \"Remitente\": \"\"\n  }\n}");
+                        // CREA EL ARCHIVO VACÍO (Seguro para GitHub / Primer arranque)
+                        File.WriteAllText(configPath, "{\n  \"ConnectionStrings\": {\n    \"InventarioConnection\": \"\"\n  },\n  \"AzureAd\": {\n    \"TenantId\": \"\",\n    \"ClientId\": \"\",\n    \"ClientSecret\": \"\",\n    \"Remitente\": \"\"\n  }\n}");
                     }
                 }
                 else
@@ -89,7 +90,7 @@ namespace GalloMeda.InventarioMaqunaria
                 }
 
                 serviceCollection.AddDbContext<InventarioContext>(options =>
-                    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30)))
+                    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 46)))
                 );
 
                 serviceCollection.AddScoped<LogsService>();

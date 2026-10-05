@@ -12,6 +12,7 @@ namespace Inventario.Core.Services
         string NombreCompleto { get; set; }
         string Area { get; set; }
         string FirmaPath { get; set; }
+        string Correoe { get; set; }
 
         void CerrarSesion();
     }

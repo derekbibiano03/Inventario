@@ -196,7 +196,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     }
 
                     var destinatarios = new List<string> { RequisicionSeleccionada.CorreoAtencion };
-                    var copias = new List<string> { "rrodriguez@enlaceferroviario.com", "egarcia@enlaceferroviario.com" };
+                    var copias = new List<string> { "rrodriguez@enlaceferroviario.com", "egarcia@enlaceferroviario.com", App.Session.Correoe };
 
                     await EnviarCorreoNotificacionConArchivoAsync(
                         correosDestino: destinatarios,

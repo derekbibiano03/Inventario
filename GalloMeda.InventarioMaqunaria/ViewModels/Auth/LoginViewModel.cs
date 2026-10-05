@@ -77,6 +77,7 @@ namespace Inventario.Desktop.ViewModels.Auth
                     App.Session.NombreCompleto = usuarioValidado.NombreCompleto ?? this.Usuario.Trim();
                     App.Session.Area = usuarioValidado.Area;
                     App.Session.FirmaPath = usuarioValidado.FirmaPath;
+                    App.Session.Correoe = usuarioValidado.Correoe;
 
                     // LLAMADA AL SERVICIO: Registra el log del inicio de sesión exitoso
                     _logsService.RegistrarLoginExitoso(usuarioValidado.IdUsuario);

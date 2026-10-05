@@ -20,62 +20,51 @@ namespace Inventario.Core.Services.Auth
             _context = context;
             _logsService = logsService;
         }
-
         public Usuario? ValidarCredenciales(string nombreUsuario, string contrasenaPlana)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(contrasenaPlana))
             {
                 return null;
             }
-
-            // Busca al usuario en PostgreSQL por su nombre único
             var usuarioDb = _context.Usuarios.FirstOrDefault(u => u.NombreUsuario == nombreUsuario.Trim());
 
             if (usuarioDb == null)
             {
-                return null; // El usuario no existe
+                return null; 
             }
 
             try
             {
-                // Verifica si la contraseña en texto plano coincide con el hash guardado
                 if (BCryptNet.Verify(contrasenaPlana, usuarioDb.Password))
                 {
-                    return usuarioDb; // Retorna el objeto completo con su IdUsuario real
+                    return usuarioDb; 
                 }
 
-                return null; // Contraseña incorrecta
+                return null; 
             }
             catch (Exception)
             {
                 return null;
             }
         }
-
-
         public bool RegistrarUsuario(int idUsuarioOperativo, string nombreUsuario, string contrasenaPlana, int idRol)
         {
             string contrasenaHasheada = BCrypt.Net.BCrypt.HashPassword(contrasenaPlana);
-
             var nuevoUsuario = new Usuario
             {
                 NombreUsuario = nombreUsuario,
                 Password = contrasenaHasheada,
                 IdRol = idRol
             };
-
             _context.Usuarios.Add(nuevoUsuario);
             _context.SaveChanges();
-
             string idGenerado = nuevoUsuario.IdUsuario.ToString();
-
             _logsService.RegistrarAltaNuevoUsuarioExitoso(idUsuarioOperativo, idGenerado);
             return true;
         }
 
         public List<UsuariosRole> ObtenerRoles()
         {
-            // Retorna la lista de roles directamente desde la base de datos de PostgreSQL
             var resultado = _context.UsuariosRoles
                 .Select(e => new UsuariosRole
                 {

@@ -11,6 +11,7 @@ namespace InventarioMaquinaria.Services
         public string NombreCompleto { get; set; }
         public string Area { get; set; }
         public string FirmaPath { get; set; }
+        public string Correoe { get; set; }
 
 
         public void CerrarSesion()
@@ -19,6 +20,7 @@ namespace InventarioMaquinaria.Services
             IdRol = 0;
             NombreCompleto = string.Empty;
             Area = string.Empty;
+            Correoe = string.Empty;
         }
     }
 }

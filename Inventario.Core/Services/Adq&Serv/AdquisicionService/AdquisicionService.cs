@@ -14,7 +14,6 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
         private readonly InventarioContext _context;
         private readonly EmailService _emailService;
         private DateTime _fechaActual = DateTime.Now;
-
         private readonly string _hostFtp = "ftp://170.10.162.13/";
         private readonly string _usuarioFtp = "dbibiano@enlaceferroviario.com";
         private readonly string _contrasenaFtp = "drbr11122003DRBR.";
@@ -38,18 +37,14 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 string directorioLimpio = _directorioRemoto.TrimEnd('/');
                 string archivoLimpio = nombreArchivoRemoto.TrimStart('/');
                 string urlRemota = $"{_hostFtp.TrimEnd('/')}/{directorioLimpio}/{archivoLimpio}";
-
                 string soloNombreArchivo = Path.GetFileName(nombreArchivoRemoto);
                 string rutaLocalTemporal = Path.Combine(Path.GetTempPath(), soloNombreArchivo);
-
-                // 1. Descargar el archivo Excel original desde el FTP
                 using (WebClient client = new WebClient())
                 {
                     client.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
                     client.DownloadFile(urlRemota, rutaLocalTemporal);
                 }
 
-                // 2. Modificar el Excel con ClosedXML para estampar la firma del autorizador y protegerlo
                 using (var workbook = new XLWorkbook(rutaLocalTemporal))
                 {
                     var ws = workbook.Worksheet(1);
@@ -75,18 +70,11 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                             }
                         }
                     }
-
-                    // --- PROTECCIÓN CORRECTA CONTRA EDICIÓN ---
                     ws.Protect("");
-                    // ------------------------------------------
-
                     workbook.Save();
                 }
 
-                // 3. Volver a subir el archivo actualizado al servidor FTP
                 SubirArchivoPorFtp(rutaLocalTemporal, nombreArchivoRemoto);
-
-                // 4. Actualizar el estatus en la Base de Datos a "AUTORIZADA" y obtener el correo de atención
                 var requisicionDb = _context.Requisiciones
                     .Include(r => r.IdAtencionNavigation)
                     .FirstOrDefault(r => r.IdRequisicion == idRequisicion);
@@ -95,8 +83,6 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 {
                     requisicionDb.Estatus = "AUTORIZADA";
                     _context.SaveChanges();
-
-                    // 5. Enviar notificación por correo electrónico mediante Microsoft Graph
                     string correoAtencion = requisicionDb.IdAtencionNavigation?.Correoe;
                     if (!string.IsNullOrEmpty(correoAtencion))
                     {
@@ -119,18 +105,14 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
         {
             string directorioLimpio = _directorioRemoto.TrimEnd('/');
             string archivoLimpio = nombreRemoto.TrimStart('/');
-
             string urlDestino = $"{_hostFtp.TrimEnd('/')}/{directorioLimpio}/{archivoLimpio}";
-
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(urlDestino);
             request.Method = WebRequestMethods.Ftp.UploadFile;
             request.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
             request.UseBinary = true;
             request.UsePassive = true;
-
             byte[] fileContents = File.ReadAllBytes(rutaLocal);
             request.ContentLength = fileContents.Length;
-
             using (Stream requestStream = request.GetRequestStream())
             {
                 requestStream.Write(fileContents, 0, fileContents.Length);
@@ -151,15 +133,12 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 {
                     throw new FileNotFoundException("El archivo local a subir no existe o la ruta está vacía.");
                 }
-
                 int ultimoConsecutivo = _context.Requisiciones
                     .Where(r => r.Empresa == empresa && r.IdUbicacion == idUbicacion)
                     .Select(r => (int?)r.Consecutivo)
                     .Max() ?? 0;
-
                 int siguienteConsecutivo = ultimoConsecutivo + 1;
                 string idRequisicionGenerado = $"{empresa} - RC - {siguienteConsecutivo:D3} - {idUbicacion} - {_fechaActual:yyyy}";
-
                 var nuevaRequisicion = new Requisicione
                 {
                     IdRequisicion = idRequisicionGenerado,
@@ -174,7 +153,6 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     IdAutorizante = idAutorizante,
                     IdAtencion = idAtencion,
                 };
-
                 _context.Requisiciones.Add(nuevaRequisicion);
                 _context.SaveChanges();
                 return true;
@@ -239,16 +217,13 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 string directorioLimpio = _directorioRemoto.TrimEnd('/');
                 string archivoLimpio = nombreArchivoRemoto.TrimStart('/');
                 string urlRemota = $"{_hostFtp.TrimEnd('/')}/{directorioLimpio}/{archivoLimpio}";
-
                 string soloNombreArchivo = Path.GetFileName(nombreArchivoRemoto);
                 string rutaLocalTemporal = Path.Combine(Path.GetTempPath(), soloNombreArchivo);
-
                 using (WebClient client = new WebClient())
                 {
                     client.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
                     client.DownloadFile(urlRemota, rutaLocalTemporal);
                 }
-
                 if (File.Exists(rutaLocalTemporal))
                 {
                     Process.Start(new ProcessStartInfo(rutaLocalTemporal) { UseShellExecute = true });

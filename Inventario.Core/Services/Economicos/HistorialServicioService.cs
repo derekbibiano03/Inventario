@@ -31,7 +31,8 @@ namespace Inventario.Core.Services.Economicos
                 FechaMantenimiento = dto.FechaMantenimiento,
                 TipoMantenimiento = dto.TipoMantenimiento,
                 Anotaciones = dto.Anotaciones,
-                Horaskilometrosreales = dto.Horaskilometrosreales
+                Horaskilometrosreales = dto.Horaskilometrosreales,
+                Costos = dto.Costos
             };
 
             _context.HistorialServicios.Add(nuevoRegistro);

@@ -5,8 +5,46 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisiciones"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             x:Name="Root">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="1" Grid.Column="0"
+              Width="Auto"
+              ItemsSource="{Binding Requisiciones}" 
+              SelectedItem="{Binding RequisicionSeleccionada, Mode=TwoWay}"
+              AutoGenerateColumns="False" 
+              CanUserAddRows="False" 
+              HeadersVisibility="Column"
+              GridLinesVisibility="Horizontal"
+              Background="White"
+              BorderBrush="#CCCCCC"
+              BorderThickness="1"
+              RowHeight="30"
+              AlternatingRowBackground="#F9F9F9">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="No. Requisicion" Width="Auto" Binding="{Binding IdRequisicion}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Fecha Requisicion" Width="*" Binding="{Binding FechaRequisicion}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Empresa" Width="*" Binding="{Binding Empresa}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Estatus" Width="*" Binding="{Binding Estatus}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Solicitante" Width="*" Binding="{Binding Solicitante}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Archivo Req." Width="*" Binding="{Binding ArchivoReq}" IsReadOnly="True"/>
+
+                <DataGridTemplateColumn Header="Acciones" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Ver Excel" 
+                                Command="{Binding DataContext.VerExcelCommand, ElementName=Root}"
+                                Margin="5"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

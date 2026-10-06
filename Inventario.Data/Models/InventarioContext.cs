@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace Inventario.Data.Models;
 
@@ -16,24 +14,6 @@ public partial class InventarioContext : DbContext
     public InventarioContext(DbContextOptions<InventarioContext> options)
         : base(options)
     {
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            // Esto sirve como respaldo por si se instancia el contexto con 'new InventarioContext()'
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            var connectionString = configuration.GetConnectionString("InventarioConnection");
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-            }
-        }
     }
 
     public virtual DbSet<CatalogoArchivo> CatalogoArchivos { get; set; }
@@ -87,6 +67,10 @@ public partial class InventarioContext : DbContext
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     public virtual DbSet<UsuariosRole> UsuariosRoles { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseMySql("server=enlaceferroviario.com;port=3306;database=irvinglunap_inventario;user=irvinglunap_admin_maestro;password=C1596mq1_75", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.46-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -713,6 +697,9 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.Anotaciones)
                 .HasColumnType("text")
                 .HasColumnName("anotaciones");
+            entity.Property(e => e.Costos)
+                .HasPrecision(10)
+                .HasColumnName("costos");
             entity.Property(e => e.FechaMantenimiento).HasColumnName("fecha_mantenimiento");
             entity.Property(e => e.Horaskilometrosreales)
                 .HasColumnType("text")

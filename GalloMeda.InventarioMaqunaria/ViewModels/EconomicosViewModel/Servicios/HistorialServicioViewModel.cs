@@ -1,4 +1,5 @@
 ﻿using GalloMeda.InventarioMaqunaria;
+using Inventario.Core;
 using Inventario.Core.DTOs;
 using Inventario.Core.Services.Economicos;
 using Inventario.Core.Services.Logs;
@@ -79,6 +80,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
             get => _tipoMantenimiento;
             set { _tipoMantenimiento = value; OnPropertyChanged(); }
         }
+        
 
         private string _anotaciones = null;
         public string Anotaciones
@@ -93,6 +95,9 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
             get => _horaskilometrosreales;
             set { _horaskilometrosreales = value; OnPropertyChanged(); }
         }
+        public ICommand ExportarExcelCommand { get; }
+        private readonly ExcelExportService _excelExportService;
+
 
         public HistorialServicioViewModel(CatalogoEconomicosService economicosService,
                                           HistorialServicioService historialServiciosService,
@@ -101,6 +106,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
             _economicosService = economicosService;
             _historialServicio = historialServiciosService;
             _gestorArchivosService = gestorArchivosService;
+            _excelExportService = new ExcelExportService();
 
             Economicos = new ObservableCollection<EconomicoMinimoDto>();
             HistorialServicio = new ObservableCollection<HistorialServicio>();
@@ -116,6 +122,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
             EliminarServicioCommand = new RelayCommand<HistorialServicio>(EliminarServicio);
             VerArchivoCommand = new RelayCommand<CatalogoArchivo>(EjecutarAbrirArchivo);
             AbrirEditarServicioCommand = new RelayCommand<HistorialServicio>(AbrirEditarServicio);
+            
+            ExportarExcelCommand = new RelayCommand(ExportarExcel);
 
             CargarTipos();
             CargarHistorialMovimientos();
@@ -135,6 +143,39 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
                    servicio.NoEconomico.Contains(FiltroNoEconomico, StringComparison.OrdinalIgnoreCase);
         }
 
+
+        private void ExportarExcel()
+        {
+            try
+            {
+                // Obtenemos los elementos filtrados o toda la lista actual de la vista
+                var listaAExportar = VistaHistorialServicios.Cast<HistorialServicio>().ToList();
+
+                if (listaAExportar.Count == 0)
+                {
+                    MessageBox.Show("No hay registros para exportar.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Archivos de Excel (*.xlsx)|*.xlsx",
+                    FileName = $"Historial_Servicios_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    byte[] archivoBytes = _excelExportService.GenerarExcelHistorialServicios(listaAExportar);
+                    File.WriteAllBytes(saveFileDialog.FileName, archivoBytes);
+
+                    MessageBox.Show("El archivo de Excel se ha generado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al exportar a Excel: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private void AbrirEditarServicio(HistorialServicio? servicio)
         {
             if (servicio == null) return;

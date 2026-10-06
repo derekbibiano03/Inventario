@@ -44,25 +44,20 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
         private readonly AdquisicionService _reqService;
 
-        // Inyectamos AdquisicionService directamente en el constructor
         public BuscarRequisicionesViewModel(AdquisicionService reqService)
         {
             _reqService = reqService ?? throw new ArgumentNullException(nameof(reqService));
             Usuarios = new ObservableCollection<Usuario>();
             VerExcelCommand = new RelayCommand(_ => AbrirArchivoExcel());
+            _ = CargarTodasRequisicionesAsync();
         }
 
-        public async Task CargarRequisicionesSinRevisionAsync()
+        public async Task CargarTodasRequisicionesAsync()
         {
             try
             {
-                if (App.Session == null)
-                {
-                    MessageBox.Show("App.Session es nulo.", "Depuración");
-                    return;
-                }
-
-                var datosReq = await _reqService.ObtenerRequisicionesAsync(App.Session.IdUsuario);
+                // Se llama al método del servicio que trae todas las requisiciones sin filtros de ID o estatus
+                var datosReq = await _reqService.ObtenerTodasRequisicionesAsync();
 
                 Requisiciones.Clear();
                 foreach (var dato in datosReq)
@@ -72,7 +67,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"StackTrace: {ex.StackTrace}\n\nMensaje: {ex.Message}", "Depuración de Error Nulo", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"StackTrace: {ex.StackTrace}\n\nMensaje: {ex.Message}", "Depuración de Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

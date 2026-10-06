@@ -17,6 +17,8 @@ public partial class HistorialServicio
 
     public string? Horaskilometrosreales { get; set; }
 
+    public decimal? Costos { get; set; }
+
     public virtual CatalogoEconomico NoEconomicoNavigation { get; set; } = null!;
 
     public virtual ICollection<ServicioArchivo> ServicioArchivos { get; set; } = new List<ServicioArchivo>();

@@ -7,6 +7,59 @@ namespace Inventario.Core
 {
     public class ExcelExportService
     {
+
+        public byte[] GenerarExcelHistorialServicios(List<HistorialServicio> listaHistorial)
+        {
+            ExcelPackage.License.SetNonCommercialOrganization("GalloMeda");
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Historial de Servicios");
+
+                // Cabeceras omitiendo los documentos adjuntos
+                string[] cabeceras = {
+            "ID SERVICIO", "ECONOMICO", "FECHA DE MANTENIMIENTO",
+            "TIPO DE MANTENIMIENTO", "ANOTACIONES", "ODOMETRO REAL"
+        };
+
+                for (int i = 0; i < cabeceras.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = cabeceras[i];
+                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                }
+
+                int fila = 2;
+
+                foreach (var item in listaHistorial)
+                {
+                    worksheet.Cells[fila, 1].Value = item.IdServicio;
+                    worksheet.Cells[fila, 2].Value = item.NoEconomico;
+
+                    // Formatear la fecha correctamente para Excel
+                    if (item.FechaMantenimiento != default)
+                    {
+                        worksheet.Cells[fila, 3].Value = item.FechaMantenimiento.ToDateTime(TimeOnly.MinValue);
+                        worksheet.Cells[fila, 3].Style.Numberformat.Format = "dd/MM/yyyy";
+                    }
+                    else
+                    {
+                        worksheet.Cells[fila, 3].Value = "N/A";
+                    }
+
+                    worksheet.Cells[fila, 4].Value = item.TipoMantenimiento ?? "N/A";
+                    worksheet.Cells[fila, 5].Value = item.Anotaciones ?? "N/A";
+                    worksheet.Cells[fila, 6].Value = item.Horaskilometrosreales ?? "N/A";
+
+                    fila++;
+                }
+
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                return package.GetAsByteArray();
+            }
+        }
+
+
         public byte[] GenerarExcelEconomicos(List<CatalogoEconomico> listaFiltrada)
         {
             ExcelPackage.License.SetNonCommercialOrganization("GalloMeda");

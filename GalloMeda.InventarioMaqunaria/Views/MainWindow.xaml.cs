@@ -198,6 +198,10 @@ namespace Inventario.Desktop.Views
                         ContenedorPrincipal.Content = new RequisicionesPendientesView();
                         textoPanel = "AUTORIZACION DE REQUISICIONES";
                         break;
+                    case "BuscReq":
+                        ContenedorPrincipal.Content = new BuscarRequisicionView();
+                        textoPanel = "AUTORIZACION DE REQUISICIONES";
+                        break; 
                 }
                 txtPanel.Text = textoPanel;
             }

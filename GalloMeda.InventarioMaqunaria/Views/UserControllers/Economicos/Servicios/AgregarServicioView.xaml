@@ -165,8 +165,13 @@
                             <TextBox Text="{Binding Horaskilometrosreales, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
+                        <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,15">
+                            <TextBlock Text="Costo de Servicio:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding Costos, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
                         <!-- Fila 3: Anotaciones / Observaciones -->
-                        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,20">
+                        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,20">
                             <TextBlock Text="Anotaciones / Observaciones:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Text="{Binding Anotaciones, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                      Height="70" 
@@ -178,7 +183,7 @@
                         </StackPanel>
 
                         <!-- Fila 4: Carga de Archivos Múltiples -->
-                        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,20">
+                        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,20">
                             <DockPanel Margin="0,0,0,8">
                                 <TextBlock Text="Archivos Adjuntos del Servicio:" Style="{StaticResource LabelStyle}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
                                 <Button Command="{Binding SeleccionarArchivosCommand}" 

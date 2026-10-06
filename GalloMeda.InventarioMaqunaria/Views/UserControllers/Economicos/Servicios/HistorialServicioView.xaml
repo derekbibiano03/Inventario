@@ -223,17 +223,37 @@
             <!-- PANEL DE BUSQUEDA POR ID ECONOMICO -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
                 <!-- Etiqueta informativa del campo de búsqueda -->
-                <TextBlock Text="Buscar por ID Económico:" 
-                           VerticalAlignment="Center" 
-                           FontWeight="SemiBold" 
-                           Margin="0,0,10,0" 
-                           Foreground="#334155"/>
-                <!-- Campo de entrada de texto para filtrar los datos en tiempo real -->
-                <TextBox Width="200" 
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Buscar por ID Económico:" 
+                       VerticalAlignment="Center" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,10,0" 
+                       Foreground="#334155"/>
+                    <!-- Campo de entrada de texto para filtrar los datos en tiempo real -->
+                    <TextBox Grid.Column="0" Grid.Row="1" Width="200" 
                          Height="32" 
                          VerticalContentAlignment="Center" 
                          Padding="5,0"
                          Text="{Binding FiltroNoEconomico, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Button Content="Exportar a Excel" 
+                            Grid.Column="1" Grid.Row="1"
+                        Command="{Binding ExportarExcelCommand}"
+                        Background="#10B981" 
+                        Foreground="White" 
+                        FontWeight="SemiBold" 
+                        Padding="12,5" 
+                        Cursor="Hand"
+                        BorderThickness="0"/>
+                </Grid>
             </StackPanel>
 
             <!-- Borde contenedor con esquinas redondeadas para enmarcar la tabla -->
@@ -280,6 +300,11 @@
                                             Width="150" 
                                             ElementStyle="{StaticResource WrappedTextBlockStyle}"
                                             IsReadOnly="True"/>
+                        <DataGridTextColumn Header="COSTO" 
+                            Binding="{Binding Costos}" 
+                            Width="150" 
+                            ElementStyle="{StaticResource WrappedTextBlockStyle}"
+                            IsReadOnly="True"/>
 
                         <!-- Columna multilínea para observaciones del servicio -->
                         <DataGridTextColumn Header="ANOTACIONES" 

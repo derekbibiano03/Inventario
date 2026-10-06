@@ -201,8 +201,8 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     await EnviarCorreoNotificacionConArchivoAsync(
                         correosDestino: destinatarios,
                         correosCc: copias,
-                        asunto: $"Requisición Autorizada - {RequisicionSeleccionada.IdRequisicion}",
-                        cuerpoHtml: $"<p>Hola Malcom,</p><p>La requisición <b>{RequisicionSeleccionada.IdRequisicion}</b> ha sido autorizada. Se adjunta el formato de Excel firmado.</p>",
+                        asunto: $"Requisición Autorizada - {RequisicionSeleccionada.ArchivoReq}",
+                        cuerpoHtml: $"<p>Hola Malcom,</p><p>La {RequisicionSeleccionada.TipoReq} <b>{RequisicionSeleccionada.ArchivoReq}</b> ha sido autorizada. Se adjunta el formato de Excel firmado.</p>",
                         rutaArchivo: saveFileDialog.FileName
                     );
                 }

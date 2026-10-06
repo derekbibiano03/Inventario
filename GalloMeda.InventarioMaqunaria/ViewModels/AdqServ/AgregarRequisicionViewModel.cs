@@ -103,6 +103,31 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             }
         }
 
+        private string _tipoRequiSeleccionada;
+        public string TipoRequiSeleccionada
+        {
+            get => _tipoRequiSeleccionada;
+            set
+            {
+                _tipoRequiSeleccionada = value;
+                OnPropertyChanged(nameof(TipoRequiSeleccionada));
+
+                // Si la requisición no es para económico, vaciamos todos los datos de la unidad
+                if (_tipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                {
+                    EconomicoSeleccionado = null;
+                    DescripcionUnidad = string.Empty;
+                    ModeloUnidad = string.Empty;
+                    MarcaUnidad = string.Empty;
+                    SerieUnidad = string.Empty;
+                    MotorUnidad = string.Empty;
+                    MotorModelo = string.Empty;
+                    MotorMarca = string.Empty;
+                    MotorSerie = string.Empty;
+                }
+            }
+        }
+
         private DateTime _fechaActual = DateTime.Now;
         public DateTime FechaActual
         {
@@ -430,31 +455,67 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     rangoEquipo.FirstCell().Style.Font.FontColor = XLColor.FromHtml("#1F4E78");
 
                     var r10_ab = ws.Range("A10:B10"); r10_ab.Merge(); r10_ab.FirstCell().Value = "No. Económico:";
-                    var r10_cd = ws.Range("C10:D10"); r10_cd.Merge(); r10_cd.FirstCell().Value = EconomicoSeleccionado?.IdEconomico ?? string.Empty;
+                    var r10_cd = ws.Range("C10:D10");
+                    r10_cd.Merge();
+                    r10_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : (EconomicoSeleccionado?.IdEconomico ?? string.Empty);
 
                     var r11_ab = ws.Range("A11:B11"); r11_ab.Merge(); r11_ab.FirstCell().Value = "Descripcion:";
-                    var r11_cd = ws.Range("C11:D11"); r11_cd.Merge(); r11_cd.FirstCell().Value = DescripcionUnidad;
+                    var r11_cd = ws.Range("C11:D11");
+                    r11_cd.Merge(); 
+                    r11_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : DescripcionUnidad;
 
                     var r12_ab = ws.Range("A12:B12"); r12_ab.Merge(); r12_ab.FirstCell().Value = "Marca:";
-                    var r12_cd = ws.Range("C12:D12"); r12_cd.Merge(); r12_cd.FirstCell().Value = MarcaUnidad;
+                    var r12_cd = ws.Range("C12:D12"); 
+                    r12_cd.Merge(); 
+                    r12_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : MarcaUnidad;
 
                     var r13_ab = ws.Range("A13:B13"); r13_ab.Merge(); r13_ab.FirstCell().Value = "Modelo:";
-                    var r13_cd = ws.Range("C13:D13"); r13_cd.Merge(); r13_cd.FirstCell().Value = ModeloUnidad;
+                    var r13_cd = ws.Range("C13:D13"); 
+                    r13_cd.Merge(); 
+                    r13_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : ModeloUnidad;
 
                     var r14_ab = ws.Range("A14:B14"); r14_ab.Merge(); r14_ab.FirstCell().Value = "No. Serie:";
-                    var r14_cd = ws.Range("C14:D14"); r14_cd.Merge(); r14_cd.FirstCell().Value = SerieUnidad;
+                    var r14_cd = ws.Range("C14:D14"); 
+                    r14_cd.Merge(); 
+                    r14_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : SerieUnidad;
 
                     ws.Cell("E10").Value = "Tipo de Motor:";
-                    var r10_fgh = ws.Range("F10:H10"); r10_fgh.Merge(); r10_fgh.FirstCell().Value = MotorUnidad;
+                    var r10_fgh = ws.Range("F10:H10"); 
+                    r10_fgh.Merge(); 
+                    r10_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : MotorUnidad;
 
                     ws.Cell("E11").Value = "Marca de Motor:";
-                    var r11_fgh = ws.Range("F11:H11"); r11_fgh.Merge(); r11_fgh.FirstCell().Value = MotorMarca;
+                    var r11_fgh = ws.Range("F11:H11"); 
+                    r11_fgh.Merge(); 
+                    r11_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : MotorMarca;
 
                     ws.Cell("E12").Value = "Modelo de Motor:";
-                    var r12_fgh = ws.Range("F12:H12"); r12_fgh.Merge(); r12_fgh.FirstCell().Value = MotorModelo;
+                    var r12_fgh = ws.Range("F12:H12"); 
+                    r12_fgh.Merge(); 
+                    r12_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : MotorModelo;
 
                     ws.Cell("E13").Value = "Serie de Motor:";
-                    var r13_fgh = ws.Range("F13:H13"); r13_fgh.Merge(); r13_fgh.FirstCell().Value = MotorSerie;
+                    var r13_fgh = ws.Range("F13:H13"); 
+                    r13_fgh.Merge(); 
+                    r13_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
+                        ? string.Empty
+                        : MotorSerie;
 
                     var rangoConceptos = ws.Range("A16:C16");
                     rangoConceptos.Merge();
@@ -552,14 +613,13 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                     workbook.SaveAs(rutaTemporal);
                 }
-
                 bool exito = _adquisicionService.NuevaRequisicion(
                     idSolicitante: App.Session?.IdUsuario ?? 0,
                     idAutorizante: UsuarioAutorizanteSeleccionado?.IdUsuario ?? 0,
                     idAtencion: UsuarioAtencionSeleccionado?.IdUsuario ?? 0,
                     idUbicacion: idUbicacionReal,
                     fechaRequisicion: DateOnly.FromDateTime(FechaActual),
-                    tipoRequisicion: "COMPRA",
+                    tipoRequisicion: TipoRequiSeleccionada ?? "REQUISICION GENERICA",
                     empresa: EmpresaSeleccionada ?? "CGM",
                     estatus: "EN ESPERA",
                     rutaArchivoLocal: rutaTemporal,

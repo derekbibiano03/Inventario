@@ -79,20 +79,6 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     .Include(r => r.IdAtencionNavigation)
                     .FirstOrDefault(r => r.IdRequisicion == idRequisicion);
 
-                if (requisicionDb != null)
-                {
-                    requisicionDb.Estatus = "AUTORIZADA";
-                    _context.SaveChanges();
-                    string correoAtencion = requisicionDb.IdAtencionNavigation?.Correoe;
-                    if (!string.IsNullOrEmpty(correoAtencion))
-                    {
-                        string asunto = $"Requisición Autorizada: {idRequisicion}";
-                        string cuerpoHtml = $"<p>La requisición <b>{idRequisicion}</b> ha sido autorizada exitosamente.</p>";
-
-                        await _emailService.EnviarCorreoNotificacionAsync(correoAtencion, asunto, cuerpoHtml);
-                    }
-                }
-
                 return rutaLocalTemporal;
             }
             catch (Exception ex)
@@ -177,6 +163,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     FechaRequisicion = (DateOnly)r.FechaRequisicion,
                     Empresa = r.Empresa,
                     Estatus = r.Estatus,
+                    TipoReq = r.TipoRequisicion,
                     Solicitante = r.IdSolicitanteNavigation != null ? r.IdSolicitanteNavigation.NombreCompleto : "N/A",
                     Autorizante = r.IdAutorizanteNavigation != null ? r.IdAutorizanteNavigation.NombreCompleto : "N/A",
                     Atencion = r.IdAtencionNavigation != null ? r.IdAtencionNavigation.NombreCompleto : "N/A",

@@ -19,7 +19,7 @@ namespace Inventario.Core
                 // Cabeceras omitiendo los documentos adjuntos
                 string[] cabeceras = {
             "ID SERVICIO", "ECONOMICO", "FECHA DE MANTENIMIENTO",
-            "TIPO DE MANTENIMIENTO", "ANOTACIONES", "ODOMETRO REAL"
+            "TIPO DE MANTENIMIENTO", "ANOTACIONES", "HR/KM REAL", "HR/KM ACTUAL", "COSTO DEL SERVICIO"
         };
 
                 for (int i = 0; i < cabeceras.Length; i++)
@@ -49,6 +49,8 @@ namespace Inventario.Core
                     worksheet.Cells[fila, 4].Value = item.TipoMantenimiento ?? "N/A";
                     worksheet.Cells[fila, 5].Value = item.Anotaciones ?? "N/A";
                     worksheet.Cells[fila, 6].Value = item.Horaskilometrosreales ?? "N/A";
+                    worksheet.Cells[fila, 7].Value = item.NoEconomicoNavigation?.Horometro ?? 0;
+                    worksheet.Cells[fila, 8].Value = item.Costos ?? 0;
 
                     fila++;
                 }

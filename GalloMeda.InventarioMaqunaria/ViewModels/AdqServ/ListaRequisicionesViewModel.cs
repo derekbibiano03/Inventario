@@ -202,7 +202,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                         correosDestino: destinatarios,
                         correosCc: copias,
                         asunto: $"Requisición Autorizada - {RequisicionSeleccionada.ArchivoReq}",
-                        cuerpoHtml: $"<p>Hola Malcom,</p><p>La {RequisicionSeleccionada.TipoReq} <b>{RequisicionSeleccionada.ArchivoReq}</b> ha sido autorizada. Se adjunta el formato de Excel firmado.</p>",
+                        cuerpoHtml: $"<p>Hola Malcom,</p><p>La {RequisicionSeleccionada.TipoRequisicion} <b>{RequisicionSeleccionada.ArchivoReq}</b> ha sido autorizada. Se adjunta el formato de Excel firmado.</p>",
                         rutaArchivo: saveFileDialog.FileName
                     );
                 }

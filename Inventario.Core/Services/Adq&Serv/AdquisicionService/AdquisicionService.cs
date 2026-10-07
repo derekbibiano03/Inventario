@@ -163,7 +163,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     FechaRequisicion = (DateOnly)r.FechaRequisicion,
                     Empresa = r.Empresa,
                     Estatus = r.Estatus,
-                    TipoReq = r.TipoRequisicion,
+                    TipoRequisicion = r.TipoRequisicion,
                     Solicitante = r.IdSolicitanteNavigation != null ? r.IdSolicitanteNavigation.NombreCompleto : "N/A",
                     Autorizante = r.IdAutorizanteNavigation != null ? r.IdAutorizanteNavigation.NombreCompleto : "N/A",
                     Atencion = r.IdAtencionNavigation != null ? r.IdAtencionNavigation.NombreCompleto : "N/A",

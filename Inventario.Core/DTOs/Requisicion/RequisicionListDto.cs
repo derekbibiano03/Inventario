@@ -13,7 +13,7 @@ namespace Inventario.Core.DTOs.Requisicion
         public string Solicitante { get; set; } // Nombre en texto
         public string Autorizante { get; set; }
         public string Atencion { get; set; }
-        public string TipoReq { get; set; }
+        public string TipoRequisicion { get; set; }
         public string Reviso { get; set; }// Nombre en texto
         public string ArchivoReq { get; set; }
         public string CorreoAtencion { get; set; }

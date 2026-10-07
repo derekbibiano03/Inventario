@@ -32,6 +32,15 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
             var viewModel = new AgregarRequisicionViewModel(context, usuarios, adquisicionService);
 
             this.DataContext = viewModel;
+            this.Loaded += AgregarRequisicionView_Loaded;
+        }
+        private void AgregarRequisicionView_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Desuscribir el evento para que la alerta solo se muestre una vez al abrir el control
+            this.Loaded -= AgregarRequisicionView_Loaded;
+
+            // Mostrar la alerta
+            MessageBox.Show("¡Recordatorio: De ser necesario asegurate de colocar las medidas de las piezas que necesitas!", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

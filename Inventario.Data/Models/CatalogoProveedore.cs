@@ -13,7 +13,21 @@ public partial class CatalogoProveedore
 
     public string? CorreoElectronico { get; set; }
 
-    public int? IdUbicacion { get; set; }
+    public string? Calle { get; set; }
 
-    public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
+    public int? Numero { get; set; }
+
+    public string? Colonia { get; set; }
+
+    public int? CodigoP { get; set; }
+
+    public string? Ciuidad { get; set; }
+
+    public string? Estado { get; set; }
+
+    public string? Pais { get; set; }
+
+    public string? Rfc { get; set; }
+
+    public string? Contacto { get; set; }
 }

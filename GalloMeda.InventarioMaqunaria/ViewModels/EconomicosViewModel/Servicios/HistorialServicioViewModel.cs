@@ -3,6 +3,7 @@ using Inventario.Core;
 using Inventario.Core.DTOs;
 using Inventario.Core.Services.Economicos;
 using Inventario.Core.Services.Logs;
+using Inventario.Core.Services.UbicacionProyecto;
 using Inventario.Data.Models;
 using Inventario.Desktop.Views;
 using Microsoft.Win32;
@@ -41,9 +42,11 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
         private readonly CatalogoEconomicosService _economicosService;
         private readonly HistorialServicioService _historialServicio;
         private readonly GestorArchivosService _gestorArchivosService;
+        private readonly UbicacionProyeectoService _ubicacionesService;
 
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
         public ObservableCollection<HistorialServicio> HistorialServicio { get; set; }
+        public ObservableCollection<CatalogoUbicacionesProyecto> Ubicaciones { get; set; }
         public ObservableCollection<string> ArchivosSeleccionados { get; set; }
 
         // PROPIEDAD PARA EL FILTRO DEL DATA GRID
@@ -101,15 +104,18 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
 
         public HistorialServicioViewModel(CatalogoEconomicosService economicosService,
                                           HistorialServicioService historialServiciosService,
-                                          GestorArchivosService gestorArchivosService)
+                                          GestorArchivosService gestorArchivosService,
+                                          UbicacionProyeectoService ubicacionesService)
         {
             _economicosService = economicosService;
             _historialServicio = historialServiciosService;
             _gestorArchivosService = gestorArchivosService;
+            _ubicacionesService = ubicacionesService;
             _excelExportService = new ExcelExportService();
 
             Economicos = new ObservableCollection<EconomicoMinimoDto>();
             HistorialServicio = new ObservableCollection<HistorialServicio>();
+            Ubicaciones  = new ObservableCollection<CatalogoUbicacionesProyecto>();
             ArchivosSeleccionados = new ObservableCollection<string>();
 
             // ASIGNACIÓN Y CONFIGURACIÓN DEL PREDICADO DE FILTRADO
@@ -132,18 +138,12 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
         // MÉTODO PREDICADO QUE FILTRA CADA REGISTRO DE LA LISTA
         private bool FiltrarPorEconomico(object obj)
         {
-            // Valida que el objeto sea una entidad de tipo HistorialServicio
+            
             if (obj is not HistorialServicio servicio) return false;
-
-            // Si la caja de texto está vacía o es espacio en blanco, muestra todos los registros
             if (string.IsNullOrWhiteSpace(FiltroNoEconomico)) return true;
-
-            // Valida que el NoEconomico del servicio contenga el texto digitado (ignora mayúsculas/minúsculas)
             return servicio.NoEconomico != null &&
                    servicio.NoEconomico.Contains(FiltroNoEconomico, StringComparison.OrdinalIgnoreCase);
         }
-
-
         private void ExportarExcel()
         {
             try
@@ -191,7 +191,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
                 CargarHistorialMovimientos();
             }
         }
-
         private void EliminarServicio(HistorialServicio? servicio)
         {
             if (servicio == null) return;
@@ -263,11 +262,17 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
 
         public void CargarTipos()
         {
-            var datoseconomicos = _economicosService.ObtenerEconomicosCortosCompletos();
+            var datoseconomicos = _economicosService.ObtenerEconomicosCortos();
             Economicos.Clear();
             foreach (var economico in datoseconomicos)
             {
                 Economicos.Add(economico);
+            }
+            var datosUbicacion = _ubicacionesService.ObtenerUbicaciones();
+            Ubicaciones.Clear();
+            foreach (var ubicacion in datosUbicacion) 
+            {
+                Ubicaciones.Add(ubicacion);
             }
         }
 

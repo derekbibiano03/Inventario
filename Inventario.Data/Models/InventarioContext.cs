@@ -18,6 +18,8 @@ public partial class InventarioContext : DbContext
 
     public virtual DbSet<CatalogoArchivo> CatalogoArchivos { get; set; }
 
+    public virtual DbSet<CatalogoClasificacione> CatalogoClasificaciones { get; set; }
+
     public virtual DbSet<CatalogoEconomico> CatalogoEconomicos { get; set; }
 
     public virtual DbSet<CatalogoEstatus> CatalogoEstatuses { get; set; }
@@ -28,6 +30,8 @@ public partial class InventarioContext : DbContext
 
     public virtual DbSet<CatalogoMarca> CatalogoMarcas { get; set; }
 
+    public virtual DbSet<CatalogoMateriale> CatalogoMateriales { get; set; }
+
     public virtual DbSet<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicos { get; set; }
 
     public virtual DbSet<CatalogoProveedore> CatalogoProveedores { get; set; }
@@ -35,6 +39,8 @@ public partial class InventarioContext : DbContext
     public virtual DbSet<CatalogoPya> CatalogoPyas { get; set; }
 
     public virtual DbSet<CatalogoRolPya> CatalogoRolPyas { get; set; }
+
+    public virtual DbSet<CatalogoSubclasificacione> CatalogoSubclasificaciones { get; set; }
 
     public virtual DbSet<CatalogoTiposCombustible> CatalogoTiposCombustibles { get; set; }
 
@@ -96,6 +102,18 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.NombreArchivo)
                 .HasColumnType("text")
                 .HasColumnName("nombre_archivo");
+        });
+
+        modelBuilder.Entity<CatalogoClasificacione>(entity =>
+        {
+            entity.HasKey(e => e.IdClasificacion).HasName("PRIMARY");
+
+            entity.ToTable("catalogo_clasificaciones");
+
+            entity.Property(e => e.IdClasificacion)
+                .ValueGeneratedNever()
+                .HasColumnName("Id_clasificacion");
+            entity.Property(e => e.Descripcion).HasColumnType("text");
         });
 
         modelBuilder.Entity<CatalogoEconomico>(entity =>
@@ -319,6 +337,47 @@ public partial class InventarioContext : DbContext
                 .HasColumnName("nombre_marca");
         });
 
+        modelBuilder.Entity<CatalogoMateriale>(entity =>
+        {
+            entity.HasKey(e => e.IdMaterial).HasName("PRIMARY");
+
+            entity.ToTable("catalogo_materiales");
+
+            entity.HasIndex(e => e.IdClasificacion, "fk_clasificacion_material");
+
+            entity.HasIndex(e => e.Marca, "fk_material_marca");
+
+            entity.HasIndex(e => e.IdSubclasificacion, "fk_subclasificacion_material");
+
+            entity.Property(e => e.IdMaterial).HasColumnName("Id_material");
+            entity.Property(e => e.DescripcionCorta)
+                .HasColumnType("text")
+                .HasColumnName("Descripcion_corta");
+            entity.Property(e => e.DescripcionLarga)
+                .HasColumnType("text")
+                .HasColumnName("Descripcion_larga");
+            entity.Property(e => e.IdClasificacion).HasColumnName("Id_clasificacion");
+            entity.Property(e => e.IdSubclasificacion).HasColumnName("Id_subclasificacion");
+            entity.Property(e => e.NoParte)
+                .HasColumnType("text")
+                .HasColumnName("No_parte");
+            entity.Property(e => e.UnidadMedida)
+                .HasColumnType("text")
+                .HasColumnName("Unidad_medida");
+
+            entity.HasOne(d => d.IdClasificacionNavigation).WithMany(p => p.CatalogoMateriales)
+                .HasForeignKey(d => d.IdClasificacion)
+                .HasConstraintName("fk_clasificacion_material");
+
+            entity.HasOne(d => d.IdSubclasificacionNavigation).WithMany(p => p.CatalogoMateriales)
+                .HasForeignKey(d => d.IdSubclasificacion)
+                .HasConstraintName("fk_subclasificacion_material");
+
+            entity.HasOne(d => d.MarcaNavigation).WithMany(p => p.CatalogoMateriales)
+                .HasForeignKey(d => d.Marca)
+                .HasConstraintName("fk_material_marca");
+        });
+
         modelBuilder.Entity<CatalogoMovimientosEconomico>(entity =>
         {
             entity.HasKey(e => e.IdMovimiento).HasName("PRIMARY");
@@ -389,23 +448,39 @@ public partial class InventarioContext : DbContext
                 .ToTable("catalogo_proveedores")
                 .UseCollation("utf8mb4_general_ci");
 
-            entity.HasIndex(e => e.IdUbicacion, "fk_proveedor_ubicacion");
-
             entity.Property(e => e.IdProveedor).HasColumnName("id_proveedor");
+            entity.Property(e => e.Calle)
+                .HasColumnType("text")
+                .HasColumnName("calle");
+            entity.Property(e => e.Ciuidad)
+                .HasColumnType("text")
+                .HasColumnName("ciuidad");
+            entity.Property(e => e.CodigoP).HasColumnName("codigoP");
+            entity.Property(e => e.Colonia)
+                .HasColumnType("text")
+                .HasColumnName("colonia");
+            entity.Property(e => e.Contacto)
+                .HasColumnType("text")
+                .HasColumnName("contacto");
             entity.Property(e => e.CorreoElectronico)
                 .HasColumnType("text")
                 .HasColumnName("correo_electronico");
-            entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
+            entity.Property(e => e.Estado)
+                .HasColumnType("text")
+                .HasColumnName("estado");
+            entity.Property(e => e.Numero).HasColumnName("numero");
             entity.Property(e => e.NumeroTelefonico)
                 .HasColumnType("text")
                 .HasColumnName("numero_telefonico");
+            entity.Property(e => e.Pais)
+                .HasColumnType("text")
+                .HasColumnName("pais");
             entity.Property(e => e.RazonSocial)
                 .HasColumnType("text")
                 .HasColumnName("razon_social");
-
-            entity.HasOne(d => d.IdUbicacionNavigation).WithMany(p => p.CatalogoProveedores)
-                .HasForeignKey(d => d.IdUbicacion)
-                .HasConstraintName("fk_proveedor_ubicacion");
+            entity.Property(e => e.Rfc)
+                .HasColumnType("text")
+                .HasColumnName("rfc");
         });
 
         modelBuilder.Entity<CatalogoPya>(entity =>
@@ -442,6 +517,25 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.DescripcionRol)
                 .HasColumnType("text")
                 .HasColumnName("descripcion_rol");
+        });
+
+        modelBuilder.Entity<CatalogoSubclasificacione>(entity =>
+        {
+            entity.HasKey(e => e.IdSubclasificacion).HasName("PRIMARY");
+
+            entity.ToTable("catalogo_subclasificaciones");
+
+            entity.HasIndex(e => e.IdClasificacion, "fk_clasificacion_subclasificacion");
+
+            entity.Property(e => e.IdSubclasificacion)
+                .ValueGeneratedNever()
+                .HasColumnName("Id_subclasificacion");
+            entity.Property(e => e.Descripcion).HasColumnType("text");
+            entity.Property(e => e.IdClasificacion).HasColumnName("Id_clasificacion");
+
+            entity.HasOne(d => d.IdClasificacionNavigation).WithMany(p => p.CatalogoSubclasificaciones)
+                .HasForeignKey(d => d.IdClasificacion)
+                .HasConstraintName("fk_clasificacion_subclasificacion");
         });
 
         modelBuilder.Entity<CatalogoTiposCombustible>(entity =>
@@ -693,6 +787,8 @@ public partial class InventarioContext : DbContext
 
             entity.HasIndex(e => e.NoEconomico, "fk_servicio_economico");
 
+            entity.HasIndex(e => e.UbicacionRealizacion, "fk_servicio_ubicacion");
+
             entity.Property(e => e.IdServicio).HasColumnName("id_servicio");
             entity.Property(e => e.Anotaciones)
                 .HasColumnType("text")
@@ -710,11 +806,16 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.TipoMantenimiento)
                 .HasMaxLength(50)
                 .HasColumnName("tipo_mantenimiento");
+            entity.Property(e => e.UbicacionRealizacion).HasColumnName("ubicacion_realizacion");
 
             entity.HasOne(d => d.NoEconomicoNavigation).WithMany(p => p.HistorialServicios)
                 .HasForeignKey(d => d.NoEconomico)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_servicio_economico");
+
+            entity.HasOne(d => d.UbicacionRealizacionNavigation).WithMany(p => p.HistorialServicios)
+                .HasForeignKey(d => d.UbicacionRealizacion)
+                .HasConstraintName("fk_servicio_ubicacion");
         });
 
         modelBuilder.Entity<Requisicione>(entity =>
@@ -724,6 +825,8 @@ public partial class InventarioContext : DbContext
             entity
                 .ToTable("requisiciones")
                 .UseCollation("utf8mb4_general_ci");
+
+            entity.HasIndex(e => e.IdAutorizante2, "fk_autorizante2_REQUISICION");
 
             entity.HasIndex(e => e.IdAtencion, "fk_requisicion_atencion");
 
@@ -737,6 +840,9 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.ArchivoReq)
                 .HasColumnType("text")
                 .HasColumnName("archivo_req");
+            entity.Property(e => e.AreaRequisicion)
+                .HasColumnType("text")
+                .HasColumnName("area_requisicion");
             entity.Property(e => e.Consecutivo).HasColumnName("consecutivo");
             entity.Property(e => e.Empresa)
                 .HasMaxLength(5)
@@ -747,6 +853,7 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.FechaRequisicion).HasColumnName("fecha_requisicion");
             entity.Property(e => e.IdAtencion).HasColumnName("id_atencion");
             entity.Property(e => e.IdAutorizante).HasColumnName("id_autorizante");
+            entity.Property(e => e.IdAutorizante2).HasColumnName("id_autorizante2");
             entity.Property(e => e.IdSolicitante).HasColumnName("id_solicitante");
             entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
             entity.Property(e => e.TipoRequisicion)
@@ -760,6 +867,10 @@ public partial class InventarioContext : DbContext
             entity.HasOne(d => d.IdAutorizanteNavigation).WithMany(p => p.RequisicioneIdAutorizanteNavigations)
                 .HasForeignKey(d => d.IdAutorizante)
                 .HasConstraintName("fk_usuario_autorizasnte_req");
+
+            entity.HasOne(d => d.IdAutorizante2Navigation).WithMany(p => p.RequisicioneIdAutorizante2Navigations)
+                .HasForeignKey(d => d.IdAutorizante2)
+                .HasConstraintName("fk_autorizante2_REQUISICION");
 
             entity.HasOne(d => d.IdSolicitanteNavigation).WithMany(p => p.RequisicioneIdSolicitanteNavigations)
                 .HasForeignKey(d => d.IdSolicitante)

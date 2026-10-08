@@ -19,7 +19,11 @@ public partial class HistorialServicio
 
     public decimal? Costos { get; set; }
 
+    public int? UbicacionRealizacion { get; set; }
+
     public virtual CatalogoEconomico NoEconomicoNavigation { get; set; } = null!;
 
     public virtual ICollection<ServicioArchivo> ServicioArchivos { get; set; } = new List<ServicioArchivo>();
+
+    public virtual CatalogoUbicacionesProyecto? UbicacionRealizacionNavigation { get; set; }
 }

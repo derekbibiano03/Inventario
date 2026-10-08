@@ -19,11 +19,11 @@ public partial class CatalogoUbicacionesProyecto
 
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicoIdUbicacionSalidaNavigations { get; set; } = new List<CatalogoMovimientosEconomico>();
 
-    public virtual ICollection<CatalogoProveedore> CatalogoProveedores { get; set; } = new List<CatalogoProveedore>();
-
     public virtual ICollection<CatalogoTramo> CatalogoTramos { get; set; } = new List<CatalogoTramo>();
 
     public virtual ICollection<Empleado> Empleados { get; set; } = new List<Empleado>();
 
     public virtual ICollection<HistorialReporte> HistorialReportes { get; set; } = new List<HistorialReporte>();
+
+    public virtual ICollection<HistorialServicio> HistorialServicios { get; set; } = new List<HistorialServicio>();
 }

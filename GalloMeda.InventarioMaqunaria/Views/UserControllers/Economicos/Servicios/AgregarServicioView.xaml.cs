@@ -1,5 +1,6 @@
 ﻿using Inventario.Core.Services.Economicos;
 using Inventario.Core.Services.Logs;
+using Inventario.Core.Services.UbicacionProyecto;
 using Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios;
 using System.Windows.Controls;
 
@@ -17,9 +18,10 @@ namespace Inventario.Desktop.Views.UserControllers.Economicos
             var logsService = new LogsService(context);
             var economicosService = new CatalogoEconomicosService(context, logsService);
             var historialServiciosService = new HistorialServicioService(context, logsService);
+            var ubicacionesService = new UbicacionProyeectoService(context);
             var gestorArchivosService = new GestorArchivosService(context);
 
-            this.DataContext = new HistorialServicioViewModel(economicosService, historialServiciosService, gestorArchivosService);
+            this.DataContext = new HistorialServicioViewModel(economicosService, historialServiciosService, gestorArchivosService, ubicacionesService);
         }
     }
 }

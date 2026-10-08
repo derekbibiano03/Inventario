@@ -35,6 +35,8 @@ public partial class Usuario
 
     public virtual ICollection<Requisicione> RequisicioneIdAtencionNavigations { get; set; } = new List<Requisicione>();
 
+    public virtual ICollection<Requisicione> RequisicioneIdAutorizante2Navigations { get; set; } = new List<Requisicione>();
+
     public virtual ICollection<Requisicione> RequisicioneIdAutorizanteNavigations { get; set; } = new List<Requisicione>();
 
     public virtual ICollection<Requisicione> RequisicioneIdSolicitanteNavigations { get; set; } = new List<Requisicione>();

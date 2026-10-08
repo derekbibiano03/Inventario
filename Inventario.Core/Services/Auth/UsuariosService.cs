@@ -29,7 +29,7 @@ namespace Inventario.Core.Services.Auth
         public List<Usuario> ObtenerUsuariosAutorizantes()
         {
             var resultado = _context.Usuarios
-                .Where(r => r.IdUsuario == 3 || r.IdUsuario == 4)
+                .Where(r => r.IdUsuario == 3 || r.IdUsuario == 4 )
                 .ToList();
 
             return resultado;

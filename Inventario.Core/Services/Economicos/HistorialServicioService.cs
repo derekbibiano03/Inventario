@@ -11,6 +11,7 @@ namespace Inventario.Core.Services.Economicos
 {
     public class HistorialServicioService
     {
+        private readonly CatalogoUbicacionesProyecto _ubicaciones;
         private readonly InventarioContext _context;
         private readonly LogsService _logsService;
         private readonly string _hostServidor = "170.10.162.13";
@@ -32,7 +33,8 @@ namespace Inventario.Core.Services.Economicos
                 TipoMantenimiento = dto.TipoMantenimiento,
                 Anotaciones = dto.Anotaciones,
                 Horaskilometrosreales = dto.Horaskilometrosreales,
-                Costos = dto.Costos
+                Costos = dto.Costos,
+                UbicacionRealizacion = dto.NoEconomicoNavigation.IdUbicacion
             };
 
             _context.HistorialServicios.Add(nuevoRegistro);
@@ -111,6 +113,7 @@ namespace Inventario.Core.Services.Economicos
                 .Include(s => s.NoEconomicoNavigation)
                 .Include(s => s.ServicioArchivos)
                     .ThenInclude(sa => sa.IdArchivoNavigation)
+                .Include(s => s.UbicacionRealizacionNavigation)
                 .ToList();
         }
 

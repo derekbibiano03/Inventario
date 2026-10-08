@@ -25,14 +25,27 @@
                         <ColumnDefinition Width="300" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="TIPO DE REQUISICION" Grid.Row="0" Grid.Column="0" FontSize="18" FontWeight="Bold" Padding="0,0,30,4" HorizontalAlignment="Left"/>
-                    <ComboBox SelectedValue="{Binding TipoRequiSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBlock Text="AREA" Grid.Row="0" Grid.Column="0" FontSize="18" FontWeight="Bold" Padding="10,0,30,4" HorizontalAlignment="Left"/>
+                    <ComboBox SelectedValue="{Binding AreaSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedValuePath="Content"
                         Grid.Row="1" Grid.Column="0"
+                        Width="250" Height="30" HorizontalAlignment="Left" Margin="0,10,0,15">
+                        <ComboBoxItem Content="MAQUINARIA" />
+                        <ComboBoxItem Content="CONSTRUCCION" />
+                        <ComboBoxItem Content="OTROS" />
+                    </ComboBox>
+
+
+                    <TextBlock Text="TIPO DE REQUISICION" Grid.Row="2" Grid.Column="0" FontSize="18" FontWeight="Bold" Padding="10,40,30,4" HorizontalAlignment="Left"/>
+                    <ComboBox SelectedValue="{Binding TipoRequiSeleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedValuePath="Content"
+                        Grid.Row="3" Grid.Column="0"
                         Width="250" Height="30" HorizontalAlignment="Left" Margin="0,10,0,15">
                         <ComboBoxItem Content="REQUISICION PARA ECONOMICO" />
                         <ComboBoxItem Content="REQUISICION PARA MATERIALES" />
                         <ComboBoxItem Content="REQUISICION PARA AGREGAR A STOCK" />
+                        <ComboBoxItem Content="REQUISICION PARA HERRAMIENTAS" />
+                        <ComboBoxItem Content="REQUISICION PARA OTROS" />
                     </ComboBox>
 
 

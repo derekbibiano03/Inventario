@@ -8,28 +8,17 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <!-- Estilo base para el encabezado de las columnas del DataGrid -->
         <Style TargetType="DataGridColumnHeader">
             <Setter Property="Background" Value="#1E293B"/>
-            <!-- Fondo oscuro para los encabezados -->
             <Setter Property="Foreground" Value="White"/>
-            <!-- Texto del encabezado en blanco -->
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <!-- Peso de fuente seminegrita -->
             <Setter Property="FontSize" Value="12"/>
-            <!-- Tamaño de letra del encabezado -->
             <Setter Property="Height" Value="40"/>
-            <!-- Altura fija del encabezado -->
             <Setter Property="Padding" Value="10,0"/>
-            <!-- Relleno horizontal interno -->
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <!-- Alineación horizontal centrada del texto -->
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <!-- Alineación vertical centrada del texto -->
             <Setter Property="BorderThickness" Value="0,0,1,0"/>
-            <!-- Borde derecho para separar columnas -->
             <Setter Property="BorderBrush" Value="#334155"/>
-            <!-- Color del borde separador de encabezados -->
         </Style>
 
         <!-- Estilo base para las celdas individuales del DataGrid -->
@@ -287,6 +276,10 @@
                                             Binding="{Binding NoEconomico}" 
                                             Width="120" 
                                             IsReadOnly="True"/>
+                        <DataGridTextColumn Header="UBICACION" 
+                                Binding="{Binding UbicacionRealizacionNavigation.NombreProyecto}" 
+                                Width="120" 
+                                IsReadOnly="True"/>
 
                         <!-- Columna con la fecha formateada en Día/Mes/Año -->
                         <DataGridTextColumn Header="FECHA DE MANTENIMIENTO" 

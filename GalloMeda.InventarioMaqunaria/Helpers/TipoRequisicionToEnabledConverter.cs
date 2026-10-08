@@ -10,7 +10,7 @@ namespace Inventario.Desktop.Helpers
         {
             if (value is string tipo)
             {
-                if (tipo == "REQUISICION PARA MATERIALES" || tipo == "REQUISICION PARA AGREGAR A STOCK")
+                if (tipo == "REQUISICION PARA MATERIALES" || tipo == "REQUISICION PARA AGREGAR A STOCK" || tipo == "REQUISICION PARA HERRAMIENTAS" || tipo == "REQUISICION PARA OTROS")
                 {
                     return false;
                 }

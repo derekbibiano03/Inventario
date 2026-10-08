@@ -1,4 +1,5 @@
-﻿using GalloMeda.InventarioMaqunaria; // Asegúrate de tener este using para acceder a App.ServiceProvider si gustas, o leer la configuración directo
+﻿using DocumentFormat.OpenXml.Drawing;
+using GalloMeda.InventarioMaqunaria; // Asegúrate de tener este using para acceder a App.ServiceProvider si gustas, o leer la configuración directo
 using Inventario.Core.Services;
 using Inventario.Core.Services.Adq_Serv.AdquisicionService;
 using Inventario.Core.Services.Auth;
@@ -34,6 +35,7 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
             this.DataContext = viewModel;
             this.Loaded += AgregarRequisicionView_Loaded;
         }
+
         private void AgregarRequisicionView_Loaded(object sender, RoutedEventArgs e)
         {
             // Desuscribir el evento para que la alerta solo se muestre una vez al abrir el control

@@ -12,4 +12,6 @@ public partial class CatalogoMarca
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicoIdMarcaNavigations { get; set; } = new List<CatalogoEconomico>();
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicoMarcaMotorNavigations { get; set; } = new List<CatalogoEconomico>();
+
+    public virtual ICollection<CatalogoMateriale> CatalogoMateriales { get; set; } = new List<CatalogoMateriale>();
 }

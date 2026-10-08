@@ -649,7 +649,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             try
             {
                 var ubicacionesDb = _contexto.CatalogoUbicacionesProyectos
-                    .Where(e => e.Siglas != "")
+                    .Where(e => !string.IsNullOrEmpty(e.Siglas)) // Filtra nulos, vacíos y espacios si usas IsNullOrWhiteSpace
                     .AsNoTracking()
                     .ToList();
 

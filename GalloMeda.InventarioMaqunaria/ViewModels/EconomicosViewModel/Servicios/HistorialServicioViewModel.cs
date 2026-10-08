@@ -100,11 +100,11 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
             set { _horaskilometrosreales = value; OnPropertyChanged(); }
         }
 
-        private decimal _costo = 0;
-        public decimal Costo
+        private decimal _costos = 0;
+        public decimal Costos
         {
-            get => _costo;
-            set { _costo = value; OnPropertyChanged(); }
+            get => _costos;
+            set { _costos = value; OnPropertyChanged(); }
         }
 
 
@@ -339,7 +339,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
                     TipoMantenimiento = this.TipoMantenimiento,
                     Anotaciones = this.Anotaciones,
                     Horaskilometrosreales = this.Horaskilometrosreales,
-                    Costos = this.Costo
+                    Costos = this.Costos,
+                    IdUsuario = App.Session.IdUsuario
                 };
 
                 // 3. Registro en Base de Datos

@@ -26,6 +26,10 @@ namespace Inventario.Core.Services.Economicos
 
         public HistorialServicio RegistrarServicio(int idUsuarioOperativo, HistorialServicio dto)
         {
+            // Buscamos el económico real en la base de datos para obtener su ubicación y grupo
+            var economicoReal = _context.CatalogoEconomicos
+                .FirstOrDefault(e => e.IdEconomico == dto.NoEconomico); // Ajusta la propiedad según tu modelo si es IdEconomico
+
             var nuevoRegistro = new HistorialServicio
             {
                 NoEconomico = dto.NoEconomico,
@@ -34,9 +38,9 @@ namespace Inventario.Core.Services.Economicos
                 Anotaciones = dto.Anotaciones,
                 Horaskilometrosreales = dto.Horaskilometrosreales,
                 Costos = dto.Costos,
-                UbicacionRealizacion = dto.NoEconomicoNavigation.IdUbicacion,
+                UbicacionRealizacion = economicoReal?.IdUbicacion, // <-- Evita el NullReferenceException
                 IdUsuario = dto.IdUsuario,
-                IdGrupo = dto.NoEconomicoNavigation.IdGrupo
+                IdGrupo = economicoReal?.IdGrupo                   // <-- Evita el NullReferenceException
             };
 
             _context.HistorialServicios.Add(nuevoRegistro);

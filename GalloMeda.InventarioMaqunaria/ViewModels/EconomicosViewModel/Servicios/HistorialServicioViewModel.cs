@@ -42,6 +42,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
         private readonly CatalogoEconomicosService _economicosService;
         private readonly HistorialServicioService _historialServicio;
         private readonly GestorArchivosService _gestorArchivosService;
+        private readonly InventarioContext _context;
         private readonly UbicacionProyeectoService _ubicacionesService;
 
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
@@ -98,6 +99,15 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
             get => _horaskilometrosreales;
             set { _horaskilometrosreales = value; OnPropertyChanged(); }
         }
+
+        private decimal _costo = 0;
+        public decimal Costo
+        {
+            get => _costo;
+            set { _costo = value; OnPropertyChanged(); }
+        }
+
+
         public ICommand ExportarExcelCommand { get; }
         private readonly ExcelExportService _excelExportService;
 
@@ -111,7 +121,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
             _historialServicio = historialServiciosService;
             _gestorArchivosService = gestorArchivosService;
             _ubicacionesService = ubicacionesService;
-            _excelExportService = new ExcelExportService();
+            _excelExportService = new ExcelExportService(_context);
 
             Economicos = new ObservableCollection<EconomicoMinimoDto>();
             HistorialServicio = new ObservableCollection<HistorialServicio>();
@@ -328,7 +338,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
                     FechaMantenimiento = DateOnly.FromDateTime(this.FechaMantenimiento.Value),
                     TipoMantenimiento = this.TipoMantenimiento,
                     Anotaciones = this.Anotaciones,
-                    Horaskilometrosreales = this.Horaskilometrosreales
+                    Horaskilometrosreales = this.Horaskilometrosreales,
+                    Costos = this.Costo
                 };
 
                 // 3. Registro en Base de Datos

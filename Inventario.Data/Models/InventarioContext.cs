@@ -785,9 +785,13 @@ public partial class InventarioContext : DbContext
                 .ToTable("historial_servicio")
                 .UseCollation("utf8mb4_unicode_ci");
 
+            entity.HasIndex(e => e.IdGrupo, "fk_grupo_servicio");
+
             entity.HasIndex(e => e.NoEconomico, "fk_servicio_economico");
 
             entity.HasIndex(e => e.UbicacionRealizacion, "fk_servicio_ubicacion");
+
+            entity.HasIndex(e => e.IdUsuario, "fk_usuario_servicio");
 
             entity.Property(e => e.IdServicio).HasColumnName("id_servicio");
             entity.Property(e => e.Anotaciones)
@@ -800,6 +804,10 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.Horaskilometrosreales)
                 .HasColumnType("text")
                 .HasColumnName("horaskilometrosreales");
+            entity.Property(e => e.IdGrupo)
+                .HasMaxLength(10)
+                .HasColumnName("id_grupo");
+            entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.NoEconomico)
                 .HasMaxLength(20)
                 .HasColumnName("no_economico");
@@ -807,6 +815,14 @@ public partial class InventarioContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("tipo_mantenimiento");
             entity.Property(e => e.UbicacionRealizacion).HasColumnName("ubicacion_realizacion");
+
+            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.HistorialServicios)
+                .HasForeignKey(d => d.IdGrupo)
+                .HasConstraintName("fk_grupo_servicio");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.HistorialServicios)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("fk_usuario_servicio");
 
             entity.HasOne(d => d.NoEconomicoNavigation).WithMany(p => p.HistorialServicios)
                 .HasForeignKey(d => d.NoEconomico)

@@ -34,7 +34,9 @@ namespace Inventario.Core.Services.Economicos
                 Anotaciones = dto.Anotaciones,
                 Horaskilometrosreales = dto.Horaskilometrosreales,
                 Costos = dto.Costos,
-                UbicacionRealizacion = dto.NoEconomicoNavigation.IdUbicacion
+                UbicacionRealizacion = dto.NoEconomicoNavigation.IdUbicacion,
+                IdUsuario = dto.IdUsuario,
+                IdGrupo = dto.NoEconomicoNavigation.IdGrupo
             };
 
             _context.HistorialServicios.Add(nuevoRegistro);
@@ -111,6 +113,8 @@ namespace Inventario.Core.Services.Economicos
         {
             return _context.HistorialServicios
                 .Include(s => s.NoEconomicoNavigation)
+                .Include(h => h.IdUsuarioNavigation)      // <-- Carga el usuario
+                .Include(h => h.IdGrupoNavigation)
                 .Include(s => s.ServicioArchivos)
                     .ThenInclude(sa => sa.IdArchivoNavigation)
                 .Include(s => s.UbicacionRealizacionNavigation)

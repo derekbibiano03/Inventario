@@ -43,8 +43,8 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
     {
         private bool _isResetting = false;
         private readonly CatalogoEconomicosService _economicosService;
-        private readonly ExcelExportService _excelService = new ExcelExportService();
         private readonly InventarioContext _contextoCompartido;
+        private readonly ExcelExportService _excelService;
 
         private string _busquedaId = string.Empty;
         private string _busquedaDescripcion = string.Empty;
@@ -176,6 +176,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
 
         public EconomicosSuvViewModel()
         {
+            _excelService = new ExcelExportService(_contextoCompartido);
             VerDetalleCommand = new RelayCommand<string>(AbrirVentanaDetalle);
             LimpiarFiltrosCommand = new RelayCommand<object>(x => LimpiarFiltros());
             EditarCommand = new RelayCommand<string>(AbrirVentanaEditar);

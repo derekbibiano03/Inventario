@@ -10,4 +10,6 @@ public partial class CatalogoGrupo
     public string DescripcionGrupo { get; set; } = null!;
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicos { get; set; } = new List<CatalogoEconomico>();
+
+    public virtual ICollection<HistorialServicio> HistorialServicios { get; set; } = new List<HistorialServicio>();
 }

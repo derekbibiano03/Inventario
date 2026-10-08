@@ -29,6 +29,8 @@ public partial class Usuario
 
     public virtual ICollection<HistorialReporte> HistorialReportes { get; set; } = new List<HistorialReporte>();
 
+    public virtual ICollection<HistorialServicio> HistorialServicios { get; set; } = new List<HistorialServicio>();
+
     public virtual UsuariosRole? IdRolNavigation { get; set; }
 
     public virtual Empleado? NoEmpleadoNavigation { get; set; }

@@ -234,6 +234,7 @@
                          Text="{Binding FiltroNoEconomico, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <Button Content="Exportar a Excel" 
+                            Margin="25,5,0,5"
                             Grid.Column="1" Grid.Row="1"
                         Command="{Binding ExportarExcelCommand}"
                         Background="#10B981" 

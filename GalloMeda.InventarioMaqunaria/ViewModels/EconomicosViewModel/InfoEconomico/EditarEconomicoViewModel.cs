@@ -90,8 +90,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             CargarCatalogos();
         }
 
-
-        // Carga los catálogos en memoria
         private void CargarCatalogos()
         {
             var tiposDb = _contexto.CatalogoTiposEquipos.AsNoTracking().ToList();
@@ -132,7 +130,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             foreach (var item in respDb) Encargados.Add(item);
         }
 
-        // Carga la información del registro económico
         public void CargarDatosEconomico(string idEconomico)
         {
             var economico = _contexto.CatalogoEconomicos
@@ -173,7 +170,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             }
         }
 
-        // Persiste los cambios
         private void EjecutarGuardarCambios()
         {
             if (EconomicoEdicion == null) return;

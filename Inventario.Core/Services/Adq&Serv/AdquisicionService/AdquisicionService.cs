@@ -74,10 +74,21 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     workbook.Save();
                 }
 
+
+
                 SubirArchivoPorFtp(rutaLocalTemporal, nombreArchivoRemoto);
                 var requisicionDb = _context.Requisiciones
                     .Include(r => r.IdAtencionNavigation)
                     .FirstOrDefault(r => r.IdRequisicion == idRequisicion);
+
+                if (requisicionDb != null)
+                {
+                    // 2. Actualizar el campo de estatus (ajusta "Estatus" por el nombre real de tu propiedad)
+                    requisicionDb.Estatus = "Autorizada";
+
+                    // 3. Guardar los cambios en la base de datos
+                    await _context.SaveChangesAsync();
+                }
 
                 return rutaLocalTemporal;
             }

@@ -207,10 +207,10 @@ namespace Inventario.Desktop.Views
         {
             try
             {
-                // Obtener la versión actual del ensamblado instalado
+                // 1. Obtener la versión actual del ensamblado instalado (ej. 1.0.0.0)
                 Version versionActual = Assembly.GetExecutingAssembly().GetName().Version;
 
-                // Consultar la última versión desde la API de GitHub Releases
+                // 2. Consultar la última versión desde la API de GitHub Releases
                 string urlApi = "https://api.github.com/repos/derekbibiano03/Inventario/releases/latest";
 
                 using (var client = new System.Net.Http.HttpClient())
@@ -233,15 +233,43 @@ namespace Inventario.Desktop.Views
                         return;
                     }
 
-                    string versionNetLimia = tagName.TrimStart('v', 'V');
-                    if (!Version.TryParse(versionNetLimia, out Version? ultimaVersion))
+                    // 3. Limpiar la 'v' inicial y dividir el tag (Ej: "1.0.20261012153439")
+                    string versionLimia = tagName.TrimStart('v', 'V');
+                    string[] partesRemotas = versionLimia.Split('.');
+
+                    if (partesRemotas.Length < 3)
                     {
                         MessageBox.Show($"La versión remota ({tagName}) no tiene un formato compatible.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
-                    // Comparar versiones
-                    if (ultimaVersion > versionActual)
+                    // Extraer componentes de forma segura usando 'long' para el timestamp
+                    int majorRemoto = int.Parse(partesRemotas[0]);
+                    int minorRemoto = int.Parse(partesRemotas[1]);
+                    long timestampRemoto = long.Parse(partesRemotas[2]);
+
+                    int majorActual = versionActual.Major;
+                    int minorActual = versionActual.Minor;
+                    long timestampActual = versionActual.Build > 0 ? versionActual.Build : 0;
+
+                    // 4. Lógica de comparación personalizada
+                    bool hayNuevaVersion = false;
+
+                    if (majorRemoto > majorActual)
+                    {
+                        hayNuevaVersion = true;
+                    }
+                    else if (majorRemoto == majorActual && minorRemoto > minorActual)
+                    {
+                        hayNuevaVersion = true;
+                    }
+                    else if (majorRemoto == majorActual && minorRemoto == minorActual)
+                    {
+                        // Si el timestamp del servidor es mayor al build actual, hay actualización
+                        hayNuevaVersion = timestampRemoto > timestampActual;
+                    }
+
+                    if (hayNuevaVersion)
                     {
                         var resultado = MessageBox.Show(
                             $"Hay una nueva versión disponible ({tagName}). ¿Deseas actualizar ahora?",

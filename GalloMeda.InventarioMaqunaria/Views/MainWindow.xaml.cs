@@ -1,4 +1,5 @@
-﻿using GalloMeda.InventarioMaqunaria;
+﻿using DocumentFormat.OpenXml.CustomProperties;
+using GalloMeda.InventarioMaqunaria;
 using Inventario.Desktop.Views.UserControllers;
 using Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requisiciones;
 using Inventario.Desktop.Views.UserControllers.Auth;
@@ -9,8 +10,10 @@ using Inventario.Desktop.Views.UserControllers.Personal;
 using Inventario.Desktop.Views.UserControllers.Proveedores;
 using Inventario.Desktop.Views.UserControllers.UbicacionProyectos;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System;
+using System.Reflection;
 using System.Windows;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 
 namespace Inventario.Desktop.Views
@@ -19,7 +22,7 @@ namespace Inventario.Desktop.Views
     {
         private string _usuarioLogueado = string.Empty;
         private string _nombreUsuarioCompleto = string.Empty;
-        private int _idRolUsuario; // Cambiado a entero
+        private int _idRolUsuario;
 
         public string UsuarioLogueado
         {
@@ -96,7 +99,6 @@ namespace Inventario.Desktop.Views
                         textoPanel = "AGREGAR A UN NUEVO USUARIO";
                         break;
 
-                    // Seccion Economicos
                     case "VerInventario":
                         ContenedorPrincipal.Content = new EconomicosView();
                         textoPanel = "INVENTARIO DE MAQUINARIA";
@@ -121,9 +123,7 @@ namespace Inventario.Desktop.Views
                         ContenedorPrincipal.Content = new HistorialMovimientosView();
                         textoPanel = "HISTORIAL DE MOVIMIENTOS";
                         break;
-                        
 
-                    // Seccion Personal
                     case "VerOperadores":
                         ContenedorPrincipal.Content = new OperadoresView();
                         textoPanel = "CATALOGO DE OPERADORES DE MAQUINARIA";
@@ -137,13 +137,11 @@ namespace Inventario.Desktop.Views
                         textoPanel = "CATALOGO DE PROPIETARIOS Y ADMINISTRADORES DE MAQUINARIA";
                         break;
 
-                    // Seccion Proveedores
                     case "VerBrokers":
                         ContenedorPrincipal.Content = new BrokersView();
                         textoPanel = "CATALOGO DE BROKERS";
                         break;
 
-                    // Seccion Catalogos
                     case "CatCom":
                         ContenedorPrincipal.Content = new CombustiblesView();
                         textoPanel = "CATALOGO DE COMBUSTIBLES";
@@ -165,7 +163,6 @@ namespace Inventario.Desktop.Views
                         textoPanel = "CATALOGO DE MARCAS";
                         break;
 
-                    // Seccion Ubicacion Proyetos
                     case "VerUbicaciones":
                         ContenedorPrincipal.Content = new UbicacionProyectoView();
                         textoPanel = "CATALOGO DE UBICACIONES";
@@ -179,7 +176,6 @@ namespace Inventario.Desktop.Views
                         textoPanel = "CATALOGO DE FRENTES";
                         break;
 
-                    // Seccion Adquisiciones y servicios
                     case "AddReq":
                         ContenedorPrincipal.Content = new AgregarRequisicionView();
                         textoPanel = "AÑADIR NUEVA REQUISICION";
@@ -188,7 +184,7 @@ namespace Inventario.Desktop.Views
                     case "HistServ":
                         ContenedorPrincipal.Content = new AgregarServicioView();
                         textoPanel = "NUEVO SERVICIOS REALIZADOS";
-                        break; 
+                        break;
 
                     case "VerServicios":
                         ContenedorPrincipal.Content = new HistorialServicioView();
@@ -201,10 +197,90 @@ namespace Inventario.Desktop.Views
                     case "BuscReq":
                         ContenedorPrincipal.Content = new BuscarRequisicionView();
                         textoPanel = "AUTORIZACION DE REQUISICIONES";
-                        break; 
+                        break;
                 }
                 txtPanel.Text = textoPanel;
             }
+        }
+
+        private async void ActualizarVersion(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Obtener la versión actual del ensamblado instalado
+                Version versionActual = Assembly.GetExecutingAssembly().GetName().Version;
+
+                // Consultar la última versión desde la API de GitHub Releases
+                string urlApi = "https://api.github.com/repos/derekbibiano03/Inventario/releases/latest";
+
+                using (var client = new System.Net.Http.HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "InventarioDesktopApp");
+
+                    var respuesta = await client.GetAsync(urlApi);
+                    if (!respuesta.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("No se pudo verificar la actualización con el servidor.", "Error de red", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    var jsonContent = await respuesta.Content.ReadAsStringAsync();
+
+                    string tagName = ExtraerTagFromJson(jsonContent);
+                    if (string.IsNullOrEmpty(tagName))
+                    {
+                        MessageBox.Show("No se encontró una versión válida en las liberaciones.", "Actualización", MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    string versionNetLimia = tagName.TrimStart('v', 'V');
+                    if (!Version.TryParse(versionNetLimia, out Version? ultimaVersion))
+                    {
+                        MessageBox.Show($"La versión remota ({tagName}) no tiene un formato compatible.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // Comparar versiones
+                    if (ultimaVersion > versionActual)
+                    {
+                        var resultado = MessageBox.Show(
+                            $"Hay una nueva versión disponible ({tagName}). ¿Deseas actualizar ahora?",
+                            "Actualización disponible",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Information);
+
+                        if (resultado == MessageBoxResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = $"https://github.com/derekbibiano03/Inventario/releases/latest",
+                                UseShellExecute = true
+                            });
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Tu aplicación ya está actualizada a la versión más reciente.", "Sin actualizaciones", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al buscar actualizaciones: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private string ExtraerTagFromJson(string json)
+        {
+            string marcador = "\"tag_name\":\"";
+            int indiceInicio = json.IndexOf(marcador);
+            if (indiceInicio == -1) return string.Empty;
+
+            indiceInicio += marcador.Length;
+            int indiceFin = json.IndexOf("\"", indiceInicio);
+            if (indiceFin == -1) return string.Empty;
+
+            return json.Substring(indiceInicio, indiceFin - indiceInicio);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

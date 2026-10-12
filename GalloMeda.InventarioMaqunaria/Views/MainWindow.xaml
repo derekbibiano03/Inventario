@@ -244,6 +244,12 @@
                             </Button.ContextMenu>
                         </Button>
 
+                        <Button Height="60" Margin="0,2" Background="#3B3F4A" Foreground="White" BorderThickness="0" HorizontalContentAlignment="Left" Padding="10,0" Click="ActualizarVersion" >
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource TextoResaltado}" Text="ACTUALIZACION MANUAL" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
 
                     </StackPanel>
                 </ScrollViewer>

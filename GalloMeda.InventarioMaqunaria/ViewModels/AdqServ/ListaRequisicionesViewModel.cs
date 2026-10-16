@@ -47,8 +47,6 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
         public ICommand VerExcelCommand { get; }
         public ICommand AutorizarCommand { get; }
-
-        private readonly InventarioContext _contexto;
         private readonly AdquisicionService _reqService;
 
         public ListaRequisicionesViewModel(AdquisicionService reqService)
@@ -176,11 +174,36 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     return;
                 }
 
+                // 1. El servicio descarga, estampa la firma del autorizante y actualiza la BD
                 string rutaTemporalExcelFirmado = await _reqService.AutorizarYDescargarArchivoAsync(
                     RequisicionSeleccionada.IdRequisicion,
                     RequisicionSeleccionada.ArchivoReq,
                     firmaPathUsuario
                 );
+
+                if (string.IsNullOrEmpty(rutaTemporalExcelFirmado) || !File.Exists(rutaTemporalExcelFirmado))
+                {
+                    throw new Exception("El servicio no pudo generar o retornar el archivo firmado.");
+                }
+
+                // 2. BLOQUEO DE EDICIÓN POST-FIRMA: Aseguramos proteger las hojas de forma limpia
+                using (var workbook = new ClosedXML.Excel.XLWorkbook(rutaTemporalExcelFirmado))
+                {
+                    foreach (var ws in workbook.Worksheets)
+                    {
+                        // Si la hoja ya estuviera protegida, la desprotegemos temporalmente para evitar excepciones
+                        if (ws.IsProtected)
+                        {
+                            ws.Unprotect();
+                        }
+
+                        // Aplicamos la protección definitiva contra edición
+                        ws.Protect("GMOX4568_MAQ159654");
+                    }
+                    workbook.Save();
+                }
+
+                string archivoFinalParaEnviar = rutaTemporalExcelFirmado;
 
                 var saveFileDialog = new SaveFileDialog
                 {
@@ -190,23 +213,23 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    if (File.Exists(rutaTemporalExcelFirmado))
-                    {
-                        File.Copy(rutaTemporalExcelFirmado, saveFileDialog.FileName, true);
-                    }
-
-                    var destinatarios = new List<string> { RequisicionSeleccionada.CorreoAtencion };
-                    var copias = new List<string> { "rrodriguez@enlaceferroviario.com", "egarcia@enlaceferroviario.com", App.Session.Correoe };
-
-                    await EnviarCorreoNotificacionConArchivoAsync(
-                        correosDestino: destinatarios,
-                        correosCc: copias,
-                        asunto: $"Requisición Autorizada - {RequisicionSeleccionada.ArchivoReq}",
-                        cuerpoHtml: $"<p>Hola Malcom,</p><p>La {RequisicionSeleccionada.TipoRequisicion} <b>{RequisicionSeleccionada.ArchivoReq}</b> ha sido autorizada. Se adjunta el formato de Excel firmado.</p>",
-                        rutaArchivo: saveFileDialog.FileName
-                    );
+                    File.Copy(rutaTemporalExcelFirmado, saveFileDialog.FileName, true);
+                    archivoFinalParaEnviar = saveFileDialog.FileName;
                 }
 
+                // 3. Envío del correo electrónico de notificación
+                var destinatarios = new List<string> { RequisicionSeleccionada.CorreoAtencion };
+                var copias = new List<string> { "rrodriguez@enlaceferroviario.com", "egarcia@enlaceferroviario.com", App.Session.Correoe };
+
+                await EnviarCorreoNotificacionConArchivoAsync(
+                    correosDestino: destinatarios,
+                    correosCc: copias,
+                    asunto: $"Requisición Autorizada - {RequisicionSeleccionada.ArchivoReq}",
+                    cuerpoHtml: $"<p>Hola Malcom,</p><p>La {RequisicionSeleccionada.TipoRequisicion} <b>{RequisicionSeleccionada.ArchivoReq}</b> ha sido autorizada. Se adjunta el formato de Excel firmado y bloqueado.</p>",
+                    rutaArchivo: archivoFinalParaEnviar
+                );
+
+                // 4. Actualización de la lista en interfaz
                 await CargarRequisicionesAsync();
 
                 MessageBox.Show("Requisición autorizada, estatus cambiado a 'AUTORIZADA' y archivo enviado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);

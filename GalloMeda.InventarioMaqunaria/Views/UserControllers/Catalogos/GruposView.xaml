@@ -34,7 +34,7 @@
                         AlternatingRowBackground="#F9F9F9" SelectionChanged="DataGrid_SelectionChanged">
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="No.Economico" Width="Auto" Binding="{Binding IdGrupo}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="ID Grupo" Width="Auto" Binding="{Binding IdGrupo}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Descripción" Width="*" Binding="{Binding DescripcionGrupo}" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>

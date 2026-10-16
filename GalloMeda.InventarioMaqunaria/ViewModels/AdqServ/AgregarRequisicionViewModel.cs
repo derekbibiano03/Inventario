@@ -377,6 +377,10 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     var ws = workbook.Worksheets.Add("Requisición");
                     ws.ShowGridLines = true;
 
+                    // Desproteger la hoja y el libro para garantizar edición abierta
+                    ws.Unprotect();
+                    workbook.Unprotect();
+
                     ws.Column(1).Width = 8;
                     ws.Column(2).Width = 8.78;
                     ws.Column(3).Width = 8.67;
@@ -463,56 +467,56 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                     var r11_ab = ws.Range("A11:B11"); r11_ab.Merge(); r11_ab.FirstCell().Value = "Descripcion:";
                     var r11_cd = ws.Range("C11:D11");
-                    r11_cd.Merge(); 
+                    r11_cd.Merge();
                     r11_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : DescripcionUnidad;
 
                     var r12_ab = ws.Range("A12:B12"); r12_ab.Merge(); r12_ab.FirstCell().Value = "Marca:";
-                    var r12_cd = ws.Range("C12:D12"); 
-                    r12_cd.Merge(); 
+                    var r12_cd = ws.Range("C12:D12");
+                    r12_cd.Merge();
                     r12_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : MarcaUnidad;
 
                     var r13_ab = ws.Range("A13:B13"); r13_ab.Merge(); r13_ab.FirstCell().Value = "Modelo:";
-                    var r13_cd = ws.Range("C13:D13"); 
-                    r13_cd.Merge(); 
+                    var r13_cd = ws.Range("C13:D13");
+                    r13_cd.Merge();
                     r13_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : ModeloUnidad;
 
                     var r14_ab = ws.Range("A14:B14"); r14_ab.Merge(); r14_ab.FirstCell().Value = "No. Serie:";
-                    var r14_cd = ws.Range("C14:D14"); 
-                    r14_cd.Merge(); 
+                    var r14_cd = ws.Range("C14:D14");
+                    r14_cd.Merge();
                     r14_cd.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : SerieUnidad;
 
                     ws.Cell("E10").Value = "Tipo de Motor:";
-                    var r10_fgh = ws.Range("F10:H10"); 
-                    r10_fgh.Merge(); 
+                    var r10_fgh = ws.Range("F10:H10");
+                    r10_fgh.Merge();
                     r10_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : MotorUnidad;
 
                     ws.Cell("E11").Value = "Marca de Motor:";
-                    var r11_fgh = ws.Range("F11:H11"); 
-                    r11_fgh.Merge(); 
+                    var r11_fgh = ws.Range("F11:H11");
+                    r11_fgh.Merge();
                     r11_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : MotorMarca;
 
                     ws.Cell("E12").Value = "Modelo de Motor:";
-                    var r12_fgh = ws.Range("F12:H12"); 
-                    r12_fgh.Merge(); 
+                    var r12_fgh = ws.Range("F12:H12");
+                    r12_fgh.Merge();
                     r12_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : MotorModelo;
 
                     ws.Cell("E13").Value = "Serie de Motor:";
-                    var r13_fgh = ws.Range("F13:H13"); 
-                    r13_fgh.Merge(); 
+                    var r13_fgh = ws.Range("F13:H13");
+                    r13_fgh.Merge();
                     r13_fgh.FirstCell().Value = (TipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                         ? string.Empty
                         : MotorSerie;
@@ -613,6 +617,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                     workbook.SaveAs(rutaTemporal);
                 }
+
                 bool exito = _adquisicionService.NuevaRequisicion(
                     idSolicitante: App.Session?.IdUsuario ?? 0,
                     idAutorizante: UsuarioAutorizanteSeleccionado?.IdUsuario ?? 0,

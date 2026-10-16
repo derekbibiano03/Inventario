@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventario.Data.Models;
@@ -73,11 +72,15 @@ public partial class CatalogoEconomico
 
     public string? IdSamsara { get; set; }
 
+    public int? Kmhrmantenimiento { get; set; }
+
     public virtual ICollection<CatalogoMovimientosEconomico> CatalogoMovimientosEconomicos { get; set; } = new List<CatalogoMovimientosEconomico>();
 
     public virtual ICollection<EconomicosArchivo> EconomicosArchivos { get; set; } = new List<EconomicosArchivo>();
 
     public virtual ICollection<HistorialReporte> HistorialReportes { get; set; } = new List<HistorialReporte>();
+
+    public virtual ICollection<HistorialResguardo> HistorialResguardos { get; set; } = new List<HistorialResguardo>();
 
     public virtual ICollection<HistorialServicio> HistorialServicios { get; set; } = new List<HistorialServicio>();
 

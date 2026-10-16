@@ -37,7 +37,9 @@
                 <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,15">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -45,28 +47,25 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-
+                        <!---->
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Descripción:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Detalle.Descripcion}" TextWrapping="Wrap" Margin="0,4" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.Descripcion}" TextWrapping="Wrap" Margin="0,4" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Marca / Modelo:" FontWeight="SemiBold" Margin="0,4" />
-                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,4">
-                            <TextBlock Text="{Binding Detalle.IdMarcaNavigation.NombreMarca}"/>
-                            <TextBlock FontSize="20" Text=" _ "/>
-                            <TextBlock Text="{Binding Detalle.Modelo}" />
-                        </StackPanel>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Marca:" FontWeight="SemiBold" Margin="0,4" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.IdMarcaNavigation.NombreMarca}" TextWrapping="Wrap" Margin="0,4" />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="No. de Serie:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Detalle.Serie}" Margin="0,4"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Modelo:" FontWeight="SemiBold" Margin="0,4" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.Modelo}" TextWrapping="Wrap" Margin="0,4" />
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Año Fabricación:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Detalle.PeriodoFabricacion}" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="No. de Serie:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.Serie}" Margin="0,4"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Horometro:" FontWeight="SemiBold" Margin="0,4"/>
-                        <!-- BINDING CORREGIDO: Pasamos la propiedad 'Detalle' al converter -->
-                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Detalle, Converter={StaticResource UnidadesHorometroConverter}}" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Año Fabricación:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.PeriodoFabricacion}" Margin="0,4"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Horometro:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle, Converter={StaticResource UnidadesHorometroConverter}}" Margin="0,4"/>
                     </Grid>
                 </Border>
 
@@ -74,27 +73,27 @@
                 <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,15">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Motor:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Detalle.Motor}" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Marca Motor:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.MarcaMotorNavigation.NombreMarca}" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Marca Motor:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Detalle.MarcaMotorNavigation.NombreMarca}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Modelo Motor:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.ModeloMotor}" Margin="0,4"/>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Modelo Motor:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Detalle.ModeloMotor}" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Serie Motor:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.SerieMotor}" Margin="0,4"/>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Serie Motor:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Detalle.SerieMotor}" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Familia Motor:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.FamiliaMotor}" Margin="0,4"/>
                     </Grid>
                 </Border>
 
@@ -102,7 +101,9 @@
                 <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,15">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -110,35 +111,31 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Estatus Actual:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Detalle.IdEstatusNavigation.DescripcionEstatus}" FontWeight="Bold" Foreground="DarkBlue" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.IdEstatusNavigation.DescripcionEstatus}" FontWeight="Bold" Foreground="DarkBlue" Margin="0,4"/>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Grupo / Familia:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Detalle.IdGrupoNavigation.DescripcionGrupo}" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.IdGrupoNavigation.DescripcionGrupo}" Margin="0,4"/>
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Tipo de Equipo:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Detalle.IdTipoEquipoNavigation.DescripcionTipoEquipo}" Margin="0,4"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Text="{Binding Detalle.IdTipoEquipoNavigation.DescripcionTipoEquipo}" Margin="0,4"/>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Operador Asignado:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Detalle.IdOperadorNavigation.NombreEmpleado}" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Operador Asignado:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.IdOperadorNavigation.NombreEmpleado}" Margin="0,4"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Responsable:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Detalle.IdResponsableNavigation.NombreEmpleado}" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Responsable:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.IdResponsableNavigation.NombreEmpleado}" Margin="0,4"/>
 
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Ubicacion:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Detalle.IdUbicacionNavigation.NombreProyecto}" Margin="0,4"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Ubicacion:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.IdUbicacionNavigation.NombreProyecto}" Margin="0,4"/>
 
-                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Observaciones / Asignaciones:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Detalle.ObservacionesAsignaciones}" Width="500" Margin="10,4" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Observaciones / Asignaciones:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Detalle.ObservacionesAsignaciones}" Width="500" Margin="10,4" HorizontalAlignment="Left" TextWrapping="Wrap"/>
 
-                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Dimensiones:" FontWeight="SemiBold" Margin="0,4"/>
-                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Detalle.Dimensiones}" Width="500" Margin="10,4" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="Dimensiones:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding Detalle.Dimensiones}" Width="500" Margin="10,4" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                     </Grid>
                 </Border>
             </StackPanel>

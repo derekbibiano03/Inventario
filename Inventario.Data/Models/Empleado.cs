@@ -19,6 +19,8 @@ public partial class Empleado
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicoIdResponsableNavigations { get; set; } = new List<CatalogoEconomico>();
 
+    public virtual ICollection<HistorialResguardo> HistorialResguardos { get; set; } = new List<HistorialResguardo>();
+
     public virtual RolEmpleado? IdRolEmpleadoNavigation { get; set; }
 
     public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }

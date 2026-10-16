@@ -87,6 +87,51 @@ namespace Inventario.Core.Services.Economicos
             return registrosLog;
         }
 
+        public List<(CatalogoArchivo Archivo, int IdResguardo)> RegistrarArchivosResguardos(List<string> rutasOriginales, int idResguardo)
+        {
+            var registrosLog = new List<(CatalogoArchivo Archivo, int IdResguardo)>();
+            if (rutasOriginales == null || !rutasOriginales.Any())
+            {
+                return registrosLog;
+            }
+
+            foreach (string rutaOriginal in rutasOriginales)
+            {
+                if (!File.Exists(rutaOriginal))
+                {
+                    throw new FileNotFoundException($"El archivo no fue encontrado en la ruta especificada: {rutaOriginal}");
+                }
+
+                string nombreOriginal = Path.GetFileName(rutaOriginal);
+                string extension = Path.GetExtension(rutaOriginal);
+                string nombreFisicoUnico = Guid.NewGuid().ToString() + extension;
+                SubirArchivoPorFtp(rutaOriginal, nombreFisicoUnico);
+
+                var catalogoArchivo = new CatalogoArchivo
+                {
+                    Archivo = nombreFisicoUnico,
+                    NombreArchivo = nombreOriginal,
+                    FechaSubida = DateTime.UtcNow
+                };
+
+                _context.CatalogoArchivos.Add(catalogoArchivo);
+                _context.SaveChanges();
+
+                var relacionResguardo = new ResguardosArchivo
+                {
+                    IdResguardo = idResguardo,
+                    IdArchivo = catalogoArchivo.IdArchivo
+                };
+
+                _context.ResguardosArchivos.Add(relacionResguardo);
+                _context.SaveChanges();
+
+                registrosLog.Add((catalogoArchivo, idResguardo));
+            }
+
+            return registrosLog;
+        }
+
         public List<(CatalogoArchivo Archivo, string IdEconomico)> RegistrarArchivosEconomicos(List<string> rutasOriginales, List<string> idsEconomicos)
         {
             var registrosLog = new List<(CatalogoArchivo Archivo, string IdEconomico)>();

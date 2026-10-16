@@ -87,6 +87,8 @@ namespace Inventario.Core.Services.Logs
             _context.SaveChanges();
         }
 
+        //REGISTRO ALTA DE ARCHIVOS PARA ECONOMICOS
+
         public void RegistrarDocumentoAdjuntoExitoso(int idUsuarioLogueado, string noEconomico, string idEconomico)
         {
             var nuevoLog = new HistorialLog
@@ -152,6 +154,8 @@ namespace Inventario.Core.Services.Logs
             _context.SaveChanges();
         }
 
+        //REGISTRO SERVICIO DE EQUIPO
+
         public void RegistrarServicioEquipo(int idUsuarioLogueado, int idServicio)
         {
             var nuevoLog = new HistorialLog
@@ -166,6 +170,25 @@ namespace Inventario.Core.Services.Logs
             _context.HistorialLogs.Add(nuevoLog);
             _context.SaveChanges();
         }
+
+        //REGISTRO RESGUARDO DE EQUIPO
+
+        public void RegistrarResguardoEquipo(int idUsuarioLogueado, int idResguardo)
+        {
+            var nuevoLog = new HistorialLog
+            {
+                DescripcionLog = $"El usuario con ID '{idUsuarioLogueado}' registro un nuevo resguardo el id '{idResguardo}'.",
+                TipoLog = "REGISTRO DE RESGUARDO",
+                IdUsuario = idUsuarioLogueado,
+                IpAddress = ObtenerIpLocal(),
+                FechaLog = DateTime.UtcNow
+            };
+
+            _context.HistorialLogs.Add(nuevoLog);
+            _context.SaveChanges();
+        }
+
+
 
     }
 }

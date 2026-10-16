@@ -52,12 +52,12 @@
                                     </MenuItem>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="INFORMACION DE ECONOMICOS" Tag="VerInventario" Click="MenuItem_Click"/>
                                     <MenuItem Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-3}" 
-          Style="{StaticResource TextoResaltadoBarra}" 
-          Header="INFORMACION DE SUV" 
-          Tag="VerSuv" 
-          Click="MenuItem_Click"/>
+                                          Style="{StaticResource TextoResaltadoBarra}" 
+                                          Header="INFORMACION DE SUV" 
+                                          Tag="VerSuv" 
+                                          Click="MenuItem_Click"/>
                                     <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="ALTAS ECONOMICOS" Tag="AgregarEconomico" Click="MenuItem_Click" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}"/>
-
+                                    <MenuItem Style="{StaticResource TextoResaltadoBarra}" Header="RESGUARDO DE ECONOMICOS" Tag="ResguardoEconomico" Click="MenuItem_Click" Visibility="{Binding PlacementTarget.DataContext.IdRolUsuario, RelativeSource={RelativeSource AncestorType=ContextMenu}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1}"/>    
                                     <MenuItem IsEnabled="False" Background="#2A2D34" Focusable="False">
                                         <MenuItem.Header>
                                             <TextBlock Text="--- MOVIMIENTOS ---" 

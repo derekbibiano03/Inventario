@@ -24,6 +24,17 @@ namespace Inventario.Core.Services.Catalogos
 
         }
 
+        public bool NuevaMarca(string nombreMarca)
+        {
+            var nuevaMarca = new CatalogoMarca
+            {
+                NombreMarca = nombreMarca
+            };
+
+            _context.CatalogoMarcas.Add(nuevaMarca);
+            _context.SaveChanges();
+            return true;
+        }
 
     }
 }

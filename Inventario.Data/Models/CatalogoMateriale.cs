@@ -17,9 +17,9 @@ public partial class CatalogoMateriale
 
     public int? Marca { get; set; }
 
-    public int? IdClasificacion { get; set; }
+    public string? IdClasificacion { get; set; }
 
-    public int? IdSubclasificacion { get; set; }
+    public string? IdSubclasificacion { get; set; }
 
     public virtual CatalogoClasificacione? IdClasificacionNavigation { get; set; }
 

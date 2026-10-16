@@ -7,7 +7,6 @@ namespace Inventario.Desktop.Views
 {
     public partial class DetallesWindow : Window
     {
-        private readonly InventarioContext _context;
         public DetallesWindow(string idEconomico)
         {
             InitializeComponent();

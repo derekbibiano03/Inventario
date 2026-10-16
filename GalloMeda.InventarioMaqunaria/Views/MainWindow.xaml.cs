@@ -98,7 +98,10 @@ namespace Inventario.Desktop.Views
                         ContenedorPrincipal.Content = new AgregarUsuario();
                         textoPanel = "AGREGAR A UN NUEVO USUARIO";
                         break;
-
+                    case "ResguardoEconomico":
+                        ContenedorPrincipal.Content = new ResguardosEconomicosView();
+                        textoPanel = "NUEVO RESGUARDO";
+                        break;
                     case "VerInventario":
                         ContenedorPrincipal.Content = new EconomicosView();
                         textoPanel = "INVENTARIO DE MAQUINARIA";

@@ -92,6 +92,20 @@ namespace Inventario.Core.Services.Economicos
             return resultado;
         }
 
+        public List<EconomicoMinimoDto> ObtenerIDs()
+        {
+
+            var resultado = _context.CatalogoEconomicos
+                .Select(e => new EconomicoMinimoDto
+                {
+                    IdEconomico = e.IdEconomico
+                })
+                .OrderBy(x => x.IdEconomico)
+                .ToList();
+
+            return resultado;
+        }
+
         public List<EconomicoMinimoDto> ObtenerSUVCortos()
         {
             var resultado = _context.CatalogoEconomicos

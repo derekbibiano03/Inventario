@@ -42,6 +42,7 @@ namespace Inventario.Core.Services.Personal
             return resultado;
         }
 
+
         public List<Empleado> ObtenerOperadoresConFechaNoNula()
         {
             var resultado = _context.Empleados

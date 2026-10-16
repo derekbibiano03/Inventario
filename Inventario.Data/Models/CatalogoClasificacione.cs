@@ -5,7 +5,7 @@ namespace Inventario.Data.Models;
 
 public partial class CatalogoClasificacione
 {
-    public int IdClasificacion { get; set; }
+    public string IdClasificacion { get; set; } = null!;
 
     public string? Descripcion { get; set; }
 

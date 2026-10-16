@@ -52,7 +52,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Movimientos
             }
         }
 
-        private ObservableCollection<CatalogoMovimientosEconomico> _listaMovimientos;
         private ICollectionView _vistaHistorialMovimientos;
         public ICollectionView VistaHistorialMovimientos
         {

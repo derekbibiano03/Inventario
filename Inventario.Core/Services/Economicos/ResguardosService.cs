@@ -1,5 +1,6 @@
 ﻿using Inventario.Core.Services.Logs;
 using Inventario.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
@@ -47,6 +48,16 @@ namespace Inventario.Core.Services.Economicos
             }
 
             _context.SaveChanges();
+        }
+
+        public List<HistorialResguardo> ObtenerHistorial()
+        {
+            return _context.HistorialResguardos
+                .Include(s => s.IdEconomicoNavigation)
+                .Include(h => h.IdOperadorNavigation)      // <-- Carga el usuario
+                .Include(h => h.ResguardosArchivos)
+                    .ThenInclude(sa => sa.IdArchivoNavigation)
+                .ToList();
         }
     }
 }

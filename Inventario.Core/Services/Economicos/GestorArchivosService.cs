@@ -16,6 +16,7 @@ namespace Inventario.Core.Services.Economicos
         private readonly string _usuarioFtp = "dbibiano@enlaceferroviario.com";
         private readonly string _contrasenaFtp = "drbr11122003DRBR.";
         private readonly string _directorioRemoto = "servidor/ArchivosEconomicos/";
+        private readonly string _directorioRemotoResguardos = "servidor/ArchivosEconomicos/Resguardos";
         public GestorArchivosService(InventarioContext context)
         {
             _context = context;
@@ -29,6 +30,22 @@ namespace Inventario.Core.Services.Economicos
         private void SubirArchivoPorFtp(string rutaLocal, string nombreRemoto)
         {
             string urlDestino = $"{_hostFtp}{_directorioRemoto}{nombreRemoto}";
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(urlDestino);
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+            request.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
+            request.UseBinary = true;
+            request.UsePassive = true;
+            byte[] fileContents = File.ReadAllBytes(rutaLocal);
+            request.ContentLength = fileContents.Length;
+            using (Stream requestStream = request.GetRequestStream())
+            {
+                requestStream.Write(fileContents, 0, fileContents.Length);
+            }
+        }
+
+        private void SubirArchivoPorFtpResguardos(string rutaLocal, string nombreRemoto)
+        {
+            string urlDestino = $"{_hostFtp}{_directorioRemotoResguardos}{nombreRemoto}";
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(urlDestino);
             request.Method = WebRequestMethods.Ftp.UploadFile;
             request.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
@@ -105,7 +122,7 @@ namespace Inventario.Core.Services.Economicos
                 string nombreOriginal = Path.GetFileName(rutaOriginal);
                 string extension = Path.GetExtension(rutaOriginal);
                 string nombreFisicoUnico = Guid.NewGuid().ToString() + extension;
-                SubirArchivoPorFtp(rutaOriginal, nombreFisicoUnico);
+                SubirArchivoPorFtpResguardos(rutaOriginal, nombreFisicoUnico);
 
                 var catalogoArchivo = new CatalogoArchivo
                 {

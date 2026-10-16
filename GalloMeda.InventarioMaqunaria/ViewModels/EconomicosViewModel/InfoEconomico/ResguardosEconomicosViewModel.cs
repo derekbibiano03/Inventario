@@ -4,14 +4,18 @@ using Inventario.Core.Services.Economicos;
 using Inventario.Core.Services.Logs;
 using Inventario.Core.Services.Personal;
 using Inventario.Data.Models;
+using Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios;
+using Inventario.Desktop.Views;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
@@ -57,6 +61,20 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             set { _idOperador = value; OnPropertyChanged(); }
         }
 
+        private string? _filtroNoEconomico;
+        public string? FiltroNoEconomico
+        {
+            get => _filtroNoEconomico;
+            set
+            {
+                _filtroNoEconomico = value;
+                OnPropertyChanged();
+                VistaHistorialResguardos?.Refresh(); // Refresca la vista si usas filtrado
+            }
+        }
+
+
+
         private readonly InventarioContext _context;
         private readonly LogsService _logsService;
         private readonly EmpleadoService _empleadosService;
@@ -71,13 +89,28 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             set { _idResguardo = value; OnPropertyChanged(); }
         }
 
+
+
         public ObservableCollection<Empleado> Empleados { get; set; }
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
+        public ObservableCollection<HistorialResguardo> HistorialResguardos { get; set; }
         public ObservableCollection<string> ListaArchivosSeleccionados { get; set; } = new ObservableCollection<string>();
 
         public ICommand SeleccionarArchivosCommand { get; }
         public ICommand EliminarArchivoCommand { get; }
         public ICommand GuardarArchivoCommand { get; }
+        public ICommand AltaServicioCommand { get; }
+        public ICommand VerArchivoCommand { get; }
+        public ICommand EliminarServicioCommand { get; }
+        public ICommand ExportarExcelCommand { get; }
+        public ICommand AbrirEditarServicioCommand { get; }
+
+        private ICollectionView _vistaHistorialResguardos;
+        public ICollectionView VistaHistorialResguardos
+        {
+            get => _vistaHistorialResguardos;
+            set { _vistaHistorialResguardos = value; OnPropertyChanged(); }
+        }
 
         public ResguardosEconomicosViewModel(
             InventarioContext context,
@@ -96,11 +129,30 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             Empleados = new ObservableCollection<Empleado>();
             Economicos = new ObservableCollection<EconomicoMinimoDto>();
 
+            HistorialResguardos = new ObservableCollection<HistorialResguardo>();
+            _vistaHistorialResguardos = CollectionViewSource.GetDefaultView(HistorialResguardos);
+
             SeleccionarArchivosCommand = new RelayCommand(EjecutarSeleccionarArchivos);
             EliminarArchivoCommand = new RelayCommand<string>(EjecutarEliminarArchivo);
+            VerArchivoCommand = new RelayCommand<CatalogoArchivo>(EjecutarAbrirArchivo);
+            ExportarExcelCommand = new RelayCommand(EjecutarExportarExcel);
             GuardarArchivoCommand = new RelayCommand(AltaResguardo);
 
             CargarTipos();
+            CargarHistorialResguardos();
+        }
+
+        private void EjecutarExportarExcel()
+        {
+            try
+            {
+                // Lógica para exportar a Excel (por ejemplo, usando ClosedXML)
+                MessageBox.Show("ESTO AUN NO LO HAGO.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al exportar: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void CargarTipos()
@@ -200,5 +252,54 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
                 MessageBox.Show(mensajeError, "Error de Base de Datos / FTP", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        public void CargarHistorialResguardos()
+        {
+            try
+            {
+                var datoshistorial = _resguardosService.ObtenerHistorial();
+
+                HistorialResguardos.Clear();
+
+                foreach (var item in datoshistorial)
+                {
+                    HistorialResguardos.Add(item);
+                }
+
+                VistaHistorialResguardos?.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar el historial de resguardos: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void EjecutarAbrirArchivo(CatalogoArchivo archivo)
+        {
+            if (string.IsNullOrEmpty(archivo?.Archivo)) return;
+            try
+            {
+                string rutaCompleta = _gestorArchivosService.ObtenerRutaAbsoluta(archivo.Archivo);
+
+                if (!File.Exists(rutaCompleta))
+                {
+                    MessageBox.Show($"No se pudo recuperar el archivo físico desde el servidor de almacenamiento.",
+                                    "Archivo No Encontrado", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = rutaCompleta,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al abrir el archivo: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
     }
 }

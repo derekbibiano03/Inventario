@@ -16,7 +16,7 @@ namespace Inventario.Core.Services.Economicos
         private readonly string _usuarioFtp = "dbibiano@enlaceferroviario.com";
         private readonly string _contrasenaFtp = "drbr11122003DRBR.";
         private readonly string _directorioRemoto = "servidor/ArchivosEconomicos/";
-        private readonly string _directorioRemotoResguardos = "servidor/ArchivosEconomicos/Resguardos";
+        private readonly string _directorioRemotoResguardos = "servidor/ArchivosEconomicos/Resguardos/";
         public GestorArchivosService(InventarioContext context)
         {
             _context = context;
@@ -260,21 +260,41 @@ namespace Inventario.Core.Services.Economicos
             if (!File.Exists(rutaLocalTemporal))
             {
                 string baseHost = _hostFtp.EndsWith("/") ? _hostFtp : _hostFtp + "/";
-                string directorio = _directorioRemoto.Trim('/') + "/";
-                string urlOrigen = $"{baseHost}{directorio}{nombreLimpio}";
-                
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(urlOrigen);
-                
-                request.Method = WebRequestMethods.Ftp.DownloadFile;
-                request.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
-                request.UseBinary = true;
-                request.UsePassive = true;
-                
-                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-                using (Stream responseStream = response.GetResponseStream())
-                using (FileStream fileStream = File.Create(rutaLocalTemporal))
+                bool descargado = false;
+                string[] directoriosAProbar = { _directorioRemotoResguardos, _directorioRemoto };
+
+                foreach (var dir in directoriosAProbar)
                 {
-                    responseStream.CopyTo(fileStream);
+                    try
+                    {
+                        string directorio = dir.Trim('/') + "/";
+                        string urlOrigen = $"{baseHost}{directorio}{nombreLimpio}";
+
+                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(urlOrigen);
+                        request.Method = WebRequestMethods.Ftp.DownloadFile;
+                        request.Credentials = new NetworkCredential(_usuarioFtp, _contrasenaFtp);
+                        request.UseBinary = true;
+                        request.UsePassive = true;
+
+                        using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+                        using (Stream responseStream = response.GetResponseStream())
+                        using (FileStream fileStream = File.Create(rutaLocalTemporal))
+                        {
+                            responseStream.CopyTo(fileStream);
+                        }
+
+                        descargado = true;
+                        break; // Si se descargó con éxito de alguno de los dos, salimos del ciclo
+                    }
+                    catch
+                    {
+                        // Si falla en el primero (ej. no está en Resguardos), intenta con el siguiente directorio
+                    }
+                }
+
+                if (!descargado)
+                {
+                    throw new FileNotFoundException($"No se pudo encontrar el archivo {nombreLimpio} en ninguna de las rutas FTP del servidor.");
                 }
             }
 

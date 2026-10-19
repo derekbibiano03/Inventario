@@ -89,8 +89,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             set { _idResguardo = value; OnPropertyChanged(); }
         }
 
-
-
         public ObservableCollection<Empleado> Empleados { get; set; }
         public ObservableCollection<EconomicoMinimoDto> Economicos { get; set; }
         public ObservableCollection<HistorialResguardo> HistorialResguardos { get; set; }
@@ -131,6 +129,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
 
             HistorialResguardos = new ObservableCollection<HistorialResguardo>();
             _vistaHistorialResguardos = CollectionViewSource.GetDefaultView(HistorialResguardos);
+            _vistaHistorialResguardos.Filter = FiltrarPorEconomico;
 
             SeleccionarArchivosCommand = new RelayCommand(EjecutarSeleccionarArchivos);
             EliminarArchivoCommand = new RelayCommand<string>(EjecutarEliminarArchivo);
@@ -300,6 +299,15 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
             }
         }
 
+
+        private bool FiltrarPorEconomico(object obj)
+        {
+
+            if (obj is not HistorialResguardo resguardo) return false;
+            if (string.IsNullOrWhiteSpace(FiltroNoEconomico)) return true;
+            return resguardo.IdEconomico != null &&
+                   resguardo.IdEconomico.Contains(FiltroNoEconomico, StringComparison.OrdinalIgnoreCase);
+        }
 
     }
 }

@@ -63,13 +63,6 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Movimientos
             }
         }
 
-        private DateTime _fechaSalida = DateTime.UtcNow;
-        public DateTime FechaSalida
-        {
-            get => _fechaSalida;
-            set { _fechaSalida = value; OnPropertyChanged(); }
-        }
-
         private int _idUbicacionFinSeleccionado;
         public int IdUbicacionFinSeleccionado
         {
@@ -97,6 +90,13 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Movimientos
                     AplicarFiltroTexto();
                 }
             }
+        }
+
+        private DateTime? _fechaMovimiento = DateTime.Today;
+        public DateTime? FechaMovimiento
+        {
+            get => _fechaMovimiento;
+            set { _fechaMovimiento = value; OnPropertyChanged(); }
         }
 
         private string _rutaArchivoAdjunto = string.Empty;
@@ -344,7 +344,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Movimientos
                 economicosSeleccionados.Select(e => e.IdEconomico).ToList(),
                 this.IdUbicacionFinSeleccionado,
                 this.IdUbicacionFiltroSeleccionado,
-                this.FechaSalida,
+                this.FechaMovimiento ?? DateTime.Today,
                 this.RutaArchivoAdjunto,
                 this.RutaArchivoAdjunto2
             );

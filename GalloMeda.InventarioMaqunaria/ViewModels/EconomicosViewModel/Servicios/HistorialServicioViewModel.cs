@@ -330,6 +330,23 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.Servicios
                     MessageBox.Show("Debe seleccionar un número económico.", "Error de Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+                if (string.IsNullOrWhiteSpace(TipoMantenimiento))
+                {
+                    MessageBox.Show("Debe seleccionar un tipo de mantenimiento.", "Error de Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Horaskilometrosreales))
+                {
+                    MessageBox.Show("Debe agregar el horometro real del equipo al que se le realizo al equipo.", "Error de Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (Costos == null || Costos == 0)
+                {
+                    MessageBox.Show("Debes escribir el costo del servicio.", "Error de Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
 
                 // 2. Construcción del DTO
                 var dto = new HistorialServicio

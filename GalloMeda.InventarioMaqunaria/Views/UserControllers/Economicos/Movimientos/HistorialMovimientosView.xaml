@@ -171,6 +171,11 @@
                                             Width="140" 
                                             IsReadOnly="True"/>
 
+                        <DataGridTextColumn Header="FECHA DE INICIUO DE MOVIMIENTO" 
+                                            Binding="{Binding FechaMovimiento}" 
+                                            Width="140" 
+                                            IsReadOnly="True"/>
+
                         <!-- COLUMNA DE ARCHIVOS ADJUNTOS -->
                         <!-- COLUMNA DE ARCHIVOS ADJUNTOS CORREGIDA -->
                         <DataGridTemplateColumn Header="ARCHIVOS ADJUNTOS" Width="200">

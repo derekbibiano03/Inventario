@@ -161,6 +161,11 @@
                                   SelectedValue="{Binding IdUbicacionFinSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                   Margin="0,0,0,20"/>
 
+                        
+                            <TextBlock Text="Fecha de Inicio de movimiento:" />
+                        <DatePicker SelectedDate="{Binding FechaMovimiento, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        
+
                         <Separator Background="#E2E8F0" Margin="0,0,0,20"/>
 
                         <TextBlock Text="DOCUMENTOS DE SOPORTE" 

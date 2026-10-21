@@ -361,6 +361,43 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         {
             try
             {
+                if (EmpresaSeleccionada == null || (EmpresaSeleccionada == "")) // Ajusta según el tipo de dato de tu IdEconomico
+                {
+                    MessageBox.Show("Seleccione una empresa para la requisicion.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (UbicacionSeleccionada == null || (UbicacionSeleccionada == "")) // Ajusta según el tipo de dato de tu IdEconomico
+                {
+                    MessageBox.Show("Seleccione una ubicacion para la requisicion.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (TipoRequiSeleccionada == null || (TipoRequiSeleccionada == "")) // Ajusta según el tipo de dato de tu IdEconomico
+                {
+                    MessageBox.Show("Seleccione un tipo de requisicion.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (UsuarioAtencionSeleccionado == null)
+                {
+                    MessageBox.Show("Seleccione a una persona para que atienda la requisicion.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (Detalles == null || Detalles.Count == 0)
+                {
+                    MessageBox.Show("Debe agregar al menos un concepto en la orden de compra.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                
+                if (UsuarioAutorizanteSeleccionado == null)
+                {
+                    MessageBox.Show("Seleccione a una persona para que autorize la requisicion.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+
                 int idUbicacionReal = Ubicaciones.FirstOrDefault(u => u.Siglas == UbicacionSeleccionada)?.IdUbicacion ?? 0;
 
                 // 1. Calculamos el consecutivo primero para que exista en el contexto actual

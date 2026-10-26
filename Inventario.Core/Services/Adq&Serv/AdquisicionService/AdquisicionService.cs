@@ -212,8 +212,8 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     throw new ArgumentException("El nombre del archivo remoto es nulo o está vacío.", nameof(nombreArchivoRemoto));
                 }
 
+                string archivoLimpio = nombreArchivoRemoto.Replace("\\", "/").TrimStart('/');
                 string directorioLimpio = _directorioRemoto.TrimEnd('/');
-                string archivoLimpio = nombreArchivoRemoto.TrimStart('/');
                 string urlRemota = $"{_hostFtp.TrimEnd('/')}/{directorioLimpio}/{archivoLimpio}";
                 string soloNombreArchivo = Path.GetFileName(nombreArchivoRemoto);
                 string rutaLocalTemporal = Path.Combine(Path.GetTempPath(), soloNombreArchivo);

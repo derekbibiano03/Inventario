@@ -16,6 +16,8 @@ public partial class InventarioContext : DbContext
     {
     }
 
+    public virtual DbSet<Adquisicione> Adquisiciones { get; set; }
+
     public virtual DbSet<CatalogoArchivo> CatalogoArchivos { get; set; }
 
     public virtual DbSet<CatalogoClasificacione> CatalogoClasificaciones { get; set; }
@@ -87,6 +89,33 @@ public partial class InventarioContext : DbContext
         modelBuilder
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Adquisicione>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("adquisiciones");
+
+            entity.HasIndex(e => e.IdMaterial, "fk_material_adquisicion");
+
+            entity.Property(e => e.Cantidad)
+                .HasPrecision(10)
+                .HasColumnName("cantidad");
+            entity.Property(e => e.IdAdquisicion)
+                .HasColumnType("text")
+                .HasColumnName("id_adquisicion");
+            entity.Property(e => e.IdMaterial).HasColumnName("id_material");
+            entity.Property(e => e.NoParte)
+                .HasColumnType("text")
+                .HasColumnName("no_parte");
+            entity.Property(e => e.PrecioUnitario)
+                .HasPrecision(10)
+                .HasColumnName("precio_unitario");
+
+            entity.HasOne(d => d.IdMaterialNavigation).WithMany()
+                .HasForeignKey(d => d.IdMaterial)
+                .HasConstraintName("fk_material_adquisicion");
+        });
 
         modelBuilder.Entity<CatalogoArchivo>(entity =>
         {
@@ -363,6 +392,7 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.DescripcionLarga)
                 .HasColumnType("text")
                 .HasColumnName("Descripcion_larga");
+            entity.Property(e => e.Detalles).HasColumnType("text");
             entity.Property(e => e.IdClasificacion)
                 .HasMaxLength(4)
                 .HasColumnName("id_clasificacion");

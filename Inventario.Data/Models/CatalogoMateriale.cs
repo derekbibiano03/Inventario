@@ -21,6 +21,8 @@ public partial class CatalogoMateriale
 
     public string? IdSubclasificacion { get; set; }
 
+    public string? Detalles { get; set; }
+
     public virtual CatalogoClasificacione? IdClasificacionNavigation { get; set; }
 
     public virtual CatalogoSubclasificacione? IdSubclasificacionNavigation { get; set; }

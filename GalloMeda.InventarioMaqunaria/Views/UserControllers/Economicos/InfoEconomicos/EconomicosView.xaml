@@ -135,6 +135,10 @@
                       ColumnHeaderHeight="55"
                       AlternatingRowBackground="#FAFAFA"
                       BorderThickness="0"
+                      EnableRowVirtualization="True"
+                      EnableColumnVirtualization="True"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.VerticalScrollBarVisibility="Auto">
 

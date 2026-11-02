@@ -118,7 +118,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
 
         public bool NuevaRequisicion(int idSolicitante, int idAutorizante, int idAtencion,
                                    int idUbicacion, DateOnly fechaRequisicion, string tipoRequisicion,
-                                   string empresa, string estatus, string rutaArchivoLocal, string nombreArchivoRemoto)
+                                   string empresa, string estatus, string rutaArchivoLocal, string nombreArchivoRemoto, string idEconomico)
         {
             try
             {
@@ -149,6 +149,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     IdSolicitante = idSolicitante,
                     IdAutorizante = idAutorizante,
                     IdAtencion = idAtencion,
+                    IdEconomico = idEconomico
                 };
                 _context.Requisiciones.Add(nuevaRequisicion);
                 _context.SaveChanges();
@@ -165,6 +166,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
             return await _context.Requisiciones
                 .Where(r => r.IdAutorizante == idUsuario && r.Estatus == "EN ESPERA")
                 .Include(r => r.IdSolicitanteNavigation)
+                .Include(r => r.IdUbicacionNavigation)
                 .Include(r => r.IdAtencionNavigation)
                 .Include(r => r.IdAutorizanteNavigation)
                 .OrderByDescending(r => r.FechaRequisicion)
@@ -173,8 +175,10 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     IdRequisicion = r.IdRequisicion,
                     FechaRequisicion = (DateOnly)r.FechaRequisicion,
                     Empresa = r.Empresa,
+                    IdEconomico = r.IdEconomico,
                     Estatus = r.Estatus,
                     TipoRequisicion = r.TipoRequisicion,
+                    Ubicacion = r.IdUbicacionNavigation != null ? r.IdUbicacionNavigation.Ubicacion : "N/A",
                     Solicitante = r.IdSolicitanteNavigation != null ? r.IdSolicitanteNavigation.NombreCompleto : "N/A",
                     Autorizante = r.IdAutorizanteNavigation != null ? r.IdAutorizanteNavigation.NombreCompleto : "N/A",
                     Atencion = r.IdAtencionNavigation != null ? r.IdAtencionNavigation.NombreCompleto : "N/A",
@@ -188,18 +192,30 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
         {
             return await _context.Requisiciones
                 .Include(r => r.IdSolicitanteNavigation)
+                .Include(r => r.IdUbicacionNavigation)
                 .Include(r => r.IdAutorizanteNavigation)
                 .OrderByDescending(r => r.FechaRequisicion)
                 .Select(r => new RequisicionListDto
                 {
                     IdRequisicion = r.IdRequisicion,
+                    IdEconomico = r.IdEconomico,
                     FechaRequisicion = (DateOnly)r.FechaRequisicion,
                     Empresa = r.Empresa,
                     Estatus = r.Estatus,
+                    Ubicacion = r.IdUbicacionNavigation != null ? r.IdUbicacionNavigation.Ubicacion: "N/A",
                     Solicitante = r.IdSolicitanteNavigation != null ? r.IdSolicitanteNavigation.NombreCompleto : "N/A",
                     Autorizante = r.IdAutorizanteNavigation != null ? r.IdAutorizanteNavigation.NombreCompleto : "N/A",
                     ArchivoReq = r.ArchivoReq
                 })
+                .ToListAsync();
+        }
+
+        public async Task<List<Requisicione>> ObtenerRequisicionesPorIdsAsync(string[] ids)
+        {
+            return await _context.Requisiciones
+                .Where(r => ids.Contains(r.IdRequisicion))
+                .Include(r => r.IdSolicitanteNavigation)
+                .Include(r => r.IdUbicacionNavigation)
                 .ToListAsync();
         }
 

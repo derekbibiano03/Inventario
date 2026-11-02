@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Inventario.Core.DTOs.Requisicion
 {
@@ -8,13 +6,20 @@ namespace Inventario.Core.DTOs.Requisicion
     {
         public string IdRequisicion { get; set; }
         public DateOnly FechaRequisicion { get; set; }
+
+        // Propiedad auxiliar para que los filtros de texto/checkbox funcionen limpiamente con la fecha
+        public string FechaTexto => FechaRequisicion.ToString("yyyy-MM-dd");
+
+        public int IdUbicacion { get; set; }
         public string Empresa { get; set; }
+        public string Ubicacion { get; set; }
+        public string IdEconomico { get; set; }
         public string Estatus { get; set; }
-        public string Solicitante { get; set; } // Nombre en texto
+        public string Solicitante { get; set; }
         public string Autorizante { get; set; }
         public string Atencion { get; set; }
         public string TipoRequisicion { get; set; }
-        public string Reviso { get; set; }// Nombre en texto
+        public string Reviso { get; set; }
         public string ArchivoReq { get; set; }
         public string CorreoAtencion { get; set; }
     }

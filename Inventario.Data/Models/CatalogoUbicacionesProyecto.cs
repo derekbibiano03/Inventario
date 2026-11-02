@@ -26,4 +26,6 @@ public partial class CatalogoUbicacionesProyecto
     public virtual ICollection<HistorialReporte> HistorialReportes { get; set; } = new List<HistorialReporte>();
 
     public virtual ICollection<HistorialServicio> HistorialServicios { get; set; } = new List<HistorialServicio>();
+
+    public virtual ICollection<Requisicione> Requisiciones { get; set; } = new List<Requisicione>();
 }

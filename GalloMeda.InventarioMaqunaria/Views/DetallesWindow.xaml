@@ -47,6 +47,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <!---->
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Descripción:" FontWeight="SemiBold" Margin="0,4"/>
@@ -66,6 +67,9 @@
 
                         <TextBlock Grid.Row="2" Grid.Column="2" Text="Horometro:" FontWeight="SemiBold" Margin="0,4"/>
                         <TextBlock Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle, Converter={StaticResource UnidadesHorometroConverter}}" Margin="0,4"/>
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="Placas:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.Placas}" Margin="0,4"/>
                     </Grid>
                 </Border>
 

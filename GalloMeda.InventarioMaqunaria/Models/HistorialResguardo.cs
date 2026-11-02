@@ -18,4 +18,6 @@ public partial class HistorialResguardo
     public virtual CatalogoEconomico? IdEconomicoNavigation { get; set; }
 
     public virtual Empleado? IdOperadorNavigation { get; set; }
+
+    public virtual ICollection<ResguardosArchivo> ResguardosArchivos { get; set; } = new List<ResguardosArchivo>();
 }

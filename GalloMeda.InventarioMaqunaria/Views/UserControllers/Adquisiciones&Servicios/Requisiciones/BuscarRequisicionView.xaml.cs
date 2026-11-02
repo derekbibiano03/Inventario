@@ -1,5 +1,6 @@
 ﻿using Inventario.Core.Services;
 using Inventario.Core.Services.Adq_Serv.AdquisicionService;
+using Inventario.Core.Services.UbicacionProyecto;
 using Inventario.Desktop.ViewModels.AdqServ;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -38,7 +39,7 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
             var adquisicionService = new AdquisicionService(context, emailService);
 
             // Asignar el ViewModel pasándole el servicio requerido
-            this.DataContext = new BuscarRequisicionesViewModel(adquisicionService);
+            this.DataContext = new BuscarRequisicionesViewModel(adquisicionService, context );
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

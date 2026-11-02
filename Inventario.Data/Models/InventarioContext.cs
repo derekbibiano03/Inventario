@@ -922,6 +922,10 @@ public partial class InventarioContext : DbContext
 
             entity.HasIndex(e => e.IdAtencion, "fk_requisicion_atencion");
 
+            entity.HasIndex(e => e.IdEconomico, "fk_requisicion_economico");
+
+            entity.HasIndex(e => e.IdUbicacion, "fk_requisicion_ubicacion");
+
             entity.HasIndex(e => e.IdAutorizante, "fk_usuario_autorizasnte_req");
 
             entity.HasIndex(e => e.IdSolicitante, "fk_usuario_colicitante_req");
@@ -946,6 +950,10 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.IdAtencion).HasColumnName("id_atencion");
             entity.Property(e => e.IdAutorizante).HasColumnName("id_autorizante");
             entity.Property(e => e.IdAutorizante2).HasColumnName("id_autorizante2");
+            entity.Property(e => e.IdEconomico)
+                .HasMaxLength(20)
+                .HasColumnName("id_economico")
+                .UseCollation("utf8mb4_unicode_ci");
             entity.Property(e => e.IdSolicitante).HasColumnName("id_solicitante");
             entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
             entity.Property(e => e.TipoRequisicion)
@@ -964,9 +972,17 @@ public partial class InventarioContext : DbContext
                 .HasForeignKey(d => d.IdAutorizante2)
                 .HasConstraintName("fk_autorizante2_REQUISICION");
 
+            entity.HasOne(d => d.IdEconomicoNavigation).WithMany(p => p.Requisiciones)
+                .HasForeignKey(d => d.IdEconomico)
+                .HasConstraintName("fk_requisicion_economico");
+
             entity.HasOne(d => d.IdSolicitanteNavigation).WithMany(p => p.RequisicioneIdSolicitanteNavigations)
                 .HasForeignKey(d => d.IdSolicitante)
                 .HasConstraintName("fk_usuario_colicitante_req");
+
+            entity.HasOne(d => d.IdUbicacionNavigation).WithMany(p => p.Requisiciones)
+                .HasForeignKey(d => d.IdUbicacion)
+                .HasConstraintName("fk_requisicion_ubicacion");
         });
 
         modelBuilder.Entity<ResguardosArchivo>(entity =>

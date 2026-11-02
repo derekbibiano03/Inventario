@@ -23,6 +23,7 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
         private bool _isChecked;
         public string? Nombre { get; set; }
         public int Id { get; set; }
+        public string IdEconomico { get; set; }
 
         public bool IsChecked
         {
@@ -489,11 +490,10 @@ namespace Inventario.Desktop.ViewModels.EconomicosViewModel.InfoEconomico
 
             var datosBBDD = _economicosService.ObtenerEconomicosCortos();
 
-            Economicos.Clear();
-            foreach (var item in datosBBDD)
-            {
-                Economicos.Add(item);
-            }
+            Economicos = new ObservableCollection<EconomicoMinimoDto>(datosBBDD);
+            VistaEconomicos = CollectionViewSource.GetDefaultView(Economicos);
+            VistaEconomicos.Filter = FiltroEjecucion;
+            OnPropertyChanged(nameof(VistaEconomicos));
 
             RecalcularOpcionesFiltros();
         }

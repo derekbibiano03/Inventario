@@ -31,11 +31,17 @@ public partial class Requisicione
 
     public string? AreaRequisicion { get; set; }
 
+    public string? IdEconomico { get; set; }
+
     public virtual Usuario? IdAtencionNavigation { get; set; }
 
     public virtual Usuario? IdAutorizante2Navigation { get; set; }
 
     public virtual Usuario? IdAutorizanteNavigation { get; set; }
 
+    public virtual CatalogoEconomico? IdEconomicoNavigation { get; set; }
+
     public virtual Usuario? IdSolicitanteNavigation { get; set; }
+
+    public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
 }

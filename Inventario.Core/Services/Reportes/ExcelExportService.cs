@@ -164,5 +164,53 @@ namespace Inventario.Core
                 return package.GetAsByteArray();
             }
         }
+
+        public byte[] GenerarExcelRequisiciones(List<Requisicione> listaFiltrada)
+        {
+            if (listaFiltrada == null) return new byte[0];
+
+            ExcelPackage.License.SetNonCommercialOrganization("GalloMeda");
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Reporte de Requisiciones");
+
+                string[] cabeceras = {
+            "No. Requisicion", "Fecha", "Empresa",
+            "Estatus", "Solicitante", "Ubicacion", "Economico"
+        };
+
+                for (int i = 0; i < cabeceras.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = cabeceras[i];
+                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                }
+
+                int fila = 2;
+
+                foreach (var item in listaFiltrada)
+                {
+                    if (item == null) continue;
+
+                    worksheet.Cells[fila, 1].Value = item.IdRequisicion?.ToUpper() ?? "N/A";
+                    worksheet.Cells[fila, 2].Value = item.FechaRequisicion;
+                    worksheet.Cells[fila, 3].Value = item.Empresa ?? "N/A";
+                    worksheet.Cells[fila, 4].Value = item.Estatus ?? "N/A";
+
+                    // Protección contra objetos nulos
+                    worksheet.Cells[fila, 5].Value = item.IdSolicitanteNavigation?.NombreCompleto ?? "N/A";
+                    worksheet.Cells[fila, 6].Value = item.IdUbicacionNavigation?.Ubicacion ?? "N/A";
+
+                    worksheet.Cells[fila, 7].Value = item.IdEconomico ?? "N/A";
+
+                    fila++;
+                }
+
+                worksheet.Cells[worksheet.Dimension?.Address ?? "A1"].AutoFitColumns();
+                return package.GetAsByteArray();
+            }
+        }
+
+
     }
 }

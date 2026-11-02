@@ -33,18 +33,9 @@
                 <DataGridTextColumn Header="Empresa" Width="*" Binding="{Binding Empresa}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Estatus" Width="*" Binding="{Binding Estatus}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Solicitante" Width="*" Binding="{Binding Solicitante}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Economico" Width="*" Binding="{Binding IdEconomico}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Archivo Req." Width="*" Binding="{Binding ArchivoReq}" IsReadOnly="True"/>
 
-                <!-- Columna de Acciones corregida con ElementName -->
-                <DataGridTemplateColumn Header="Acciones" Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Ver Excel" 
-                                    Command="{Binding DataContext.VerExcelCommand, ElementName=Root}"
-                                    Margin="5"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Header="Acciones" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

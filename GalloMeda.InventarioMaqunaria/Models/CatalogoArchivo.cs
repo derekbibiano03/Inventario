@@ -15,5 +15,7 @@ public partial class CatalogoArchivo
 
     public virtual ICollection<EconomicosArchivo> EconomicosArchivos { get; set; } = new List<EconomicosArchivo>();
 
+    public virtual ICollection<ResguardosArchivo> ResguardosArchivos { get; set; } = new List<ResguardosArchivo>();
+
     public virtual ICollection<ServicioArchivo> ServicioArchivos { get; set; } = new List<ServicioArchivo>();
 }

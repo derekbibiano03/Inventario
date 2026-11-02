@@ -105,4 +105,6 @@ public partial class CatalogoEconomico
     public virtual CatalogoUbicacionesProyecto? IdUbicacionNavigation { get; set; }
 
     public virtual CatalogoMarca? MarcaMotorNavigation { get; set; }
+
+    public virtual ICollection<Requisicione> Requisiciones { get; set; } = new List<Requisicione>();
 }

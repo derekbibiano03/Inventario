@@ -7,43 +7,252 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="Root">
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Barra superior con botón para limpiar filtros -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+            <Button Content="Limpiar Filtros" 
+                    Command="{Binding LimpiarFiltrosCommand}" 
+                    Padding="10,5"/>
+
+            <Button Grid.Column="1" 
+        Content="Exportar a Excel" 
+        Command="{Binding ExportarExcelCommand}" Margin="20,0,0,0"/>
+        </StackPanel>
+
         <DataGrid Grid.Row="1" Grid.Column="0"
-              Width="Auto"
-              ItemsSource="{Binding Requisiciones}" 
-              SelectedItem="{Binding RequisicionSeleccionada, Mode=TwoWay}"
-              AutoGenerateColumns="False" 
-              CanUserAddRows="False" 
-              HeadersVisibility="Column"
-              GridLinesVisibility="Horizontal"
-              Background="White"
-              BorderBrush="#CCCCCC"
-              BorderThickness="1"
-              RowHeight="30"
-              AlternatingRowBackground="#F9F9F9">
+          ItemsSource="{Binding VistaRequisiciones}" 
+          SelectedItem="{Binding RequisicionSeleccionada, Mode=TwoWay}"
+          AutoGenerateColumns="False" 
+          CanUserAddRows="False" 
+          HeadersVisibility="Column"
+          GridLinesVisibility="Horizontal"
+          Background="White"
+          BorderBrush="#CCCCCC"
+          BorderThickness="1"
+          RowHeight="30"
+          AlternatingRowBackground="#F9F9F9">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="No. Requisicion" Width="Auto" Binding="{Binding IdRequisicion}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Fecha Requisicion" Width="*" Binding="{Binding FechaRequisicion}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Empresa" Width="*" Binding="{Binding Empresa}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Estatus" Width="*" Binding="{Binding Estatus}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Solicitante" Width="*" Binding="{Binding Solicitante}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Archivo Req." Width="*" Binding="{Binding ArchivoReq}" IsReadOnly="True"/>
-
-                <DataGridTemplateColumn Header="Acciones" Width="*">
+                <!-- 1. No. Requisicion -->
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="No. Requisicion" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaIdReq, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+                                         ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroIdReqOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Ver Excel" 
-                                Command="{Binding DataContext.VerExcelCommand, ElementName=Root}"
-                                Margin="5"/>
+                            <TextBlock Text="{Binding IdRequisicion}" VerticalAlignment="Center" Margin="5,0"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
+                <!-- 2. Fecha Requisicion -->
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Fecha Requisicion" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaFecha, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+                                         ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroFechaOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding FechaTexto}" VerticalAlignment="Center" Margin="5,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- 3. Empresa -->
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Empresa" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaEmpresa, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+                                         ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroEmpresaOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Empresa}" VerticalAlignment="Center" Margin="5,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- 4. Estatus -->
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Estatus" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaEstatus, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+                                         ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroEstatusOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Estatus}" VerticalAlignment="Center" Margin="5,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- 5. Solicitante -->
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Solicitante" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaSolicitante, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+                                         ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroSolicitanteOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Solicitante}" VerticalAlignment="Center" Margin="5,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Ubicacion" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaUbicacion, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+                         ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroUbicacionOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Ubicacion}" VerticalAlignment="Center" Margin="5,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Economicos" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaIdEconomico, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroIdEconomicoOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding IdEconomico}" VerticalAlignment="Center" Margin="5,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- 7. Archivo Req. -->
+                <DataGridTextColumn Header="Archivo Req." Width="Auto" Binding="{Binding ArchivoReq}" IsReadOnly="True"/>
+
+                <!-- 8. Acciones -->
+                <DataGridTemplateColumn Header="Acciones" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Ver Excel" 
+                            Command="{Binding DataContext.VerExcelCommand, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}"
+                            Margin="5"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

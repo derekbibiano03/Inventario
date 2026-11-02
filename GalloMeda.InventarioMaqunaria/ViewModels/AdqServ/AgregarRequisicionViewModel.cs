@@ -164,6 +164,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             set { _consecutivoGenerado = value; OnPropertyChanged(); }
         }
 
+
         private string? _observaciones;
         public string? Observaciones
         {
@@ -240,6 +241,9 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             get => _serieUnidad;
             set { _serieUnidad = value; OnPropertyChanged(); }
         }
+
+
+
 
         public ObservableCollection<CatalogoMarca> ListaMarcas { get; set; } = new();
         public ObservableCollection<CatalogoTiposCombustible> ListaMotores { get; set; } = new();
@@ -665,7 +669,8 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     empresa: EmpresaSeleccionada ?? "CGM",
                     estatus: "EN ESPERA",
                     rutaArchivoLocal: rutaTemporal,
-                    nombreArchivoRemoto: nombreArchivoRemoto
+                    nombreArchivoRemoto: nombreArchivoRemoto,
+                    idEconomico: EconomicoSeleccionado.IdEconomico
                 );
 
                 if (exito)

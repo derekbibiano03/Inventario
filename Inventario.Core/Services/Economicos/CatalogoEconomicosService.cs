@@ -234,33 +234,19 @@ namespace Inventario.Core.Services.Economicos
         {
             // Ejecuta una consulta con cargas de relaciones filtrando registros mediante coincidencia de conjunto por medio de WHERE IN.
             return _context.CatalogoEconomicos
-                // CORRECCIÓN: Asegura la inclusión de la marca para el despliegue del listado filtrado por IDs.
                 .Include(e => e.IdMarcaNavigation)
-                // NUEVA CORRECCIÓN CRÍTICA: Carga explícitamente la relación de la marca del motor para evitar valores nulos en los detalles.
                 .Include(e => e.MarcaMotorNavigation)
-                // Carga la relación con el tipo de equipo asociado.
                 .Include(e => e.IdTipoEquipoNavigation)
-                // Carga la relación con el grupo de inventario correspondiente.
                 .Include(e => e.IdGrupoNavigation)
-                // Carga la relación con la ubicación o frente de obra asignada.
                 .Include(e => e.IdUbicacionNavigation)
-                // Carga la relación con el tipo de combustible requerido.
                 .Include(e => e.IdCombustibleNavigation)
-                // Carga la relación de la entidad propietaria de la maquinaria.
                 .Include(e => e.IdPropietarioNavigation)
-                // Carga la relación de la organización que administra las operaciones.
                 .Include(e => e.IdAdministradorNavigation)
-                // Carga la relación del estatus de ciclo de vida del activo.
                 .Include(e => e.IdEstatusNavigation)
-                // Carga la relación del operador técnico asignado temporal o fijamente.
                 .Include(e => e.IdOperadorNavigation)
-                // Carga la relación del ingeniero o encargado responsable del activo.
                 .Include(e => e.IdResponsableNavigation)
-                // Filtra los renglones donde el ID del económico coincida con alguno de los elementos del arreglo provisto.
                 .Where(e => ids.Contains(e.IdEconomico))
-                // Omite el guardado en caché de seguimiento optimizando el rendimiento de lectura.
                 .AsNoTracking()
-                // Transforma y descarga la respuesta de la base de datos en una colección estructurada de tipo List.
                 .ToList();
         }
 

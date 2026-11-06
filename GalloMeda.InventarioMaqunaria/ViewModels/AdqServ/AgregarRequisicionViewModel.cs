@@ -36,6 +36,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
         private readonly InventarioContext _contexto;
         private readonly UsuariosService _usuariosService;
+        private readonly Action _onRegistroRequisicionCompletado;
 
         public ICommand AñadirConceptoCommand { get; }
         public ICommand EliminarConceptoCommand { get; }
@@ -103,6 +104,21 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             }
         }
 
+        private string? _gradoPrioridadSeleccionado;
+        public string? GradoPrioridadSeleccionado
+        {
+            get => _gradoPrioridadSeleccionado;
+            set
+            {
+                if (_gradoPrioridadSeleccionado != value)
+                {
+                    _gradoPrioridadSeleccionado = value;
+                    OnPropertyChanged();
+                    ActualizarConsecutivo();
+                }
+            }
+        }
+
         private string _tipoRequiSeleccionada;
         public string TipoRequiSeleccionada
         {
@@ -116,14 +132,14 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                 if (_tipoRequiSeleccionada != "REQUISICION PARA ECONOMICO")
                 {
                     EconomicoSeleccionado = null;
-                    DescripcionUnidad = string.Empty;
-                    ModeloUnidad = string.Empty;
-                    MarcaUnidad = string.Empty;
-                    SerieUnidad = string.Empty;
-                    MotorUnidad = string.Empty;
-                    MotorModelo = string.Empty;
-                    MotorMarca = string.Empty;
-                    MotorSerie = string.Empty;
+                    DescripcionUnidad = null;
+                    ModeloUnidad = null;
+                    MarcaUnidad = null;
+                    SerieUnidad = null;
+                    MotorUnidad = null;
+                    MotorModelo = null;
+                    MotorMarca = null;
+                    MotorSerie = null;
                 }
             }
         }
@@ -247,6 +263,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
         public ObservableCollection<CatalogoMarca> ListaMarcas { get; set; } = new();
         public ObservableCollection<CatalogoTiposCombustible> ListaMotores { get; set; } = new();
+        public ICollectionView VistaRequisicion { get; set; }
 
         private CatalogoEconomico? _economicoSeleccionado;
         public CatalogoEconomico? EconomicoSeleccionado
@@ -299,8 +316,12 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         }
 
         private readonly AdquisicionService _adquisicionService;
-
-        public AgregarRequisicionViewModel(InventarioContext contexto, UsuariosService usuariosService, AdquisicionService adquisicionService)
+        public event EventHandler? RequisicionRegistrada;
+        public AgregarRequisicionViewModel(
+            InventarioContext contexto, 
+            UsuariosService usuariosService, 
+            AdquisicionService adquisicionService, 
+            Action onRegistroRequisicionCompletado)
         {
             _usuariosService = usuariosService ?? throw new ArgumentNullException(nameof(usuariosService));
             _contexto = contexto ?? throw new ArgumentNullException(nameof(contexto));
@@ -309,6 +330,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             AñadirConceptoCommand = new RelayCommand(EjecutarAñadirConcepto);
             EliminarConceptoCommand = new RelayCommand(EjecutarEliminarConcepto);
             GenerarExcelCommand = new RelayCommand(EjecutarGenerarExcel);
+            _onRegistroRequisicionCompletado = onRegistroRequisicionCompletado;
 
             CargarUsuarios();
             CargarCatalogos();
@@ -368,6 +390,12 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                 if (EmpresaSeleccionada == null || (EmpresaSeleccionada == "")) // Ajusta según el tipo de dato de tu IdEconomico
                 {
                     MessageBox.Show("Seleccione una empresa para la requisicion.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (GradoPrioridadSeleccionado == null || (GradoPrioridadSeleccionado == "")) // Ajusta según el tipo de dato de tu IdEconomico
+                {
+                    MessageBox.Show("Seleccione un grado de prioridad para generar la requisicion.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -667,10 +695,11 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     fechaRequisicion: DateOnly.FromDateTime(FechaActual),
                     tipoRequisicion: TipoRequiSeleccionada ?? "REQUISICION GENERICA",
                     empresa: EmpresaSeleccionada ?? "CGM",
-                    estatus: "EN ESPERA",
+                    estatus: "EN ESPERA DE SER AUTORIAZADA",
                     rutaArchivoLocal: rutaTemporal,
                     nombreArchivoRemoto: nombreArchivoRemoto,
-                    idEconomico: EconomicoSeleccionado.IdEconomico
+                    idEconomico: EconomicoSeleccionado?.IdEconomico,
+                    gradoPrioridad: GradoPrioridadSeleccionado
                 );
 
                 if (exito)
@@ -682,6 +711,8 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                     };
 
                     MessageBox.Show("Requisición guardada en el servidor FTP y en la base de datos exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    RequisicionRegistrada?.Invoke(this, EventArgs.Empty);
+                    _onRegistroRequisicionCompletado?.Invoke();
                 }
             }
             catch (Exception ex)

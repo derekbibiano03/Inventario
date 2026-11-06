@@ -32,6 +32,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         private string _busquedaEmpresa = string.Empty;
         private string _busquedaEstatus = string.Empty;
         private string _busquedaSolicitante = string.Empty;
+        private string _busquedaAtencion = string.Empty;
 
         private ObservableCollection<RequisicionListDto> _requisiciones = new();
         public ObservableCollection<RequisicionListDto> Requisiciones
@@ -43,6 +44,10 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         public ICollectionView VistaRequisiciones { get; set; }
         public ICommand LimpiarFiltrosCommand { get; }
         public ICommand VerExcelCommand { get; }
+        public ICommand LiquidarCommand { get; }
+        public ICommand LiquidarProcesoCommand { get; }
+        public ICommand LiqProcesoCommand { get; }
+        private readonly Action _onRecargarBusqueda;
 
         private RequisicionListDto? _requisicionSeleccionada;
         public RequisicionListDto? RequisicionSeleccionada
@@ -63,6 +68,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         private Dictionary<string, bool> _estadosEmpresa = new();
         private Dictionary<string, bool> _estadosEstatus = new();
         private Dictionary<string, bool> _estadosSolicitante = new();
+        private Dictionary<string, bool> _estadosAtencion = new();
 
         public ObservableCollection<OpcionFiltroCheckbox> FiltroIdReqOpciones { get; set; } = new();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroIdEconomicoOpciones { get; set; } = new();
@@ -71,6 +77,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
         public ObservableCollection<OpcionFiltroCheckbox> FiltroEmpresaOpciones { get; set; } = new();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroEstatusOpciones { get; set; } = new();
         public ObservableCollection<OpcionFiltroCheckbox> FiltroSolicitanteOpciones { get; set; } = new();
+        public ObservableCollection<OpcionFiltroCheckbox> FiltroAtencionOpciones { get; set; } = new();
 
         public string BusquedaIdReq
         {
@@ -114,11 +121,17 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             set { _busquedaSolicitante = value; OnPropertyChanged(); FiltrarListaCheckboxes(FiltroSolicitanteOpciones, _busquedaSolicitante); }
         }
 
+        public string BusquedaAtencion
+        {
+            get => _busquedaAtencion;
+            set { _busquedaAtencion = value; OnPropertyChanged(); FiltrarListaCheckboxes(FiltroAtencionOpciones, _busquedaAtencion); }
+        }
+
         private readonly AdquisicionService _reqService;
         private readonly ExcelExportService _excelService;
         private readonly InventarioContext _context;
-
-        public BuscarRequisicionesViewModel(AdquisicionService reqService, InventarioContext context)
+        public event EventHandler? RecargaBusqueda;
+        public BuscarRequisicionesViewModel(AdquisicionService reqService, InventarioContext context, Action onRecargarBusqueda)
         {
             _reqService = reqService ?? throw new ArgumentNullException(nameof(reqService));
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -130,9 +143,78 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             VistaRequisiciones = CollectionViewSource.GetDefaultView(Requisiciones);
             VistaRequisiciones.Filter = FiltroEjecucion;
 
+            LiquidarCommand = new RelayCommand(async (obj) => await EjecutarLiquidarAsync());
+            LiquidarProcesoCommand = new RelayCommand(async (obj) => await EjecutarLiquidarProcesoAsync());
+
             ExportarExcelCommand = new RelayCommand(_ => EjecutarExportacion());
 
+            _onRecargarBusqueda = onRecargarBusqueda;
+
             _ = CargarTodasRequisicionesAsync();
+        }
+
+        private async Task EjecutarLiquidarAsync()
+        {
+            if (RequisicionSeleccionada == null)
+            {
+                MessageBox.Show("Por favor seleccione una requisición para liquidar.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var resultado = MessageBox.Show($"¿Está seguro de liquidar la requisición {RequisicionSeleccionada.IdRequisicion}?",
+                                            "Confirmación", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (resultado == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    bool exito = await _reqService.LiquidarRequisicionAsync(RequisicionSeleccionada.IdRequisicion);
+
+                    if (exito)
+                    {
+                        MessageBox.Show("La requisición ha sido liquidada exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        RecargaBusqueda?.Invoke(this, EventArgs.Empty);
+                        _onRecargarBusqueda?.Invoke();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ocurrió un error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private async Task EjecutarLiquidarProcesoAsync()
+        {
+            if (RequisicionSeleccionada == null)
+            {
+                MessageBox.Show("Por favor seleccione una requisición para liquidar.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var resultado = MessageBox.Show($"¿Está seguro de liquidar la requisición {RequisicionSeleccionada.IdRequisicion}?",
+                                            "Confirmación", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (resultado == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    bool exito = await _reqService.LiquidarProcesoRequisicionAsync(RequisicionSeleccionada.IdRequisicion);
+
+                    if (exito)
+                    {
+                        MessageBox.Show("La requisición ha sido liquidada exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        RecargaBusqueda?.Invoke(this, EventArgs.Empty);
+                        _onRecargarBusqueda?.Invoke();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ocurrió un error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private async void EjecutarExportacion()
@@ -236,6 +318,12 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                 resultado = resultado && req.Solicitante != null && solicitantesSeleccionados.Contains(req.Solicitante);
             }
 
+            var atencionSeleccionados = _estadosAtencion.Where(x => x.Value).Select(x => x.Key).ToList();
+            if (atencionSeleccionados.Any())
+            {
+                resultado = resultado && req.Atencion != null && atencionSeleccionados.Contains(req.Atencion);
+            }
+
             return resultado;
         }
 
@@ -324,6 +412,19 @@ namespace Inventario.Desktop.ViewModels.AdqServ
                 FiltrarListaCheckboxes(FiltroSolicitanteOpciones, BusquedaSolicitante);
             }
 
+            if (columnaExcluida != "ATENCION")
+            {
+                var visibles = itemsVisibles.Select(e => e.Atencion).Where(sol => !string.IsNullOrEmpty(sol)).Distinct().ToList();
+                FiltroAtencionOpciones.Clear();
+                var aMostrar = _estadosAtencion.Where(x => x.Value).Select(x => x.Key).Union(visibles).Where(sol => sol != null).OrderBy(x => x);
+                foreach (var sol in aMostrar)
+                {
+                    _estadosAtencion.TryAdd(sol!, false);
+                    FiltroAtencionOpciones.Add(new OpcionFiltroCheckbox { Nombre = sol!, IsChecked = _estadosAtencion[sol!], AlCambiarSeleccion = () => NotificarCheckboxCambiadoTexto("ATENCION", sol!) });
+                }
+                FiltrarListaCheckboxes(FiltroAtencionOpciones, BusquedaAtencion);
+            }
+
             if (columnaExcluida != "ECONOMICO")
             {
                 var visibles = itemsVisibles.Select(e => e.IdEconomico).Where(sol => !string.IsNullOrEmpty(sol)).Distinct().ToList();
@@ -370,8 +471,11 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             if (columnaOrigen == "SOLICITANTE" && FiltroSolicitanteOpciones.FirstOrDefault(x => x.Nombre == claveTexto) is var opt5 && opt5 != null)
                 _estadosSolicitante[claveTexto] = opt5.IsChecked;
 
-            if (columnaOrigen == "ECONOMICO" && FiltroIdEconomicoOpciones.FirstOrDefault(x => x.Nombre == claveTexto) is var opt6 && opt6 != null)
-                _estadosIdEconomico[claveTexto] = opt6.IsChecked;
+            if (columnaOrigen == "ATENCION" && FiltroAtencionOpciones.FirstOrDefault(x => x.Nombre == claveTexto) is var opt6 && opt6 != null)
+                _estadosAtencion[claveTexto] = opt6.IsChecked;
+
+            if (columnaOrigen == "ECONOMICO" && FiltroIdEconomicoOpciones.FirstOrDefault(x => x.Nombre == claveTexto) is var opt7 && opt7 != null)
+                _estadosIdEconomico[claveTexto] = opt7.IsChecked;
 
             VistaRequisiciones.Refresh();
             RecalcularOpcionesFiltros(columnaOrigen);
@@ -411,6 +515,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             _busquedaEmpresa = string.Empty;
             _busquedaEstatus = string.Empty;
             _busquedaSolicitante = string.Empty;
+            _busquedaAtencion = string.Empty;
 
             OnPropertyChanged(nameof(BusquedaIdReq));
             OnPropertyChanged(nameof(BusquedaIdEconomico));
@@ -419,6 +524,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             OnPropertyChanged(nameof(BusquedaEmpresa));
             OnPropertyChanged(nameof(BusquedaEstatus));
             OnPropertyChanged(nameof(BusquedaSolicitante));
+            OnPropertyChanged(nameof(BusquedaAtencion));
 
             _estadosIdReq.Clear();
             _estadosIdEconomico.Clear();
@@ -427,6 +533,7 @@ namespace Inventario.Desktop.ViewModels.AdqServ
             _estadosEmpresa.Clear();
             _estadosEstatus.Clear();
             _estadosSolicitante.Clear();
+            _estadosAtencion.Clear();
 
             _isResetting = false;
 

@@ -85,6 +85,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Marca Motor:" FontWeight="SemiBold" Margin="0,4"/>
@@ -98,6 +99,9 @@
 
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="Familia Motor:" FontWeight="SemiBold" Margin="0,4"/>
                         <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.FamiliaMotor}" Margin="0,4"/>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Combustible:" FontWeight="SemiBold" Margin="0,4"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" Text="{Binding Detalle.IdCombustibleNavigation.DescripcionCombustible}" Margin="0,4"/>
                     </Grid>
                 </Border>
 

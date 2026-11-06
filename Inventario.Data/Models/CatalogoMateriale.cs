@@ -23,7 +23,11 @@ public partial class CatalogoMateriale
 
     public string? Detalles { get; set; }
 
+    public string? IdGrupo { get; set; }
+
     public virtual CatalogoClasificacione? IdClasificacionNavigation { get; set; }
+
+    public virtual CatalogoGrupo? IdGrupoNavigation { get; set; }
 
     public virtual CatalogoSubclasificacione? IdSubclasificacionNavigation { get; set; }
 

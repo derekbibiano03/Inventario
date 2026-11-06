@@ -84,7 +84,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 if (requisicionDb != null)
                 {
                     // 2. Actualizar el campo de estatus (ajusta "Estatus" por el nombre real de tu propiedad)
-                    requisicionDb.Estatus = "Autorizada";
+                    requisicionDb.Estatus = "AUTORIZADA";
 
                     // 3. Guardar los cambios en la base de datos
                     await _context.SaveChangesAsync();
@@ -118,7 +118,8 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
 
         public bool NuevaRequisicion(int idSolicitante, int idAutorizante, int idAtencion,
                                    int idUbicacion, DateOnly fechaRequisicion, string tipoRequisicion,
-                                   string empresa, string estatus, string rutaArchivoLocal, string nombreArchivoRemoto, string idEconomico)
+                                   string empresa, string estatus, string rutaArchivoLocal, 
+                                   string nombreArchivoRemoto, string idEconomico, string gradoPrioridad)
         {
             try
             {
@@ -149,7 +150,8 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     IdSolicitante = idSolicitante,
                     IdAutorizante = idAutorizante,
                     IdAtencion = idAtencion,
-                    IdEconomico = idEconomico
+                    IdEconomico = idEconomico,
+                    GradoPrioridad = gradoPrioridad
                 };
                 _context.Requisiciones.Add(nuevaRequisicion);
                 _context.SaveChanges();
@@ -158,6 +160,50 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
             catch (Exception ex)
             {
                 throw new Exception($"Error al procesar la nueva requisición: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> LiquidarRequisicionAsync(string idRequisicion)
+        {
+            try
+            {
+                var requisicionDb = await _context.Requisiciones
+                    .FirstOrDefaultAsync(r => r.IdRequisicion == idRequisicion);
+
+                if (requisicionDb != null)
+                {
+                    requisicionDb.Estatus = "LIQUIDADA";
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al liquidar la requisición: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<bool> LiquidarProcesoRequisicionAsync(string idRequisicion)
+        {
+            try
+            {
+                var requisicionDb = await _context.Requisiciones
+                    .FirstOrDefaultAsync(r => r.IdRequisicion == idRequisicion);
+
+                if (requisicionDb != null)
+                {
+                    requisicionDb.Estatus = "EN PROCESO DE SER LIQUIDADA";
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al liquidar la requisición: {ex.Message}", ex);
             }
         }
 
@@ -178,6 +224,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     IdEconomico = r.IdEconomico,
                     Estatus = r.Estatus,
                     TipoRequisicion = r.TipoRequisicion,
+                    GradoPrioridad = r.GradoPrioridad,
                     Ubicacion = r.IdUbicacionNavigation != null ? r.IdUbicacionNavigation.Ubicacion : "N/A",
                     Solicitante = r.IdSolicitanteNavigation != null ? r.IdSolicitanteNavigation.NombreCompleto : "N/A",
                     Autorizante = r.IdAutorizanteNavigation != null ? r.IdAutorizanteNavigation.NombreCompleto : "N/A",
@@ -191,8 +238,10 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
         public async Task<List<RequisicionListDto>> ObtenerTodasRequisicionesAsync()
         {
             return await _context.Requisiciones
+                .Where(r => r.Estatus != "FANTASMA")
                 .Include(r => r.IdSolicitanteNavigation)
                 .Include(r => r.IdUbicacionNavigation)
+                .Include(r => r.IdAtencionNavigation)
                 .Include(r => r.IdAutorizanteNavigation)
                 .OrderByDescending(r => r.FechaRequisicion)
                 .Select(r => new RequisicionListDto
@@ -201,10 +250,12 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     IdEconomico = r.IdEconomico,
                     FechaRequisicion = (DateOnly)r.FechaRequisicion,
                     Empresa = r.Empresa,
+                    GradoPrioridad = r.GradoPrioridad,
                     Estatus = r.Estatus,
                     Ubicacion = r.IdUbicacionNavigation != null ? r.IdUbicacionNavigation.Ubicacion: "N/A",
                     Solicitante = r.IdSolicitanteNavigation != null ? r.IdSolicitanteNavigation.NombreCompleto : "N/A",
                     Autorizante = r.IdAutorizanteNavigation != null ? r.IdAutorizanteNavigation.NombreCompleto : "N/A",
+                    Atencion = r.IdAtencionNavigation != null ? r.IdAtencionNavigation.NombreCompleto : "N/A",                   
                     ArchivoReq = r.ArchivoReq
                 })
                 .ToListAsync();
@@ -218,6 +269,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                 .Include(r => r.IdUbicacionNavigation)
                 .ToListAsync();
         }
+
 
         public void DescargarYAbrirArchivoExcel(string nombreArchivoRemoto)
         {

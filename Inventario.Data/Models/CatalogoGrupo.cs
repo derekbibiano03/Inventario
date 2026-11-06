@@ -11,5 +11,7 @@ public partial class CatalogoGrupo
 
     public virtual ICollection<CatalogoEconomico> CatalogoEconomicos { get; set; } = new List<CatalogoEconomico>();
 
+    public virtual ICollection<CatalogoMateriale> CatalogoMateriales { get; set; } = new List<CatalogoMateriale>();
+
     public virtual ICollection<HistorialServicio> HistorialServicios { get; set; } = new List<HistorialServicio>();
 }

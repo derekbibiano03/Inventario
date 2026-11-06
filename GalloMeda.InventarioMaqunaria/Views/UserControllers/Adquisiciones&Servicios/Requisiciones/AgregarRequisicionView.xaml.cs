@@ -30,7 +30,15 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
             var usuarios = new UsuariosService(context);
             var email = new EmailService(configuration); // <-- Aquí le pasamos la configuración requerida
             var adquisicionService = new AdquisicionService(context, email);
-            var viewModel = new AgregarRequisicionViewModel(context, usuarios, adquisicionService);
+            var viewModel = new AgregarRequisicionViewModel(context, usuarios, adquisicionService, onRegistroRequisicionCompletado: () =>
+            {
+                // Aquí defines a qué pantalla te quieres redirigir.
+                // Por ejemplo, si estás navegando dentro de un ContentControl en la ventana principal:
+                if (this.Parent is ContentControl parentControl)
+                {
+                    parentControl.Content = new BuscarRequisicionView(); // Redirige de vuelta a la tabla principal
+                }
+            });
 
             this.DataContext = viewModel;
             this.Loaded += AgregarRequisicionView_Loaded;

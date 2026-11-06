@@ -381,6 +381,8 @@ public partial class InventarioContext : DbContext
 
             entity.HasIndex(e => e.IdClasificacion, "fk_material_clasificacion");
 
+            entity.HasIndex(e => e.IdGrupo, "fk_material_grupo_maquina");
+
             entity.HasIndex(e => e.Marca, "fk_material_marca");
 
             entity.HasIndex(e => e.IdSubclasificacion, "fk_material_subclasificacion");
@@ -396,6 +398,10 @@ public partial class InventarioContext : DbContext
             entity.Property(e => e.IdClasificacion)
                 .HasMaxLength(4)
                 .HasColumnName("id_clasificacion");
+            entity.Property(e => e.IdGrupo)
+                .HasMaxLength(10)
+                .HasColumnName("id_grupo")
+                .UseCollation("utf8mb4_unicode_ci");
             entity.Property(e => e.IdSubclasificacion)
                 .HasMaxLength(4)
                 .HasColumnName("id_subclasificacion");
@@ -409,6 +415,10 @@ public partial class InventarioContext : DbContext
             entity.HasOne(d => d.IdClasificacionNavigation).WithMany(p => p.CatalogoMateriales)
                 .HasForeignKey(d => d.IdClasificacion)
                 .HasConstraintName("fk_material_clasificacion");
+
+            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.CatalogoMateriales)
+                .HasForeignKey(d => d.IdGrupo)
+                .HasConstraintName("fk_material_grupo_maquina");
 
             entity.HasOne(d => d.IdSubclasificacionNavigation).WithMany(p => p.CatalogoMateriales)
                 .HasForeignKey(d => d.IdSubclasificacion)
@@ -947,6 +957,9 @@ public partial class InventarioContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("estatus");
             entity.Property(e => e.FechaRequisicion).HasColumnName("fecha_requisicion");
+            entity.Property(e => e.GradoPrioridad)
+                .HasColumnType("text")
+                .HasColumnName("grado_prioridad");
             entity.Property(e => e.IdAtencion).HasColumnName("id_atencion");
             entity.Property(e => e.IdAutorizante).HasColumnName("id_autorizante");
             entity.Property(e => e.IdAutorizante2).HasColumnName("id_autorizante2");

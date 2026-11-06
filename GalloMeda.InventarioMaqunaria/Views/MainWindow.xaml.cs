@@ -205,6 +205,10 @@ namespace Inventario.Desktop.Views
                         ContenedorPrincipal.Content = new BuscarRequisicionView();
                         textoPanel = "AUTORIZACION DE REQUISICIONES";
                         break;
+                    case "CatMaterial":
+                        ContenedorPrincipal.Content = new CatalogoMaterialView();
+                        textoPanel = "CATALOGO DE MATERIALES";
+                        break; 
                 }
                 txtPanel.Text = textoPanel;
             }

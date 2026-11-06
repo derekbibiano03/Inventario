@@ -33,6 +33,8 @@ public partial class Requisicione
 
     public string? IdEconomico { get; set; }
 
+    public string? GradoPrioridad { get; set; }
+
     public virtual Usuario? IdAtencionNavigation { get; set; }
 
     public virtual Usuario? IdAutorizante2Navigation { get; set; }

@@ -14,6 +14,7 @@ namespace Inventario.Core.DTOs.Requisicion
         public string Empresa { get; set; }
         public string Ubicacion { get; set; }
         public string IdEconomico { get; set; }
+        public string GradoPrioridad { get; set; }
         public string Estatus { get; set; }
         public string Solicitante { get; set; }
         public string Autorizante { get; set; }

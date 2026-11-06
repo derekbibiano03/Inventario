@@ -37,6 +37,38 @@
           RowHeight="30"
           AlternatingRowBackground="#F9F9F9">
 
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+
+                        <DataTrigger Binding="{Binding GradoPrioridad}" Value="URGENTE">
+                            <Setter Property="Background" Value="#BA0000"/>
+                            <Setter Property="Foreground" Value="#000000"/>
+                        </DataTrigger>
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding GradoPrioridad}" Value="ORDINARIO"/>
+                                <Condition Binding="{Binding Estatus}" Value="EN ESPERA DE SER ATENDIDA"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="#FBFD3D"/>
+                            <Setter Property="Foreground" Value="#000000"/>
+                        </MultiDataTrigger>
+
+                        <DataTrigger Binding="{Binding Estatus}" Value="LIQUIDADA">
+                            <Setter Property="Background" Value="#12A81C"/>
+                            <Setter Property="Foreground" Value="#000000"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Estatus}" Value="EN ESPERA DE SER AUTORIAZADA">
+                            <Setter Property="Background" Value="#D9A0FF"/>
+                            <Setter Property="Foreground" Value="#000000"/>
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+
             <DataGrid.Columns>
                 <!-- 1. No. Requisicion -->
                 <DataGridTemplateColumn Width="Auto">
@@ -154,7 +186,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- 5. Solicitante -->
+                <!-- 5. Solicitante Visibility="{Binding IdRolUsuario, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource RolToVisibilityConverter}, ConverterParameter=1-2-4}" -->
                 <DataGridTemplateColumn Width="Auto">
                     <DataGridTemplateColumn.Header>
                         <StackPanel Orientation="Horizontal">
@@ -239,6 +271,34 @@ ToolTip="Buscar..." Margin="0,0,0,5"/>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Atencion A:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Menu Background="Transparent">
+                                <MenuItem Header="▼">
+                                    <StackPanel Width="180" Margin="5">
+                                        <TextBox Text="{Binding DataContext.BusquedaAtencion, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}, UpdateSourceTrigger=PropertyChanged}" 
+ToolTip="Buscar..." Margin="0,0,0,5"/>
+                                        <ItemsControl ItemsSource="{Binding DataContext.FiltroAtencionOpciones, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}" MaxHeight="150">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Content="{Binding Nombre}" IsChecked="{Binding IsChecked, Mode=TwoWay}" Margin="2"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </MenuItem>
+                            </Menu>
+                        </StackPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Atencion}" VerticalAlignment="Center" Margin="5,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
                 <!-- 7. Archivo Req. -->
                 <DataGridTextColumn Header="Archivo Req." Width="Auto" Binding="{Binding ArchivoReq}" IsReadOnly="True"/>
 
@@ -246,14 +306,47 @@ ToolTip="Buscar..." Margin="0,0,0,5"/>
                 <DataGridTemplateColumn Header="Acciones" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Ver Excel" 
-                            Command="{Binding DataContext.VerExcelCommand, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}"
-                            Margin="5"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="Ver Excel" 
+                        Command="{Binding DataContext.VerExcelCommand, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}"
+                        Margin="5"/>
+
+                                <Button Content="Liquidar" 
+                        Command="{Binding DataContext.LiquidarCommand, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}"
+                        Margin="5">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Estatus}" Value="EN ESPERA DE SER ATENDIDA">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Content="Liquidar en Procesos" 
+                        Command="{Binding DataContext.LiquidarProcesoCommand, RelativeSource={RelativeSource AncestorType={x:Type local:BuscarRequisicionView}}}"
+                        Margin="5">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Estatus}" Value="EN ESPERA DE SER ATENDIDA">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
             </DataGrid.Columns>
+        
         </DataGrid>
     </Grid>
 </UserControl>

@@ -39,7 +39,15 @@ namespace Inventario.Desktop.Views.UserControllers.Adquisiciones_Servicios.Requi
             var adquisicionService = new AdquisicionService(context, emailService);
 
             // Asignar el ViewModel pasándole el servicio requerido
-            this.DataContext = new BuscarRequisicionesViewModel(adquisicionService, context );
+            var viewModel = new BuscarRequisicionesViewModel(adquisicionService, context, onRecargarBusqueda: () =>
+            {
+                
+                if (this.Parent is ContentControl parentControl)
+                {
+                    parentControl.Content = new BuscarRequisicionView(); // Redirige de vuelta a la tabla principal
+                }
+            });
+            this.DataContext = viewModel;
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

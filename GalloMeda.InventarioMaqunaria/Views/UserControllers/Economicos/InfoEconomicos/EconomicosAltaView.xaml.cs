@@ -23,10 +23,23 @@ namespace Inventario.Desktop.Views.UserControllers.Economicos
             var empleadosService = new EmpleadoService(context);
             var economicosService = new CatalogoEconomicosService(context, logsService);
 
-            this.DataContext = new EconomicosAltaViewModel(marcasServicio, tipoEquipoServicio, grupoServicio, 
-                                                           combusServicio, pyaServicio, ubicacionService, empleadosService,
-                                                           economicosService);
+            // Pasamos la acción de redirección en el último parámetro del constructor
+            var viewModel = new EconomicosAltaViewModel(
+                marcasServicio, tipoEquipoServicio, grupoServicio,
+                combusServicio, pyaServicio, ubicacionService, empleadosService,
+                economicosService,
+                onRegistroCompletado: () =>
+                {
+                    // Aquí defines a qué pantalla te quieres redirigir.
+                    // Por ejemplo, si estás navegando dentro de un ContentControl en la ventana principal:
+                    if (this.Parent is ContentControl parentControl)
+                    {
+                        parentControl.Content = new EconomicosView(); // Redirige de vuelta a la tabla principal
+                    }
+                }
+            );
 
+            this.DataContext = viewModel;
         }
     }
 }

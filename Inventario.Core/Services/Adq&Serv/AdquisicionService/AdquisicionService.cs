@@ -210,7 +210,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
         public async Task<List<RequisicionListDto>> ObtenerRequisicionesAsync(int idUsuario)
         {
             return await _context.Requisiciones
-                .Where(r => r.IdAutorizante == idUsuario && r.Estatus == "EN ESPERA")
+                .Where(r => r.IdAutorizante == idUsuario && r.Estatus == "EN ESPERA DE SER AUTORIAZADA")
                 .Include(r => r.IdSolicitanteNavigation)
                 .Include(r => r.IdUbicacionNavigation)
                 .Include(r => r.IdAtencionNavigation)

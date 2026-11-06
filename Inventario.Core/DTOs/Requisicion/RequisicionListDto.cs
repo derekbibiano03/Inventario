@@ -6,8 +6,6 @@ namespace Inventario.Core.DTOs.Requisicion
     {
         public string IdRequisicion { get; set; }
         public DateOnly FechaRequisicion { get; set; }
-
-        // Propiedad auxiliar para que los filtros de texto/checkbox funcionen limpiamente con la fecha
         public string FechaTexto => FechaRequisicion.ToString("yyyy-MM-dd");
 
         public int IdUbicacion { get; set; }
@@ -23,5 +21,7 @@ namespace Inventario.Core.DTOs.Requisicion
         public string Reviso { get; set; }
         public string ArchivoReq { get; set; }
         public string CorreoAtencion { get; set; }
+        public string CorreoSolicitante { get; set; }
+
     }
 }

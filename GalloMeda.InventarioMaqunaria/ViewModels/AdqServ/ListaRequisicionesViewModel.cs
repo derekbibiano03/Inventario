@@ -219,12 +219,12 @@ namespace Inventario.Desktop.ViewModels.AdqServ
 
                 // 3. Envío del correo electrónico de notificación
                 var destinatarios = new List<string> { RequisicionSeleccionada.CorreoAtencion };
-                var copias = new List<string> { "rrodriguez@enlaceferroviario.com", "egarcia@enlaceferroviario.com", App.Session.Correoe };
+                var copias = new List<string> { "rrodriguez@enlaceferroviario.com", "egarcia@enlaceferroviario.com", RequisicionSeleccionada.CorreoSolicitante };
 
                 await EnviarCorreoNotificacionConArchivoAsync(
                     correosDestino: destinatarios,
                     correosCc: copias,
-                    asunto: $"Requisición Autorizada - {RequisicionSeleccionada.ArchivoReq}",
+                    asunto: $"PRUEBA NO CONSIDERAR: Requisición {RequisicionSeleccionada.GradoPrioridad} Autorizada - {RequisicionSeleccionada.ArchivoReq}",
                     cuerpoHtml: $"<p>Hola Malcom,</p><p>La {RequisicionSeleccionada.TipoRequisicion} <b>{RequisicionSeleccionada.ArchivoReq}</b> ha sido autorizada. Se adjunta el formato de Excel firmado y bloqueado.</p>",
                     rutaArchivo: archivoFinalParaEnviar
                 );

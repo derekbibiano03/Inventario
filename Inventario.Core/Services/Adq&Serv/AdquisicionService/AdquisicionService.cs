@@ -230,6 +230,7 @@ namespace Inventario.Core.Services.Adq_Serv.AdquisicionService
                     Autorizante = r.IdAutorizanteNavigation != null ? r.IdAutorizanteNavigation.NombreCompleto : "N/A",
                     Atencion = r.IdAtencionNavigation != null ? r.IdAtencionNavigation.NombreCompleto : "N/A",
                     CorreoAtencion = r.IdAtencionNavigation != null ? r.IdAtencionNavigation.Correoe : string.Empty,
+                    CorreoSolicitante = r.IdSolicitanteNavigation != null ? r.IdSolicitanteNavigation.Correoe : string.Empty,
                     ArchivoReq = r.ArchivoReq
                 })
                 .ToListAsync();
